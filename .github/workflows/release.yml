@@ -1,0 +1,516 @@
+name: Release Images
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  gate-check:
+    name: Gate Check
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    outputs:
+      pr_number: ${{ steps.meta.outputs.pr_number }}
+      head_sha: ${{ steps.meta.outputs.head_sha }}
+      merge_sha: ${{ steps.meta.outputs.merge_sha }}
+      short_sha: ${{ steps.meta.outputs.short_sha }}
+      date_tag: ${{ steps.meta.outputs.date_tag }}
+    steps:
+      - name: Extract release metadata
+        id: meta
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          MERGE_SHA="${{ github.sha }}"
+          SHORT_SHA="${MERGE_SHA:0:7}"
+          DATE_TAG="$(date -u +'%Y%m%d')"
+
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
+          echo "merge_sha=$MERGE_SHA" >> $GITHUB_OUTPUT
+          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "date_tag=$DATE_TAG" >> $GITHUB_OUTPUT
+
+          echo "PR #$PR_NUMBER merged"
+          echo "Head SHA: $HEAD_SHA"
+          echo "Merge SHA: $MERGE_SHA ($SHORT_SHA)"
+          echo "Date tag: $DATE_TAG"
+
+  matrix-setup:
+    name: Resolve Release Matrix
+    needs: gate-check
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.matrix.outputs.versions }}
+      variants: ${{ steps.matrix.outputs.variants }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Extract matrix from versions.json
+        id: matrix
+        run: |
+          VERSIONS=$(jq -c '[keys[] | ltrimstr("ubi")]' versions.json)
+          VARIANTS=$(jq -c '[to_entries[].value | to_entries[] | select(.value | type == "object" and has("base")) | .key] | unique' versions.json)
+          echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
+          echo "variants=$VARIANTS" >> $GITHUB_OUTPUT
+          echo "Resolved versions: $VERSIONS"
+          echo "Resolved variants: $VARIANTS"
+
+  release:
+    name: Release UBI Variant
+    needs: [gate-check, matrix-setup]
+    runs-on: ubuntu-latest
+    environment: Release-Actor
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: ${{ fromJSON(needs.matrix-setup.outputs.variants) }}
+        version: ${{ fromJSON(needs.matrix-setup.outputs.versions) }}
+        arch: [amd64, arm64]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.4.0
+
+      - name: Install Skopeo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve dev image
+        id: dev
+        env:
+          REGISTRY: ghcr.io/${{ github.repository }}/development
+          PR_NUM: ${{ needs.gate-check.outputs.pr_number }}
+        run: |
+          DEV_IMAGE="${REGISTRY}/ubi${{ matrix.version }}-${{ matrix.variant }}:pr-${PR_NUM}-${{ matrix.arch }}"
+          echo "Resolving digest for: $DEV_IMAGE"
+
+          DEV_DIGEST=$(skopeo inspect --format '{{.Digest}}' "docker://${DEV_IMAGE}")
+          DEV_URI="${DEV_IMAGE%:*}@${DEV_DIGEST}"
+
+          echo "image=$DEV_IMAGE" >> $GITHUB_OUTPUT
+          echo "digest=$DEV_DIGEST" >> $GITHUB_OUTPUT
+          echo "uri=$DEV_URI" >> $GITHUB_OUTPUT
+
+          echo "Dev image: $DEV_IMAGE"
+          echo "Dev digest: $DEV_DIGEST"
+          echo "Dev URI: $DEV_URI"
+
+      - name: Verify build attestations
+        env:
+          DEV_URI: ${{ steps.dev.outputs.uri }}
+        run: |
+          echo "Verifying SBOM attestation..."
+          cosign verify-attestation \
+            --key .github/pdp/public-keys/build.pub \
+            --type spdxjson \
+            --insecure-ignore-tlog \
+            --certificate-identity-regexp='.*' \
+            --certificate-oidc-issuer-regexp='.*' \
+            "$DEV_URI" > /dev/null
+
+          echo "Verifying CVE report attestation..."
+          cosign verify-attestation \
+            --key .github/pdp/public-keys/build.pub \
+            --type vuln \
+            --insecure-ignore-tlog \
+            --certificate-identity-regexp='.*' \
+            --certificate-oidc-issuer-regexp='.*' \
+            "$DEV_URI" > /dev/null
+
+          echo "Verifying SLSA provenance attestation..."
+          cosign verify-attestation \
+            --key .github/pdp/public-keys/build.pub \
+            --type slsaprovenance1 \
+            --insecure-ignore-tlog \
+            --certificate-identity-regexp='.*' \
+            --certificate-oidc-issuer-regexp='.*' \
+            "$DEV_URI" > /dev/null
+
+          echo "All build attestations verified"
+
+      - name: Verify review attestation and extract verdict
+        id: review
+        env:
+          DEV_URI: ${{ steps.dev.outputs.uri }}
+        run: |
+          echo "Verifying review attestation..."
+          REVIEW_PAYLOAD=$(cosign verify-attestation \
+            --key .github/pdp/public-keys/review.pub \
+            --type https://infrashift.io/attestation/review/v1 \
+            --insecure-ignore-tlog \
+            --certificate-identity-regexp='.*' \
+            --certificate-oidc-issuer-regexp='.*' \
+            "$DEV_URI")
+
+          VERDICT=$(echo "$REVIEW_PAYLOAD" | jq -r '.payload' | base64 -d | jq -r '.predicate.verdict')
+
+          if [[ -z "$VERDICT" || "$VERDICT" == "null" ]]; then
+            echo "Failed to extract verdict from review attestation"
+            exit 1
+          fi
+
+          echo "verdict=$VERDICT" >> $GITHUB_OUTPUT
+          echo "Review verdict: $VERDICT"
+
+      - name: Determine destination
+        id: dest
+        env:
+          VERDICT: ${{ steps.review.outputs.verdict }}
+          SHORT_SHA: ${{ needs.gate-check.outputs.short_sha }}
+          PR_NUM: ${{ needs.gate-check.outputs.pr_number }}
+        run: |
+          if [[ "$VERDICT" == "PASS" ]]; then
+            NAMESPACE="trusted"
+            DEST_REGISTRY="ghcr.io/${{ github.repository }}/trusted"
+            TAG="${SHORT_SHA}-${{ matrix.arch }}"
+          else
+            NAMESPACE="quarantine"
+            DEST_REGISTRY="ghcr.io/${{ github.repository }}/quarantine"
+            TAG="pr-${PR_NUM}-${{ matrix.arch }}"
+          fi
+
+          DEST_IMAGE="${DEST_REGISTRY}/ubi${{ matrix.version }}-${{ matrix.variant }}:${TAG}"
+
+          echo "namespace=$NAMESPACE" >> $GITHUB_OUTPUT
+          echo "registry=$DEST_REGISTRY" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "image=$DEST_IMAGE" >> $GITHUB_OUTPUT
+
+          echo "Destination: $NAMESPACE"
+          echo "Dest image: $DEST_IMAGE"
+
+      - name: Promote image
+        id: promote
+        env:
+          DEV_URI: ${{ steps.dev.outputs.uri }}
+          DEST_IMAGE: ${{ steps.dest.outputs.image }}
+        run: |
+          echo "Promoting image to $DEST_IMAGE..."
+          cosign copy "$DEV_URI" "$DEST_IMAGE"
+
+          echo "Verifying promoted image digest..."
+          DEST_DIGEST=$(skopeo inspect --format '{{.Digest}}' "docker://${DEST_IMAGE}")
+          DEST_URI="${DEST_IMAGE%:*}@${DEST_DIGEST}"
+
+          echo "digest=$DEST_DIGEST" >> $GITHUB_OUTPUT
+          echo "uri=$DEST_URI" >> $GITHUB_OUTPUT
+
+          echo "Promoted image digest: $DEST_DIGEST"
+
+      - name: Generate release attestation
+        env:
+          DEV_URI: ${{ steps.dev.outputs.uri }}
+          DEV_DIGEST: ${{ steps.dev.outputs.digest }}
+          DEST_IMAGE: ${{ steps.dest.outputs.image }}
+          DEST_DIGEST: ${{ steps.promote.outputs.digest }}
+          DEST_NAMESPACE: ${{ steps.dest.outputs.namespace }}
+          VERDICT: ${{ steps.review.outputs.verdict }}
+          PR_NUM: ${{ needs.gate-check.outputs.pr_number }}
+          HEAD_SHA: ${{ needs.gate-check.outputs.head_sha }}
+          MERGE_SHA: ${{ needs.gate-check.outputs.merge_sha }}
+        run: |
+          jq -n \
+            --arg timestamp "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+            --arg releaser "release-actor" \
+            --arg releaseRunId "${{ github.run_id }}" \
+            --arg pullRequest "$PR_NUM" \
+            --arg commitSha "$HEAD_SHA" \
+            --arg mergeCommitSha "$MERGE_SHA" \
+            --arg srcUri "$DEV_URI" \
+            --arg srcDigest "$DEV_DIGEST" \
+            --arg destUri "$DEST_IMAGE" \
+            --arg destDigest "$DEST_DIGEST" \
+            --arg destNamespace "$DEST_NAMESPACE" \
+            --arg verdict "$VERDICT" \
+            '{
+              "metadata": {
+                "timestamp": $timestamp,
+                "releaser": $releaser,
+                "releaseRunId": $releaseRunId,
+                "pullRequest": $pullRequest,
+                "commitSha": $commitSha,
+                "mergeCommitSha": $mergeCommitSha
+              },
+              "source": {
+                "uri": $srcUri,
+                "digest": $srcDigest
+              },
+              "destination": {
+                "uri": $destUri,
+                "digest": $destDigest,
+                "namespace": $destNamespace
+              },
+              "verification": {
+                "build_attestations": "VERIFIED",
+                "review_attestation": "VERIFIED",
+                "review_verdict": $verdict
+              }
+            }' > release-attestation.json
+
+          echo "Release attestation:"
+          cat release-attestation.json
+
+      - name: Dual-sign release attestation
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          DEST_URI: ${{ steps.promote.outputs.uri }}
+        run: |
+          echo "Pass 1: Sovereign ED25519 key signing..."
+          cosign attest --yes \
+            --key env://COSIGN_PRIVATE_KEY \
+            --type https://infrashift.io/attestation/release/v1 \
+            --predicate release-attestation.json "$DEST_URI"
+
+          echo "Pass 2: Keyless OIDC signing..."
+          cosign attest --yes \
+            --type https://infrashift.io/attestation/release/v1 \
+            --predicate release-attestation.json "$DEST_URI"
+
+          echo "Dual signing complete"
+
+      - name: Generate release result
+        env:
+          VARIANT: ${{ matrix.variant }}
+          VERSION: ${{ matrix.version }}
+          ARCH: ${{ matrix.arch }}
+          VERDICT: ${{ steps.review.outputs.verdict }}
+          NAMESPACE: ${{ steps.dest.outputs.namespace }}
+          DEST_IMAGE: ${{ steps.dest.outputs.image }}
+          DEST_DIGEST: ${{ steps.promote.outputs.digest }}
+        run: |
+          jq -n \
+            --arg variant "$VARIANT" \
+            --arg version "$VERSION" \
+            --arg arch "$ARCH" \
+            --arg verdict "$VERDICT" \
+            --arg namespace "$NAMESPACE" \
+            --arg dest_image "$DEST_IMAGE" \
+            --arg digest "$DEST_DIGEST" \
+            '{
+              "variant": $variant,
+              "version": $version,
+              "arch": $arch,
+              "verdict": $verdict,
+              "namespace": $namespace,
+              "dest_image": $dest_image,
+              "digest": $digest
+            }' > release-result.json
+
+          echo "Release result:"
+          cat release-result.json
+
+      - name: Upload release result
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-result-ubi${{ matrix.version }}-${{ matrix.variant }}-${{ matrix.arch }}
+          path: release-result.json
+
+  manifest:
+    name: Create Manifest List
+    needs: [gate-check, matrix-setup, release]
+    runs-on: ubuntu-latest
+    environment: Release-Actor
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: ${{ fromJSON(needs.matrix-setup.outputs.variants) }}
+        version: ${{ fromJSON(needs.matrix-setup.outputs.versions) }}
+
+    steps:
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.4.0
+
+      - name: Install Buildah & Skopeo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y buildah skopeo
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download release results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-result-ubi${{ matrix.version }}-${{ matrix.variant }}-*
+          path: results/
+
+      - name: Determine namespace
+        id: ns
+        run: |
+          ALL_TRUSTED=true
+          for dir in results/release-result-*/; do
+            [ -f "${dir}release-result.json" ] || continue
+            NS=$(jq -r '.namespace' "${dir}release-result.json")
+            if [[ "$NS" != "trusted" ]]; then
+              ALL_TRUSTED=false
+              break
+            fi
+          done
+
+          echo "all_trusted=$ALL_TRUSTED" >> $GITHUB_OUTPUT
+          echo "All arches trusted: $ALL_TRUSTED"
+
+      - name: Create and push manifest lists
+        if: steps.ns.outputs.all_trusted == 'true'
+        env:
+          SHORT_SHA: ${{ needs.gate-check.outputs.short_sha }}
+          DATE_TAG: ${{ needs.gate-check.outputs.date_tag }}
+        run: |
+          MANIFEST="ghcr.io/${{ github.repository }}/trusted/ubi${{ matrix.version }}-${{ matrix.variant }}"
+
+          # Collect per-arch image references
+          AMD64_IMAGE="${MANIFEST}:${SHORT_SHA}-amd64"
+          ARM64_IMAGE="${MANIFEST}:${SHORT_SHA}-arm64"
+
+          echo "Creating manifest list for $MANIFEST"
+          echo "  amd64: $AMD64_IMAGE"
+          echo "  arm64: $ARM64_IMAGE"
+
+          TAGS=("latest" "$DATE_TAG" "$SHORT_SHA")
+
+          for TAG in "${TAGS[@]}"; do
+            echo "Creating manifest: ${MANIFEST}:${TAG}"
+            buildah manifest create "${MANIFEST}:${TAG}"
+            buildah manifest add "${MANIFEST}:${TAG}" "docker://${AMD64_IMAGE}"
+            buildah manifest add "${MANIFEST}:${TAG}" "docker://${ARM64_IMAGE}"
+            buildah manifest push --all "${MANIFEST}:${TAG}" "docker://${MANIFEST}:${TAG}"
+            echo "Pushed ${MANIFEST}:${TAG}"
+          done
+
+      - name: Dual-sign manifest list
+        if: steps.ns.outputs.all_trusted == 'true'
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+        run: |
+          MANIFEST="ghcr.io/${{ github.repository }}/trusted/ubi${{ matrix.version }}-${{ matrix.variant }}"
+
+          MANIFEST_DIGEST=$(skopeo inspect --raw "docker://${MANIFEST}:latest" | sha256sum | awk '{print "sha256:"$1}')
+          MANIFEST_URI="${MANIFEST}@${MANIFEST_DIGEST}"
+
+          echo "Manifest list digest: $MANIFEST_DIGEST"
+          echo "Manifest URI: $MANIFEST_URI"
+
+          echo "Pass 1: Sovereign ED25519 key signing..."
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY "$MANIFEST_URI"
+
+          echo "Pass 2: Keyless OIDC signing..."
+          cosign sign --yes "$MANIFEST_URI"
+
+          echo "Manifest list dual signing complete"
+
+      - name: Skip manifest (quarantined)
+        if: steps.ns.outputs.all_trusted != 'true'
+        run: |
+          echo "Skipping manifest list creation — one or more arches were quarantined"
+
+  summary:
+    name: Post Release Summary
+    needs: [gate-check, matrix-setup, release, manifest]
+    if: always() && needs.gate-check.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      actions: read
+
+    steps:
+      - name: Download all release results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-result-*
+          path: results/
+
+      - name: Generate summary comment
+        env:
+          PR_NUMBER: ${{ needs.gate-check.outputs.pr_number }}
+          SHORT_SHA: ${{ needs.gate-check.outputs.short_sha }}
+          DATE_TAG: ${{ needs.gate-check.outputs.date_tag }}
+          MERGE_SHA: ${{ needs.gate-check.outputs.merge_sha }}
+          RELEASE_RUN_ID: ${{ github.run_id }}
+          REPO: ${{ github.repository }}
+        run: |
+          RELEASE_URL="https://github.com/${REPO}/actions/runs/${RELEASE_RUN_ID}"
+
+          cat > /tmp/pr-comment.md << 'HEADER'
+          ## Release Summary
+
+          HEADER
+
+          echo "**PR:** #${PR_NUMBER} | **Merge commit:** \`${SHORT_SHA}\` | **Release:** [${RELEASE_RUN_ID}](${RELEASE_URL})" >> /tmp/pr-comment.md
+          echo "" >> /tmp/pr-comment.md
+
+          echo "| Image | Arch | Verdict | Namespace | Tags |" >> /tmp/pr-comment.md
+          echo "|-------|------|:-------:|:---------:|------|" >> /tmp/pr-comment.md
+
+          TRUSTED_COUNT=0
+          QUARANTINE_COUNT=0
+
+          for dir in results/release-result-*/; do
+            [ -f "${dir}release-result.json" ] || continue
+            RESULT_FILE="${dir}release-result.json"
+
+            VARIANT=$(jq -r '.variant' "$RESULT_FILE")
+            VERSION=$(jq -r '.version' "$RESULT_FILE")
+            ARCH=$(jq -r '.arch' "$RESULT_FILE")
+            VERDICT=$(jq -r '.verdict' "$RESULT_FILE")
+            NAMESPACE=$(jq -r '.namespace' "$RESULT_FILE")
+            DEST=$(jq -r '.dest_image' "$RESULT_FILE")
+
+            IMAGE_NAME="ubi${VERSION}-${VARIANT}"
+
+            if [[ "$NAMESPACE" == "trusted" ]]; then
+              TAGS="\`${SHORT_SHA}-${ARCH}\`, \`latest\`, \`${DATE_TAG}\`, \`${SHORT_SHA}\`"
+              TRUSTED_COUNT=$((TRUSTED_COUNT + 1))
+            else
+              TAGS="\`pr-${PR_NUMBER}-${ARCH}\`"
+              QUARANTINE_COUNT=$((QUARANTINE_COUNT + 1))
+            fi
+
+            VERDICT_ICON="$VERDICT"
+
+            echo "| ${IMAGE_NAME} | ${ARCH} | **${VERDICT_ICON}** | ${NAMESPACE} | ${TAGS} |" >> /tmp/pr-comment.md
+          done
+
+          echo "" >> /tmp/pr-comment.md
+
+          if [[ "$QUARANTINE_COUNT" -eq 0 ]]; then
+            echo "**Result:** ${TRUSTED_COUNT} images promoted to \`trusted\`." >> /tmp/pr-comment.md
+          else
+            echo "**Result:** ${TRUSTED_COUNT} images promoted to \`trusted\`, ${QUARANTINE_COUNT} quarantined." >> /tmp/pr-comment.md
+          fi
+
+          cat /tmp/pr-comment.md
+
+      - name: Post PR comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ needs.gate-check.outputs.pr_number }}
+        run: |
+          gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" --body-file /tmp/pr-comment.md
