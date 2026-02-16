@@ -28,7 +28,7 @@ jobs:
   build-and-sign:
     name: Build UBI Variant
     needs: matrix-setup
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     environment: Build-Actor
     permissions:
       contents: read
