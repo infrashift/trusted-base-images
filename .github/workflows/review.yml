@@ -208,7 +208,7 @@ jobs:
 
           echo "OPA result: $OPA_RESULT"
 
-          if [[ "$OPA_RESULT" == "[]" ]]; then
+          if [[ "$OPA_RESULT" == "[]" || "$OPA_RESULT" == "{}" ]]; then
             echo "result=PASS" >> $GITHUB_OUTPUT
           else
             echo "result=FAIL" >> $GITHUB_OUTPUT

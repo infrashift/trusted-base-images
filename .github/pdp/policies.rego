@@ -30,3 +30,8 @@ violation_security_threshold[msg] if {
     input.scan_results.critical_count > 0
     msg := "Critical vulnerabilities found. Deployment denied."
 }
+
+violation_security_threshold[msg] if {
+    input.scan_results.high_count > 0
+    msg := "High vulnerabilities found. Deployment denied."
+}
