@@ -16,7 +16,7 @@ Trusted Base Images use a three-layer signing chain. Each actor in the governanc
 ## Download Public Keys
 
 ```bash
-BASE_URL="https://raw.githubusercontent.com/infrashift/trusted-base-oci-images/main/.github/pdp/public-keys"
+BASE_URL="https://raw.githubusercontent.com/infrashift/trusted-base-images/main/.github/pdp/public-keys"
 
 curl -sSfL -o build.pub "${BASE_URL}/build.pub"
 curl -sSfL -o review.pub "${BASE_URL}/review.pub"
@@ -84,4 +84,4 @@ The three-layer signing chain ensures no single actor can push a compromised ima
 2. **Review-Actor** proves the artifacts passed all policy checks
 3. **Release-Actor** proves the image was promoted through the full governance chain
 
-If any key is compromised, the other two layers prevent unauthorized modifications from reaching production. See the [Governance Model](/trusted-base-oci-images/security/governance-model/) for details.
+If any key is compromised, the other two layers prevent unauthorized modifications from reaching production. See the [Governance Model](/trusted-base-images/security/governance-model/) for details.

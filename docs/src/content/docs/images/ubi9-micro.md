@@ -82,4 +82,4 @@ USER 1001
 
 ## Inventory
 
-See the [UBI9 Micro inventory](/trusted-base-oci-images/inventory/ubi9-micro/) for current tags, digests, and CVE status.
+See the [UBI9 Micro inventory](/trusted-base-images/inventory/ubi9-micro/) for current tags, digests, and CVE status.

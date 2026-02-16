@@ -28,7 +28,7 @@ The build attestations are signed with the Build-Actor's sovereign key. Download
 
 ```bash
 curl -sSfL -o build.pub \
-  https://raw.githubusercontent.com/infrashift/trusted-base-oci-images/main/.github/pdp/public-keys/build.pub
+  https://raw.githubusercontent.com/infrashift/trusted-base-images/main/.github/pdp/public-keys/build.pub
 ```
 
 ## Verify SBOM Attestation

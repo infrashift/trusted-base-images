@@ -69,4 +69,4 @@ USER 1001
 
 ## Inventory
 
-See the [UBI10 Minimal inventory](/trusted-base-oci-images/inventory/ubi10-minimal/) for current tags, digests, and CVE status.
+See the [UBI10 Minimal inventory](/trusted-base-images/inventory/ubi10-minimal/) for current tags, digests, and CVE status.

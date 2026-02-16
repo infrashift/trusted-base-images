@@ -44,7 +44,7 @@ docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard@sha256:
 FROM ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard@sha256:abc123...
 ```
 
-Find current digests on the [inventory pages](/trusted-base-oci-images/inventory/).
+Find current digests on the [inventory pages](/trusted-base-images/inventory/).
 
 ## Multi-Architecture Support
 
@@ -76,6 +76,6 @@ echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
 
 After pulling an image, verify its integrity:
 
-- [Verify Attestations](/trusted-base-oci-images/guides/verify-attestations/) — check SBOM, CVE, and provenance attestations
-- [Verify Signatures](/trusted-base-oci-images/guides/verify-signatures/) — verify the three-layer signing chain
-- [Compare Checksums](/trusted-base-oci-images/guides/compare-checksums/) — validate evidence artifact integrity
+- [Verify Attestations](/trusted-base-images/guides/verify-attestations/) — check SBOM, CVE, and provenance attestations
+- [Verify Signatures](/trusted-base-images/guides/verify-signatures/) — verify the three-layer signing chain
+- [Compare Checksums](/trusted-base-images/guides/compare-checksums/) — validate evidence artifact integrity

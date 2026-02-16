@@ -5,7 +5,7 @@ import starlight from '@astrojs/starlight';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://infrashift.github.io',
-	base: '/trusted-base-oci-images',
+	base: '/trusted-base-images',
 	integrations: [
 		starlight({
 			title: 'Trusted Base Images',

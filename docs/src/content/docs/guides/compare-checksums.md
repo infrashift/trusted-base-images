@@ -51,7 +51,7 @@ Download the Build-Actor's public key and verify the checksum file itself was si
 
 ```bash
 curl -sSfL -o build.pub \
-  https://raw.githubusercontent.com/infrashift/trusted-base-oci-images/main/.github/pdp/public-keys/build.pub
+  https://raw.githubusercontent.com/infrashift/trusted-base-images/main/.github/pdp/public-keys/build.pub
 
 cosign verify-blob \
   --key build.pub \

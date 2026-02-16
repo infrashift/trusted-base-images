@@ -92,4 +92,4 @@ skopeo inspect --raw docker://registry.access.redhat.com/ubi9 | \
   jq '.manifests[] | {(.platform.architecture): .digest}'
 ```
 
-See [versions.json Schema](/trusted-base-oci-images/reference/versions-json/) for the full format.
+See [versions.json Schema](/trusted-base-images/reference/versions-json/) for the full format.
