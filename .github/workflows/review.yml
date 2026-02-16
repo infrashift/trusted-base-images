@@ -1,0 +1,341 @@
+name: Review Attestations
+
+on:
+  workflow_run:
+    workflows: ["CI Build & Audit"]
+    types: [completed]
+
+jobs:
+  gate-check:
+    name: Gate Check
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request'
+    outputs:
+      pr_number: ${{ steps.pr.outputs.number }}
+      head_sha: ${{ steps.pr.outputs.sha }}
+    steps:
+      - name: Extract PR metadata
+        id: pr
+        run: |
+          PR_NUMBER="${{ github.event.workflow_run.pull_requests[0].number }}"
+          HEAD_SHA="${{ github.event.workflow_run.pull_requests[0].head.sha }}"
+          if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
+            echo "No pull request associated with this workflow run"
+            exit 1
+          fi
+          echo "number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "sha=$HEAD_SHA" >> $GITHUB_OUTPUT
+          echo "PR #$PR_NUMBER at commit $HEAD_SHA"
+
+  matrix-setup:
+    name: Resolve Review Matrix
+    needs: gate-check
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.matrix.outputs.versions }}
+      variants: ${{ steps.matrix.outputs.variants }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.gate-check.outputs.head_sha }}
+
+      - name: Extract matrix from versions.json
+        id: matrix
+        run: |
+          VERSIONS=$(jq -c '[keys[] | ltrimstr("ubi")]' versions.json)
+          VARIANTS=$(jq -c '[to_entries[].value | to_entries[] | select(.value | type == "object" and has("base")) | .key] | unique' versions.json)
+          echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
+          echo "variants=$VARIANTS" >> $GITHUB_OUTPUT
+          echo "Resolved versions: $VERSIONS"
+          echo "Resolved variants: $VARIANTS"
+
+  review:
+    name: Review UBI Variant
+    needs: [gate-check, matrix-setup]
+    runs-on: ubuntu-latest
+    environment: Review-Actor
+    permissions:
+      contents: read
+      packages: write
+      actions: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: ${{ fromJSON(needs.matrix-setup.outputs.variants) }}
+        version: ${{ fromJSON(needs.matrix-setup.outputs.versions) }}
+        arch: [amd64, arm64]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.gate-check.outputs.head_sha }}
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.4.0
+
+      - name: Install OPA
+        run: |
+          curl -sSfL -o /usr/local/bin/opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          chmod +x /usr/local/bin/opa
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Evidence Bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: evidence-ubi${{ matrix.version }}-${{ matrix.variant }}-${{ matrix.arch }}
+          path: evidence/
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve Image URI
+        id: image
+        run: |
+          IMAGE_URI=$(jq -r '.buildDefinition.internalParameters.output.uri' evidence/provenance.json)
+          if [[ -z "$IMAGE_URI" || "$IMAGE_URI" == "null" ]]; then
+            echo "Failed to resolve image URI from provenance"
+            exit 1
+          fi
+          echo "uri=$IMAGE_URI" >> $GITHUB_OUTPUT
+          echo "Image URI: $IMAGE_URI"
+
+      - name: Verify Build Attestation Signatures
+        env:
+          IMAGE_URI: ${{ steps.image.outputs.uri }}
+        run: |
+          echo "Verifying SBOM attestation signature..."
+          cosign verify-attestation \
+            --key .github/pdp/public-keys/build.pub \
+            --type spdxjson \
+            --insecure-ignore-tlog \
+            --certificate-identity-regexp='.*' \
+            --certificate-oidc-issuer-regexp='.*' \
+            "$IMAGE_URI" > /dev/null
+
+          echo "Verifying CVE report attestation signature..."
+          cosign verify-attestation \
+            --key .github/pdp/public-keys/build.pub \
+            --type vuln \
+            --insecure-ignore-tlog \
+            --certificate-identity-regexp='.*' \
+            --certificate-oidc-issuer-regexp='.*' \
+            "$IMAGE_URI" > /dev/null
+
+          echo "Verifying SLSA provenance attestation signature..."
+          cosign verify-attestation \
+            --key .github/pdp/public-keys/build.pub \
+            --type slsaprovenance1 \
+            --insecure-ignore-tlog \
+            --certificate-identity-regexp='.*' \
+            --certificate-oidc-issuer-regexp='.*' \
+            "$IMAGE_URI" > /dev/null
+
+          echo "All build attestation signatures verified"
+
+      - name: Verify Evidence Blob Signatures
+        run: |
+          echo "Verifying evidence blob signatures against build key..."
+          for artifact in sbom.json cve-report.json provenance.json checksums.sha256; do
+            echo "  Verifying $artifact..."
+            cosign verify-blob \
+              --key .github/pdp/public-keys/build.pub \
+              --insecure-ignore-tlog \
+              --signature "evidence/${artifact}.sig" \
+              "evidence/${artifact}"
+          done
+
+          echo "Verifying evidence checksums..."
+          cd evidence && sha256sum --check checksums.sha256
+          cd ..
+
+          echo "All evidence blob signatures and checksums verified"
+
+      - name: Upstream Digest Cross-Check
+        id: upstream
+        run: |
+          PROV_DIGEST=$(jq -r '.buildDefinition.resolvedDependencies[0].digest.sha256' evidence/provenance.json)
+          EXPECTED_DIGEST=$(jq -r '.ubi${{ matrix.version }}.${{ matrix.variant }}.digest' versions.json | sed 's/^sha256://')
+
+          echo "Provenance upstream digest: $PROV_DIGEST"
+          echo "versions.json digest:       $EXPECTED_DIGEST"
+
+          if [[ "$PROV_DIGEST" != "$EXPECTED_DIGEST" ]]; then
+            echo "FAIL: Upstream digest mismatch"
+            exit 1
+          fi
+
+          echo "Upstream digest cross-check passed"
+
+      - name: OPA CVE Policy Evaluation
+        id: cve-policy
+        run: |
+          CRITICAL=$(jq '[.matches[] | select(.vulnerability.severity == "Critical")] | length' evidence/cve-report.json)
+          HIGH=$(jq '[.matches[] | select(.vulnerability.severity == "High")] | length' evidence/cve-report.json)
+          MEDIUM=$(jq '[.matches[] | select(.vulnerability.severity == "Medium")] | length' evidence/cve-report.json)
+          LOW=$(jq '[.matches[] | select(.vulnerability.severity == "Low")] | length' evidence/cve-report.json)
+
+          echo "CVE summary: Critical=$CRITICAL High=$HIGH Medium=$MEDIUM Low=$LOW"
+
+          jq -n \
+            --argjson critical "$CRITICAL" \
+            --argjson high "$HIGH" \
+            --argjson medium "$MEDIUM" \
+            --argjson low "$LOW" \
+            '{
+              "scan_results": {
+                "critical_count": $critical,
+                "high_count": $high,
+                "medium_count": $medium,
+                "low_count": $low
+              }
+            }' > /tmp/opa-input.json
+
+          OPA_RESULT=$(opa eval \
+            --data .github/pdp/policies.rego \
+            --input /tmp/opa-input.json \
+            'data.tbi.pdp.violation_security_threshold' \
+            --format raw)
+
+          echo "OPA result: $OPA_RESULT"
+
+          if [[ "$OPA_RESULT" == "[]" ]]; then
+            echo "result=PASS" >> $GITHUB_OUTPUT
+          else
+            echo "result=FAIL" >> $GITHUB_OUTPUT
+          fi
+
+          echo "critical=$CRITICAL" >> $GITHUB_OUTPUT
+          echo "high=$HIGH" >> $GITHUB_OUTPUT
+          echo "medium=$MEDIUM" >> $GITHUB_OUTPUT
+          echo "low=$LOW" >> $GITHUB_OUTPUT
+
+      - name: Generate Review Verdict
+        id: verdict
+        env:
+          IMAGE_URI: ${{ steps.image.outputs.uri }}
+          CVE_RESULT: ${{ steps.cve-policy.outputs.result }}
+          CVE_CRITICAL: ${{ steps.cve-policy.outputs.critical }}
+          CVE_HIGH: ${{ steps.cve-policy.outputs.high }}
+          CVE_MEDIUM: ${{ steps.cve-policy.outputs.medium }}
+          CVE_LOW: ${{ steps.cve-policy.outputs.low }}
+        run: |
+          IMAGE_DIGEST=$(echo "$IMAGE_URI" | cut -d'@' -f2)
+
+          # Compute evidence checksums
+          SBOM_SHA=$(sha256sum evidence/sbom.json | cut -d' ' -f1)
+          CVE_SHA=$(sha256sum evidence/cve-report.json | cut -d' ' -f1)
+          PROV_SHA=$(sha256sum evidence/provenance.json | cut -d' ' -f1)
+
+          # Determine overall verdict — PASS only if all checks pass
+          if [[ "$CVE_RESULT" == "PASS" ]]; then
+            VERDICT="PASS"
+          else
+            VERDICT="FAIL"
+          fi
+
+          jq -n \
+            --arg timestamp "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+            --arg reviewer "review-actor" \
+            --arg reviewRunId "${{ github.run_id }}" \
+            --arg buildRunId "${{ github.event.workflow_run.id }}" \
+            --arg pullRequest "${{ needs.gate-check.outputs.pr_number }}" \
+            --arg commitSha "${{ needs.gate-check.outputs.head_sha }}" \
+            --arg uri "$IMAGE_URI" \
+            --arg digest "$IMAGE_DIGEST" \
+            --arg variant "${{ matrix.variant }}" \
+            --arg version "ubi${{ matrix.version }}" \
+            --arg arch "${{ matrix.arch }}" \
+            --arg cveResult "$CVE_RESULT" \
+            --argjson critical "${CVE_CRITICAL}" \
+            --argjson high "${CVE_HIGH}" \
+            --argjson medium "${CVE_MEDIUM}" \
+            --argjson low "${CVE_LOW}" \
+            --arg verdict "$VERDICT" \
+            --arg sbomSha "$SBOM_SHA" \
+            --arg cveSha "$CVE_SHA" \
+            --arg provSha "$PROV_SHA" \
+            '{
+              "metadata": {
+                "timestamp": $timestamp,
+                "reviewer": $reviewer,
+                "reviewRunId": $reviewRunId,
+                "buildRunId": $buildRunId,
+                "pullRequest": $pullRequest,
+                "commitSha": $commitSha
+              },
+              "subject": {
+                "uri": $uri,
+                "digest": $digest,
+                "variant": $variant,
+                "version": $version,
+                "arch": $arch
+              },
+              "checks": {
+                "attestation_signatures": {
+                  "result": "PASS",
+                  "detail": "SBOM, CVE, and provenance attestation signatures verified against build.pub"
+                },
+                "evidence_blob_signatures": {
+                  "result": "PASS",
+                  "detail": "All evidence blobs and checksums verified against build.pub"
+                },
+                "upstream_digest_match": {
+                  "result": "PASS",
+                  "detail": "Provenance upstream digest matches versions.json"
+                },
+                "cve_policy": {
+                  "result": $cveResult,
+                  "policy": "tbi.pdp.violation_security_threshold",
+                  "summary": {
+                    "critical": $critical,
+                    "high": $high,
+                    "medium": $medium,
+                    "low": $low
+                  }
+                }
+              },
+              "verdict": $verdict,
+              "evidence_checksums": {
+                "sbom_sha256": $sbomSha,
+                "cve_report_sha256": $cveSha,
+                "provenance_sha256": $provSha
+              }
+            }' > review-verdict.json
+
+          echo "Review verdict: $VERDICT"
+          cat review-verdict.json
+
+      - name: Sign and Attach Review Attestation
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          IMAGE_URI: ${{ steps.image.outputs.uri }}
+        run: |
+          echo "Signing review verdict..."
+          cosign sign-blob --tlog-upload=false --key env://COSIGN_PRIVATE_KEY \
+            --output-signature review-verdict.json.sig review-verdict.json
+
+          echo "Attaching review attestation to image..."
+          cosign attest --yes --replace --tlog-upload=false \
+            --key env://COSIGN_PRIVATE_KEY \
+            --type https://infrashift.io/attestation/review/v1 \
+            --predicate review-verdict.json "$IMAGE_URI"
+
+          echo "Review attestation attached"
+
+      - name: Upload Review Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: review-ubi${{ matrix.version }}-${{ matrix.variant }}-${{ matrix.arch }}
+          path: |
+            review-verdict.json
+            review-verdict.json.sig
