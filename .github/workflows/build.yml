@@ -73,7 +73,7 @@ jobs:
           IMAGE_NAME="${REGISTRY}/ubi${{ matrix.version }}-${{ matrix.variant }}"
           TAG="pr-${PR_NUM}-${{ matrix.arch }}"
           
-          echo "🔨 Building Development Image: $IMAGE_NAME:$TAG"
+          echo "Building Development Image: $IMAGE_NAME:$TAG"
           
           # 1. Build the image (added IMAGE_VERSION to silence warning)
           buildah bud \
@@ -90,17 +90,20 @@ jobs:
           # 2. Push the image
           buildah push "$IMAGE_NAME:$TAG"
           
-          # 3. Capture the digest using a safer template
-          # .FromImageID is widely supported across buildah versions for this purpose
-          DIGEST=$(buildah inspect --format '{{.FromImageID}}' "$IMAGE_NAME:$TAG")
+          # 3. Capture the hex ID
+          RAW_DIGEST=$(buildah inspect --format '{{.FromImageID}}' "$IMAGE_NAME:$TAG")
           
-          echo "image_uri=$IMAGE_NAME@$DIGEST" >> $GITHUB_OUTPUT
-          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+          # Ensure it has the sha256 prefix for OCI tools
+          FULL_DIGEST="sha256:${RAW_DIGEST}"
+          
+          echo "image_uri=$IMAGE_NAME@$FULL_DIGEST" >> $GITHUB_OUTPUT
+          echo "digest=$FULL_DIGEST" >> $GITHUB_OUTPUT
 
       - name: Generate and Sign Artifacts
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-          IMAGE_URI: ${{ steps.build.outputs.image_uri }}
+          # Prefix with 'registry:' to force Syft to pull the metadata from GHCR
+          IMAGE_URI: registry:${{ steps.build.outputs.image_uri }}
         run: |
           echo "Generating SBOM (Syft)..."
           syft "$IMAGE_URI" -o spdx-json=sbom.json
