@@ -104,7 +104,7 @@ jobs:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           # We use the IMAGE_NAME:TAG for local lookups instead of the Digest URI
           # because local storage drivers are tag-aware.
-          LOCAL_IMAGE: "podman:ghcr.io/${{ github.repository }}/development/ubi${{ matrix.version }}-${{ matrix.variant }}:pr-${{ github.event.pull_request.number }}-${{ matrix.arch }}"
+          LOCAL_IMAGE: "containers-storage:ghcr.io/${{ github.repository }}/development/ubi${{ matrix.version }}-${{ matrix.variant }}:pr-${{ github.event.pull_request.number }}-${{ matrix.arch }}"
         run: |
           echo "📦 Generating SBOM (Syft) from local storage..."
           syft "${{ env.LOCAL_IMAGE }}" -o spdx-json=sbom.json
