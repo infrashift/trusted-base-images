@@ -12,10 +12,12 @@ UBI10 Minimal is currently available for **amd64 only**. arm64 support will be a
 ## Quick Pull
 
 ```bash
-# Pull the latest trusted image (amd64 only)
-docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi10-minimal:latest
+# Podman
+podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi10-minimal:latest
+podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi10-minimal@sha256:<digest>
 
-# Pull by digest (recommended for production)
+# Docker
+docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi10-minimal:latest
 docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi10-minimal@sha256:<digest>
 ```
 

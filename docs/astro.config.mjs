@@ -62,6 +62,7 @@ export default defineConfig({
 					label: 'Security',
 					items: [
 						{ label: 'Governance Model', slug: 'security/governance-model' },
+						{ label: 'Namespace Isolation', slug: 'security/namespace-isolation' },
 						{ label: 'Supply Chain', slug: 'security/supply-chain' },
 						{ label: 'Digest Pinning', slug: 'security/digest-pinning' },
 						{ label: 'Image Annotations', slug: 'security/image-annotations' },
@@ -75,6 +76,7 @@ export default defineConfig({
 						{ label: 'versions.json Schema', slug: 'reference/versions-json' },
 						{ label: 'Contributing', slug: 'reference/contributing' },
 						{ label: 'Roadmap', slug: 'reference/roadmap' },
+						{ label: 'Thank You', slug: 'reference/thank-you' },
 					],
 				},
 			],

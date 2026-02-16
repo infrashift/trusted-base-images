@@ -8,10 +8,12 @@ The UBI9 Standard image is the full-featured Red Hat Universal Base Image for RH
 ## Quick Pull
 
 ```bash
-# Pull the latest trusted multi-arch image
-docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
+# Podman
+podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
+podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard@sha256:<digest>
 
-# Pull a specific architecture by digest (recommended for production)
+# Docker
+docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
 docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard@sha256:<digest>
 ```
 

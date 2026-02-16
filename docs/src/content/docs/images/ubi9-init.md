@@ -8,10 +8,12 @@ The UBI9 Init image is based on the Red Hat UBI9 Init variant with systemd suppo
 ## Quick Pull
 
 ```bash
-# Pull the latest trusted multi-arch image
-docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-init:latest
+# Podman
+podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-init:latest
+podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-init@sha256:<digest>
 
-# Pull a specific architecture by digest (recommended for production)
+# Docker
+docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-init:latest
 docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-init@sha256:<digest>
 ```
 

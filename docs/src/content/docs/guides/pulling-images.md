@@ -1,6 +1,6 @@
 ---
 title: Pulling Images
-description: How to pull Trusted Base Images using Docker or Podman with digest pinning.
+description: How to pull Trusted Base Images using Podman or Docker with digest pinning.
 ---
 
 All Trusted Base Images are published to the GitHub Container Registry (GHCR) under the `trusted` namespace.
@@ -16,11 +16,11 @@ ghcr.io/infrashift/trusted-base-images/trusted/<image-name>
 The simplest way to pull an image is by tag. Multi-arch manifest lists (`latest`, date tags, and SHA tags) automatically resolve to your platform's architecture.
 
 ```bash
-# Docker
-docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
-
 # Podman
 podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
+
+# Docker
+docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
 ```
 
 ### Available Tag Types
@@ -37,7 +37,10 @@ podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
 For production workloads, always pin to a specific digest. Digests are immutable — unlike tags, they cannot be changed after publishing.
 
 ```bash
-# Pull a specific per-architecture image by digest
+# Podman
+podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard@sha256:abc123...
+
+# Docker
 docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard@sha256:abc123...
 
 # Use in a Containerfile / Dockerfile
@@ -48,15 +51,17 @@ Find current digests on the [inventory pages](/trusted-base-images/inventory/).
 
 ## Multi-Architecture Support
 
-Most images are published for both `amd64` and `arm64`. When you pull a manifest list tag (like `latest`), Docker/Podman automatically selects the correct architecture for your platform.
+Most images are published for both `amd64` and `arm64`. When you pull a manifest list tag (like `latest`), Podman/Docker automatically selects the correct architecture for your platform.
 
 To pull a specific architecture explicitly:
 
 ```bash
-# Pull amd64 specifically
-docker pull --platform linux/amd64 ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
+# Podman
+podman pull --platform linux/amd64 ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
+podman pull --platform linux/arm64 ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
 
-# Pull arm64 specifically
+# Docker
+docker pull --platform linux/amd64 ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
 docker pull --platform linux/arm64 ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
 ```
 
@@ -69,6 +74,10 @@ UBI10 Minimal is currently amd64 only. Pulling with `--platform linux/arm64` wil
 GHCR packages in this repository are public. No authentication is required to pull images. If you need to authenticate for rate-limiting purposes:
 
 ```bash
+# Podman
+podman login ghcr.io -u USERNAME -p $GITHUB_TOKEN
+
+# Docker
 echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
 ```
 

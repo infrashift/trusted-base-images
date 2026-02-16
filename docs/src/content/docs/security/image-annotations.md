@@ -35,6 +35,13 @@ These follow the [OCI Image Spec annotations](https://github.com/opencontainers/
 
 ## Inspecting Labels
 
+### Using Podman
+
+```bash
+podman inspect ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest \
+  --format '{{json .Config.Labels}}' | jq
+```
+
 ### Using Docker
 
 ```bash
@@ -56,7 +63,12 @@ skopeo inspect docker://ghcr.io/infrashift/trusted-base-images/trusted/ubi9-stan
 The `io.infrashift.image.upstream.base` and `io.infrashift.image.upstream.digest` labels allow you to trace any Trusted Base Image back to the exact upstream source it was built from:
 
 ```bash
-# Extract upstream source from a running container
+# Podman
+UPSTREAM=$(podman inspect <container> --format '{{index .Config.Labels "io.infrashift.image.upstream.base"}}')
+DIGEST=$(podman inspect <container> --format '{{index .Config.Labels "io.infrashift.image.upstream.digest"}}')
+echo "Built from: ${UPSTREAM}@${DIGEST}"
+
+# Docker
 UPSTREAM=$(docker inspect <container> --format '{{index .Config.Labels "io.infrashift.image.upstream.base"}}')
 DIGEST=$(docker inspect <container> --format '{{index .Config.Labels "io.infrashift.image.upstream.digest"}}')
 echo "Built from: ${UPSTREAM}@${DIGEST}"

@@ -9,13 +9,13 @@ Digest pinning is the practice of referencing container images by their content-
 
 Container image tags are mutable pointers. The same tag can point to different content at different times:
 
-```
+```bash
 # Today this pulls image A
-docker pull registry.example.com/app:v1.0
+podman pull registry.example.com/app:v1.0  # or: docker pull
 
 # Tomorrow the publisher pushes a different image with the same tag
 # Now this pulls image B — silently different content
-docker pull registry.example.com/app:v1.0
+podman pull registry.example.com/app:v1.0  # or: docker pull
 ```
 
 This creates several risks:
@@ -27,9 +27,9 @@ This creates several risks:
 
 A digest is a SHA-256 hash of the image manifest. It is computed from the image content itself and cannot be forged:
 
-```
+```bash
 # This always pulls exactly the same image content
-docker pull registry.example.com/app@sha256:abc123...
+podman pull registry.example.com/app@sha256:abc123...  # or: docker pull
 ```
 
 ## Per-Architecture Digests

@@ -8,10 +8,12 @@ The UBI9 Micro image is the smallest UBI variant. It has no shell, no package ma
 ## Quick Pull
 
 ```bash
-# Pull the latest trusted multi-arch image
-docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-micro:latest
+# Podman
+podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-micro:latest
+podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-micro@sha256:<digest>
 
-# Pull a specific architecture by digest (recommended for production)
+# Docker
+docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-micro:latest
 docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-micro@sha256:<digest>
 ```
 

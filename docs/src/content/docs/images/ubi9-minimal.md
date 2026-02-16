@@ -8,10 +8,12 @@ The UBI9 Minimal image provides a smaller footprint than the Standard variant wh
 ## Quick Pull
 
 ```bash
-# Pull the latest trusted multi-arch image
-docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-minimal:latest
+# Podman
+podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-minimal:latest
+podman pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-minimal@sha256:<digest>
 
-# Pull a specific architecture by digest (recommended for production)
+# Docker
+docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-minimal:latest
 docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi9-minimal@sha256:<digest>
 ```
 
