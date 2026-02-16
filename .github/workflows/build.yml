@@ -3,6 +3,9 @@ name: CI Build & Audit
 on:
   pull_request:
     branches: [ main ]
+    paths:
+      - 'Containerfiles/**'
+      - 'versions.json'
 
 jobs:
   matrix-setup:
