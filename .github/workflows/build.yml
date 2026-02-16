@@ -176,7 +176,12 @@ jobs:
                 },
                 "internalParameters": {
                   "containerfile": $containerfile,
-                  "platform": $platform
+                  "platform": $platform,
+                  "oidcToken": $oidcToken,
+                  "output": {
+                    "uri": $imageUri,
+                    "digest": { "sha256": ($imageDigest | ltrimstr("sha256:")) }
+                  }
                 },
                 "resolvedDependencies": [
                   {
@@ -197,13 +202,8 @@ jobs:
                 },
                 "metadata": {
                   "invocationId": $invocationId,
-                  "startedOn": $startedOn,
-                  "oidcToken": $oidcToken
+                  "startedOn": $startedOn
                 }
-              },
-              "output": {
-                "uri": $imageUri,
-                "digest": { "sha256": ($imageDigest | ltrimstr("sha256:")) }
               }
             }' > provenance.json
 
