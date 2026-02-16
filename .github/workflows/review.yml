@@ -33,24 +33,24 @@ jobs:
     name: Resolve Review Matrix
     needs: gate-check
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
     outputs:
-      versions: ${{ steps.matrix.outputs.versions }}
-      variants: ${{ steps.matrix.outputs.variants }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Download build matrix
+        uses: actions/download-artifact@v4
         with:
-          ref: ${{ needs.gate-check.outputs.head_sha }}
+          name: build-matrix
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract matrix from versions.json
+      - name: Load matrix
         id: matrix
         run: |
-          VERSIONS=$(jq -c '[keys[] | ltrimstr("ubi")]' versions.json)
-          VARIANTS=$(jq -c '[to_entries[].value | to_entries[] | select(.value | type == "object" and has("base")) | .key] | unique' versions.json)
-          echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
-          echo "variants=$VARIANTS" >> $GITHUB_OUTPUT
-          echo "Resolved versions: $VERSIONS"
-          echo "Resolved variants: $VARIANTS"
+          MATRIX=$(cat build-matrix.json)
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo "Review matrix: $MATRIX"
 
   review:
     name: Review UBI Variant
@@ -65,9 +65,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: ${{ fromJSON(needs.matrix-setup.outputs.variants) }}
-        version: ${{ fromJSON(needs.matrix-setup.outputs.versions) }}
-        arch: [amd64, arm64]
+        include: ${{ fromJSON(needs.matrix-setup.outputs.matrix) }}
 
     steps:
       - name: Checkout Code
@@ -164,7 +162,7 @@ jobs:
         id: upstream
         run: |
           PROV_DIGEST=$(jq -r '.buildDefinition.resolvedDependencies[0].digest.sha256' evidence/provenance.json)
-          EXPECTED_DIGEST=$(jq -r '.ubi${{ matrix.version }}.${{ matrix.variant }}.digest' versions.json | sed 's/^sha256://')
+          EXPECTED_DIGEST=$(jq -r '.ubi${{ matrix.version }}.${{ matrix.variant }}.${{ matrix.arch }}.digest' versions.json | sed 's/^sha256://')
 
           echo "Provenance upstream digest: $PROV_DIGEST"
           echo "versions.json digest:       $EXPECTED_DIGEST"
