@@ -339,3 +339,108 @@ jobs:
           path: |
             review-verdict.json
             review-verdict.json.sig
+
+  summary:
+    name: Post Review Summary
+    needs: [gate-check, review]
+    if: always() && needs.gate-check.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      actions: read
+
+    steps:
+      - name: Download All Review Verdicts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: review-*
+          path: verdicts/
+
+      - name: Generate Summary Comment
+        env:
+          PR_NUMBER: ${{ needs.gate-check.outputs.pr_number }}
+          HEAD_SHA: ${{ needs.gate-check.outputs.head_sha }}
+          BUILD_RUN_ID: ${{ github.event.workflow_run.id }}
+          REVIEW_RUN_ID: ${{ github.run_id }}
+          REPO: ${{ github.repository }}
+        run: |
+          cat > /tmp/pr-comment.md << 'HEADER'
+          ## Review Attestation Summary
+
+          HEADER
+
+          SHORT_SHA="${HEAD_SHA:0:7}"
+          BUILD_URL="https://github.com/${REPO}/actions/runs/${BUILD_RUN_ID}"
+          REVIEW_URL="https://github.com/${REPO}/actions/runs/${REVIEW_RUN_ID}"
+
+          echo "**PR:** #${PR_NUMBER} | **Commit:** \`${SHORT_SHA}\` | **Build:** [${BUILD_RUN_ID}](${BUILD_URL}) | **Review:** [${REVIEW_RUN_ID}](${REVIEW_URL})" >> /tmp/pr-comment.md
+          echo "" >> /tmp/pr-comment.md
+
+          # Policy checks table
+          echo "| Image | Arch | Attestations | Evidence | Upstream | CVE Policy | Verdict |" >> /tmp/pr-comment.md
+          echo "|-------|------|:------------:|:--------:|:--------:|:----------:|:-------:|" >> /tmp/pr-comment.md
+
+          OVERALL_VERDICT="PASS"
+
+          for dir in verdicts/review-*/; do
+            [ -f "${dir}review-verdict.json" ] || continue
+            VERDICT_FILE="${dir}review-verdict.json"
+
+            VARIANT=$(jq -r '.subject.version + "-" + .subject.variant' "$VERDICT_FILE")
+            ARCH=$(jq -r '.subject.arch' "$VERDICT_FILE")
+            ATT=$(jq -r '.checks.attestation_signatures.result' "$VERDICT_FILE")
+            EVD=$(jq -r '.checks.evidence_blob_signatures.result' "$VERDICT_FILE")
+            UPS=$(jq -r '.checks.upstream_digest_match.result' "$VERDICT_FILE")
+            CVE=$(jq -r '.checks.cve_policy.result' "$VERDICT_FILE")
+            VRD=$(jq -r '.verdict' "$VERDICT_FILE")
+
+            icon() { if [[ "$1" == "PASS" ]]; then echo "pass"; else echo "FAIL"; fi; }
+
+            echo "| ${VARIANT} | ${ARCH} | $(icon $ATT) | $(icon $EVD) | $(icon $UPS) | $(icon $CVE) | **$(icon $VRD)** |" >> /tmp/pr-comment.md
+
+            if [[ "$VRD" != "PASS" ]]; then
+              OVERALL_VERDICT="FAIL"
+            fi
+          done
+
+          echo "" >> /tmp/pr-comment.md
+
+          # CVE details table
+          echo "<details>" >> /tmp/pr-comment.md
+          echo "<summary>CVE Details</summary>" >> /tmp/pr-comment.md
+          echo "" >> /tmp/pr-comment.md
+          echo "| Image | Arch | Critical | High | Medium | Low |" >> /tmp/pr-comment.md
+          echo "|-------|------|:--------:|:----:|:------:|:---:|" >> /tmp/pr-comment.md
+
+          for dir in verdicts/review-*/; do
+            [ -f "${dir}review-verdict.json" ] || continue
+            VERDICT_FILE="${dir}review-verdict.json"
+
+            VARIANT=$(jq -r '.subject.version + "-" + .subject.variant' "$VERDICT_FILE")
+            ARCH=$(jq -r '.subject.arch' "$VERDICT_FILE")
+            CRIT=$(jq -r '.checks.cve_policy.summary.critical' "$VERDICT_FILE")
+            HIGH=$(jq -r '.checks.cve_policy.summary.high' "$VERDICT_FILE")
+            MED=$(jq -r '.checks.cve_policy.summary.medium' "$VERDICT_FILE")
+            LOW=$(jq -r '.checks.cve_policy.summary.low' "$VERDICT_FILE")
+
+            echo "| ${VARIANT} | ${ARCH} | ${CRIT} | ${HIGH} | ${MED} | ${LOW} |" >> /tmp/pr-comment.md
+          done
+
+          echo "" >> /tmp/pr-comment.md
+          echo "</details>" >> /tmp/pr-comment.md
+          echo "" >> /tmp/pr-comment.md
+
+          if [[ "$OVERALL_VERDICT" == "PASS" ]]; then
+            echo "**Overall Verdict: PASS** — All images passed review." >> /tmp/pr-comment.md
+          else
+            echo "**Overall Verdict: FAIL** — One or more images failed review." >> /tmp/pr-comment.md
+          fi
+
+          cat /tmp/pr-comment.md
+
+      - name: Post PR Comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ needs.gate-check.outputs.pr_number }}
+        run: |
+          gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" --body-file /tmp/pr-comment.md

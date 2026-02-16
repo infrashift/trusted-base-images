@@ -17,6 +17,6 @@
       "digest": "sha256:f9d3c9784baa730b28ab80d59dcf45ffdd2cf863c8e09a9ff6f455ef11439bd7"
     },
     "updated": "2026-02-15",
-    "reason": "Baseline images"
+    "reason": "Test review workflow"
   }  
 }
