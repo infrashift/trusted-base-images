@@ -145,3 +145,10 @@ jobs:
 
           Auto-generated from Release Images workflow run #${{ github.event.workflow_run.id }}"
           git push
+
+      - name: Trigger docs deployment
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run deploy-docs.yml --ref main
