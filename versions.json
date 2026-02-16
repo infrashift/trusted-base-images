@@ -18,13 +18,4 @@
     },
     "updated": "2026-02-15",
     "reason": "Baseline images"
-  },
-  "ubi10": {
-    "standard": {
-      "base": "registry.access.redhat.com/ubi10",
-      "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "updated": "2026-02-15",
-    "reason": "Initial UBI10 support"
-  }
 }
