@@ -66,7 +66,8 @@ export default defineConfig({
 						{ label: 'Supply Chain', slug: 'security/supply-chain' },
 						{ label: 'Digest Pinning', slug: 'security/digest-pinning' },
 						{ label: 'Image Annotations', slug: 'security/image-annotations' },
-						{ label: 'CVE Monitoring', slug: 'security/cve-monitoring' },
+						{ label: 'PDP Strategy', slug: 'security/pdp-strategy' },
+					{ label: 'CVE Monitoring', slug: 'security/cve-monitoring' },
 					],
 				},
 				{

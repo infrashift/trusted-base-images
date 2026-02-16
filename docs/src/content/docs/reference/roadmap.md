@@ -50,6 +50,19 @@ Build a visual audit trail from Rekor transparency log entries:
 - Show the complete governance chain from build to release
 - Integrate with inventory pages
 
+### GARMR Policy Agent Migration
+
+Replace the current OPA-based PDP with [GARMR](https://infrashift.github.io) Policy Agent for supply-chain-native policy evaluation:
+
+- Drop-in replacement at the Review-Actor enforcement point
+- Native SBOM, CVE, provenance, and attestation policy primitives
+- Attestation-aware evaluation — consume Sigstore attestations directly as policy input
+- Multi-signal correlation in a single policy evaluation
+- Continuous policy monitoring when CVE databases update
+- Migrate policy definitions from Rego to GARMR policy format
+
+See [PDP Strategy](/trusted-base-images/security/pdp-strategy/) for the current OPA architecture and migration path.
+
 ### Commit Signature Enforcement
 
 Re-enable and enhance the OPA commit signature policy:
