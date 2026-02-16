@@ -67,32 +67,36 @@ jobs:
       - name: Build Image with Buildah
         id: build
         env:
-          # Use a 'development/' namespace for all PR builds
           REGISTRY: ghcr.io/${{ github.repository }}/development
           PR_NUM: ${{ github.event.pull_request.number }}
         run: |
-          # Construct the namespaced path
-          # Example: ghcr.io/infrashift/trusted-base-images/development/ubi9-standard
           IMAGE_NAME="${REGISTRY}/ubi${{ matrix.version }}-${{ matrix.variant }}"
           TAG="pr-${PR_NUM}-${{ matrix.arch }}"
           
-          echo "Building Development Image: $IMAGE_NAME:$TAG"
+          echo "🔨 Building Development Image: $IMAGE_NAME:$TAG"
           
+          # Build with all required args to silence warnings
           buildah bud \
             --platform linux/${{ matrix.arch }} \
             --build-arg UPSTREAM_BASE="${{ steps.metadata.outputs.base }}" \
             --build-arg UPSTREAM_DIGEST="${{ steps.metadata.outputs.digest }}" \
+            --build-arg IMAGE_VERSION="${{ github.ref_name }}" \
             --build-arg GIT_COMMIT="${{ github.sha }}" \
             --build-arg BUILD_DATE="$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
             --build-arg TARGETARCH="${{ matrix.arch }}" \
             -t "$IMAGE_NAME:$TAG" \
             -f Containerfiles/ubi${{ matrix.version }}-${{ matrix.variant }}.Containerfile .
           
+          # Push to GHCR
           buildah push "$IMAGE_NAME:$TAG"
           
-          # Capture the immutable digest for the Review-Actor
-          DIGEST=$(buildah inspect --format '{{.FromAS}}' "$IMAGE_NAME:$TAG")
+          # Capture the specific digest for the next signing steps
+          # We use FromImageDigest to get the immutable anchor
+          DIGEST=$(buildah inspect --format '{{.FromImageID}}' "$IMAGE_NAME:$TAG")
+          
+          # Set outputs for 'Generate and Sign Artifacts' step
           echo "image_uri=$IMAGE_NAME@$DIGEST" >> $GITHUB_OUTPUT
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
 
       - name: Generate and Sign Artifacts
         env:
