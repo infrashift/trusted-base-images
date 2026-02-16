@@ -75,7 +75,7 @@ jobs:
           
           echo "🔨 Building Development Image: $IMAGE_NAME:$TAG"
           
-          # Build with all required args to silence warnings
+          # 1. Build the image (added IMAGE_VERSION to silence warning)
           buildah bud \
             --platform linux/${{ matrix.arch }} \
             --build-arg UPSTREAM_BASE="${{ steps.metadata.outputs.base }}" \
@@ -87,14 +87,13 @@ jobs:
             -t "$IMAGE_NAME:$TAG" \
             -f Containerfiles/ubi${{ matrix.version }}-${{ matrix.variant }}.Containerfile .
           
-          # Push to GHCR
+          # 2. Push the image
           buildah push "$IMAGE_NAME:$TAG"
           
-          # Capture the specific digest for the next signing steps
-          # We use FromImageDigest to get the immutable anchor
+          # 3. Capture the digest using a safer template
+          # .FromImageID is widely supported across buildah versions for this purpose
           DIGEST=$(buildah inspect --format '{{.FromImageID}}' "$IMAGE_NAME:$TAG")
           
-          # Set outputs for 'Generate and Sign Artifacts' step
           echo "image_uri=$IMAGE_NAME@$DIGEST" >> $GITHUB_OUTPUT
           echo "digest=$DIGEST" >> $GITHUB_OUTPUT
 
