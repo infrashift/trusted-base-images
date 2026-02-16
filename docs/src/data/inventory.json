@@ -1,27 +1,102 @@
 {
   "ubi9-standard": {
     "status": "trusted",
-    "tags": [],
-    "cves": { "critical": [], "high": [], "medium": [], "low": [] }
+    "tags": [
+      {
+        "tag": "48d891a-amd64",
+        "arch": "amd64",
+        "digest": "sha256:a0bf654f8412b975fbe95defc5d59f35411d12b9b4113ff23bbffbffbc3bfe94"
+      },
+      {
+        "tag": "48d891a-arm64",
+        "arch": "arm64",
+        "digest": "sha256:ba7d50e75dfc32ba74252f000415f8f42e1b3b308f96c52e690a056f6fac97bb"
+      }
+    ],
+    "cves": {
+      "critical": [],
+      "high": [],
+      "medium": [],
+      "low": []
+    }
   },
   "ubi9-minimal": {
     "status": "trusted",
-    "tags": [],
-    "cves": { "critical": [], "high": [], "medium": [], "low": [] }
+    "tags": [
+      {
+        "tag": "48d891a-amd64",
+        "arch": "amd64",
+        "digest": "sha256:1f3784171328e103569949dc9c45b292cac209d484a3191cee2ddaf5e83faeea"
+      },
+      {
+        "tag": "48d891a-arm64",
+        "arch": "arm64",
+        "digest": "sha256:554931b52f4fa596166b67cbe6a663d0ea2f16df916952b68b743d5a836454a8"
+      }
+    ],
+    "cves": {
+      "critical": [],
+      "high": [],
+      "medium": [],
+      "low": []
+    }
   },
   "ubi9-micro": {
     "status": "trusted",
-    "tags": [],
-    "cves": { "critical": [], "high": [], "medium": [], "low": [] }
+    "tags": [
+      {
+        "tag": "48d891a-amd64",
+        "arch": "amd64",
+        "digest": "sha256:4b0683f0567bd6ea84b75ef56fb0bf17f991cbd17c59984daa75835ac9101817"
+      },
+      {
+        "tag": "48d891a-arm64",
+        "arch": "arm64",
+        "digest": "sha256:04cd7da1ebad5f6a5545ad4c8675aea05548ad1623b706cc8c243ab866f4cce3"
+      }
+    ],
+    "cves": {
+      "critical": [],
+      "high": [],
+      "medium": [],
+      "low": []
+    }
   },
   "ubi9-init": {
-    "status": "trusted",
-    "tags": [],
-    "cves": { "critical": [], "high": [], "medium": [], "low": [] }
+    "status": "quarantine",
+    "tags": [
+      {
+        "tag": "pr-9-amd64",
+        "arch": "amd64",
+        "digest": "sha256:7d05e5cd50d22ed110f65c5e57e5a632e521b344a22325251b3febc3e17f1bfc"
+      },
+      {
+        "tag": "pr-9-arm64",
+        "arch": "arm64",
+        "digest": "sha256:813ad30d59db57f3ef36dc3b0a3d6fd4182d5ce7c93ede35b23e114b0b7e43e1"
+      }
+    ],
+    "cves": {
+      "critical": [],
+      "high": [],
+      "medium": [],
+      "low": []
+    }
   },
   "ubi10-minimal": {
-    "status": "trusted",
-    "tags": [],
-    "cves": { "critical": [], "high": [], "medium": [], "low": [] }
+    "status": "quarantine",
+    "tags": [
+      {
+        "tag": "pr-9-amd64",
+        "arch": "amd64",
+        "digest": "sha256:74325d3f118ad5bfb5806e7c26492eb3108e3e1a699edaf845077047633c885a"
+      }
+    ],
+    "cves": {
+      "critical": [],
+      "high": [],
+      "medium": [],
+      "low": []
+    }
   }
 }
