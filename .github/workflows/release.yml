@@ -471,21 +471,26 @@ jobs:
         run: |
           MANIFEST="ghcr.io/${{ github.repository }}/trusted/ubi${{ matrix.version }}-${{ matrix.variant }}"
 
-          # Collect per-arch image references
-          AMD64_IMAGE="${MANIFEST}:${SHORT_SHA}-amd64"
-          ARM64_IMAGE="${MANIFEST}:${SHORT_SHA}-arm64"
+          # Dynamically collect arches from release results
+          ARCHES=()
+          for dir in results/release-result-ubi${{ matrix.version }}-${{ matrix.variant }}-*/; do
+            [ -f "${dir}release-result.json" ] || continue
+            ARCHES+=($(jq -r '.arch' "${dir}release-result.json"))
+          done
 
           echo "Creating manifest list for $MANIFEST"
-          echo "  amd64: $AMD64_IMAGE"
-          echo "  arm64: $ARM64_IMAGE"
+          for ARCH in "${ARCHES[@]}"; do
+            echo "  ${ARCH}: ${MANIFEST}:${SHORT_SHA}-${ARCH}"
+          done
 
           TAGS=("latest" "$DATE_TAG" "$SHORT_SHA")
 
           for TAG in "${TAGS[@]}"; do
             echo "Creating manifest: ${MANIFEST}:${TAG}"
             buildah manifest create "${MANIFEST}:${TAG}"
-            buildah manifest add "${MANIFEST}:${TAG}" "docker://${AMD64_IMAGE}"
-            buildah manifest add "${MANIFEST}:${TAG}" "docker://${ARM64_IMAGE}"
+            for ARCH in "${ARCHES[@]}"; do
+              buildah manifest add "${MANIFEST}:${TAG}" "docker://${MANIFEST}:${SHORT_SHA}-${ARCH}"
+            done
             buildah manifest push --all "${MANIFEST}:${TAG}" "docker://${MANIFEST}:${TAG}"
             echo "Pushed ${MANIFEST}:${TAG}"
           done

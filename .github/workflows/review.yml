@@ -162,7 +162,7 @@ jobs:
         id: upstream
         run: |
           PROV_DIGEST=$(jq -r '.buildDefinition.resolvedDependencies[0].digest.sha256' evidence/provenance.json)
-          EXPECTED_DIGEST=$(jq -r '.ubi${{ matrix.version }}.${{ matrix.variant }}.digest' versions.json | sed 's/^sha256://')
+          EXPECTED_DIGEST=$(jq -r '.ubi${{ matrix.version }}.${{ matrix.variant }}.${{ matrix.arch }}.digest' versions.json | sed 's/^sha256://')
 
           echo "Provenance upstream digest: $PROV_DIGEST"
           echo "versions.json digest:       $EXPECTED_DIGEST"

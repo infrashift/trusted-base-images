@@ -26,38 +26,48 @@ jobs:
         run: |
           set -euo pipefail
 
-          # 1. Enumerate all valid version-variant pairs from versions.json
-          ALL_PAIRS=$(jq -c '[to_entries[] | .key as $ver | .value | to_entries[] |
+          # 1. Enumerate all valid {version, variant, arch} triples from versions.json
+          ALL_TRIPLES=$(jq -c '[to_entries[] | .key as $ver | .value | to_entries[] |
             select(.value | type == "object" and has("base")) |
-            {version: ($ver | ltrimstr("ubi")), variant: .key}]' versions.json)
-          echo "All valid pairs: $ALL_PAIRS"
+            .key as $var | .value | to_entries[] |
+            select(.key != "base" and (.value | type == "object" and has("digest"))) |
+            {version: ($ver | ltrimstr("ubi")), variant: $var, arch: .key}]' versions.json)
+          echo "All valid triples: $ALL_TRIPLES"
 
-          # 2. Detect changed Containerfiles
-          CHANGED_CF="[]"
+          # 2. Detect changed Containerfiles → (version, variant) pairs
+          CHANGED_PAIRS="[]"
           while IFS= read -r file; do
             [[ -z "$file" ]] && continue
             basename=$(basename "$file" .Containerfile)
             if [[ "$basename" =~ ^ubi([0-9]+)-(.+)$ ]]; then
               ver="${BASH_REMATCH[1]}"
               var="${BASH_REMATCH[2]}"
-              CHANGED_CF=$(echo "$CHANGED_CF" | jq -c --arg v "$ver" --arg r "$var" \
+              CHANGED_PAIRS=$(echo "$CHANGED_PAIRS" | jq -c --arg v "$ver" --arg r "$var" \
                 '. + [{version: $v, variant: $r}]')
             fi
           done < <(git diff --name-only "${BASE_SHA}" HEAD -- 'Containerfiles/*.Containerfile' 2>/dev/null || true)
-          echo "Changed Containerfiles: $CHANGED_CF"
+          echo "Changed Containerfiles: $CHANGED_PAIRS"
 
-          # 3. Detect changed versions.json entries (base/digest field changes)
+          # Expand changed pairs to all arches for those pairs from ALL_TRIPLES
+          CHANGED_CF=$(jq -c --argjson pairs "$CHANGED_PAIRS" \
+            '[.[] | . as $t | select($pairs | any(.version == $t.version and .variant == $t.variant))]' <<< "$ALL_TRIPLES")
+
+          # 3. Detect changed versions.json entries (per-arch digest and base changes)
           BASE_VERSIONS=$(git show "${BASE_SHA}:versions.json" 2>/dev/null || echo '{}')
           CHANGED_VJ=$(jq -c --argjson base "$BASE_VERSIONS" '
             [to_entries[] | .key as $ver | .value | to_entries[] |
              select(.value | type == "object" and has("base")) |
-             {version: ($ver | ltrimstr("ubi")), variant: .key,
-              base: .value.base, digest: .value.digest} |
+             .key as $var | .value |
+             . as $variant |
+             to_entries[] |
+             select(.key != "base" and (.value | type == "object" and has("digest"))) |
+             {version: ($ver | ltrimstr("ubi")), variant: $var, arch: .key,
+              base: $variant.base, digest: .value.digest} |
              select(
                ($base[("ubi" + .version)]?[.variant]?.base // null) != .base or
-               ($base[("ubi" + .version)]?[.variant]?.digest // null) != .digest
+               ($base[("ubi" + .version)]?[.variant]?[.arch]?.digest // null) != .digest
              ) |
-             {version, variant}
+             {version, variant, arch}
             ]' versions.json)
           echo "Changed versions.json entries: $CHANGED_VJ"
 
@@ -65,24 +75,20 @@ jobs:
           UNION=$(jq -c -n --argjson cf "$CHANGED_CF" --argjson vj "$CHANGED_VJ" \
             '($cf + $vj) | unique')
 
-          # 5. Validate against all valid pairs (filter out deleted entries)
-          FILTERED=$(jq -c --argjson all "$ALL_PAIRS" \
+          # 5. Validate against all valid triples (filter out deleted entries)
+          FILTERED=$(jq -c --argjson all "$ALL_TRIPLES" \
             '[.[] | . as $item | select($all | any(. == $item))]' <<< "$UNION")
           echo "Filtered changes: $FILTERED"
 
-          # 6. Fallback to all pairs if nothing changed
+          # 6. Fallback to all triples if nothing changed
           if [[ "$FILTERED" == "[]" ]]; then
-            echo "No specific changes detected, falling back to all valid pairs"
-            FILTERED="$ALL_PAIRS"
+            echo "No specific changes detected, falling back to all valid triples"
+            FILTERED="$ALL_TRIPLES"
           fi
 
-          # 7. Expand by architecture
-          MATRIX=$(jq -c '[.[] | . as $pair | ("amd64", "arm64") | $pair + {arch: .}]' \
-            <<< "$FILTERED")
-          echo "Final matrix: $MATRIX"
-
-          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
-          echo "$MATRIX" > build-matrix.json
+          echo "Final matrix: $FILTERED"
+          echo "matrix=$FILTERED" >> $GITHUB_OUTPUT
+          echo "$FILTERED" > build-matrix.json
 
       - name: Upload build matrix
         uses: actions/upload-artifact@v4
@@ -132,12 +138,12 @@ jobs:
       - name: Load Upstream Metadata
         id: metadata
         run: |
-          # Querying: .ubi9.standard.base and .ubi9.standard.digest
           KEY_VER="ubi${{ matrix.version }}"
           VAR="${{ matrix.variant }}"
-          
+          ARCH="${{ matrix.arch }}"
+
           BASE=$(jq -r ".$KEY_VER.$VAR.base" versions.json)
-          DIGEST=$(jq -r ".$KEY_VER.$VAR.digest" versions.json)
+          DIGEST=$(jq -r ".$KEY_VER.$VAR.$ARCH.digest" versions.json)
           
           # Safety check: fail if jq returns null (variant not defined in JSON)
           if [[ "$BASE" == "null" ]]; then
