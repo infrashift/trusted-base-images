@@ -17,7 +17,7 @@
       "digest": "sha256:88923f58ef6aebe2b8f543f8f6c5af15c6f9aeeef34ba332f33bf7610012de0c"
     },
     "updated": "2026-02-15",
-    "reason": "Baseline"
+    "reason": "Baseline images"
   },
   "ubi10": {
     "standard": {
