@@ -20,7 +20,7 @@ jobs:
       github.event.workflow_run.conclusion == 'success'
     permissions:
       contents: write
-      actions: read
+      actions: write
       packages: read
 
     steps:
