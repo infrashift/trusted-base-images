@@ -137,10 +137,10 @@ jobs:
           echo "🖋️ Signing artifacts with Build-Actor sovereign key..."
           # Note: We still sign using the FULL_DIGEST to ensure the signature 
           # is bound to the immutable content-hash pushed to GHCR.
-          cosign sign-blob --key env://COSIGN_PRIVATE_KEY \
+          cosign sign-blob --tlog-upload=false --key env://COSIGN_PRIVATE_KEY \
             --output-signature sbom.json.sig sbom.json
-          
-          cosign sign-blob --key env://COSIGN_PRIVATE_KEY \
+
+          cosign sign-blob --tlog-upload=false --key env://COSIGN_PRIVATE_KEY \
             --output-signature cve-report.json.sig cve-report.json
 
       - name: Upload Evidence Bundle
