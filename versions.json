@@ -17,7 +17,7 @@
       "digest": "sha256:88923f58ef6aebe2b8f543f8f6c5af15c6f9aeeef34ba332f33bf7610012de0c"
     },
     "updated": "2026-02-15",
-    "reason": "Baseline for Trusted Images"
+    "reason": "Baseline for trusted images"
   },
   "ubi10": {
     "standard": {
@@ -25,6 +25,6 @@
       "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "updated": "2026-02-15",
-    "reason": "Initial UBI10 Support"
+    "reason": "Initial UBI10 support"
   }
 }
