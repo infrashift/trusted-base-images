@@ -58,15 +58,79 @@ jobs:
           echo "Resolved versions: $VERSIONS"
           echo "Resolved variants: $VARIANTS"
 
+  resolve-review:
+    name: Resolve Review Run
+    needs: gate-check
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    outputs:
+      review_run_id: ${{ steps.find.outputs.review_run_id }}
+      build_run_id: ${{ steps.find.outputs.build_run_id }}
+    steps:
+      - name: Find reviewed build
+        id: find
+        env:
+          HEAD_SHA: ${{ needs.gate-check.outputs.head_sha }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Finding successful build for commit ${HEAD_SHA:0:7}..."
+          BUILD_RUN_ID=$(gh api "/repos/${REPO}/actions/workflows/build.yml/runs?head_sha=${HEAD_SHA}&status=success&per_page=1" \
+            --jq '.workflow_runs[0].id // empty')
+
+          if [[ -z "$BUILD_RUN_ID" ]]; then
+            echo "::error::No successful build found for commit ${HEAD_SHA}"
+            exit 1
+          fi
+          echo "Build run: $BUILD_RUN_ID"
+
+          echo "Searching for review run that reviewed build ${BUILD_RUN_ID}..."
+
+          REVIEW_RUNS=$(gh api "/repos/${REPO}/actions/workflows/review.yml/runs?status=success&per_page=10" \
+            --jq '.workflow_runs[].id')
+
+          REVIEW_RUN_ID=""
+          for RUN_ID in $REVIEW_RUNS; do
+            ARTIFACT_ID=$(gh api "/repos/${REPO}/actions/runs/${RUN_ID}/artifacts" \
+              --jq '[.artifacts[] | select(.name | startswith("review-"))][0].id // empty')
+
+            if [[ -z "$ARTIFACT_ID" ]]; then continue; fi
+
+            mkdir -p /tmp/review-probe
+            gh api "/repos/${REPO}/actions/artifacts/${ARTIFACT_ID}/zip" > /tmp/review-probe/artifact.zip
+            unzip -o /tmp/review-probe/artifact.zip -d /tmp/review-probe/ > /dev/null 2>&1
+
+            VERDICT_BUILD=$(jq -r '.metadata.buildRunId' /tmp/review-probe/review-verdict.json 2>/dev/null || echo "")
+
+            if [[ "$VERDICT_BUILD" == "$BUILD_RUN_ID" ]]; then
+              REVIEW_RUN_ID="$RUN_ID"
+              echo "Found matching review run: $RUN_ID"
+              break
+            fi
+
+            rm -rf /tmp/review-probe/*
+          done
+
+          if [[ -z "$REVIEW_RUN_ID" ]]; then
+            echo "::error::No successful review found for build ${BUILD_RUN_ID}"
+            echo "::error::The build+review cycle must complete before release"
+            exit 1
+          fi
+
+          echo "build_run_id=$BUILD_RUN_ID" >> $GITHUB_OUTPUT
+          echo "review_run_id=$REVIEW_RUN_ID" >> $GITHUB_OUTPUT
+
   release:
     name: Release UBI Variant
-    needs: [gate-check, matrix-setup]
+    needs: [gate-check, matrix-setup, resolve-review]
     runs-on: ubuntu-latest
     environment: Release-Actor
     permissions:
       contents: read
       packages: write
       id-token: write
+      actions: read
 
     strategy:
       fail-fast: false
@@ -94,25 +158,41 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Resolve dev image
+      - name: Download review verdict
+        uses: actions/download-artifact@v4
+        with:
+          name: review-ubi${{ matrix.version }}-${{ matrix.variant }}-${{ matrix.arch }}
+          path: review/
+          run-id: ${{ needs.resolve-review.outputs.review_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve reviewed image
         id: dev
         env:
-          REGISTRY: ghcr.io/${{ github.repository }}/development
-          PR_NUM: ${{ needs.gate-check.outputs.pr_number }}
+          HEAD_SHA: ${{ needs.gate-check.outputs.head_sha }}
         run: |
-          DEV_IMAGE="${REGISTRY}/ubi${{ matrix.version }}-${{ matrix.variant }}:pr-${PR_NUM}-${{ matrix.arch }}"
-          echo "Resolving digest for: $DEV_IMAGE"
+          DEV_URI=$(jq -r '.subject.uri' review/review-verdict.json)
+          DEV_DIGEST=$(jq -r '.subject.digest' review/review-verdict.json)
+          VERDICT_COMMIT=$(jq -r '.metadata.commitSha' review/review-verdict.json)
 
-          DEV_DIGEST=$(skopeo inspect --format '{{.Digest}}' "docker://${DEV_IMAGE}")
-          DEV_URI="${DEV_IMAGE%:*}@${DEV_DIGEST}"
+          if [[ -z "$DEV_URI" || "$DEV_URI" == "null" ]]; then
+            echo "::error::Failed to extract image URI from review verdict"
+            exit 1
+          fi
 
-          echo "image=$DEV_IMAGE" >> $GITHUB_OUTPUT
+          # Freshness check: ensure the review was for the commit that was merged
+          if [[ "$VERDICT_COMMIT" != "$HEAD_SHA" ]]; then
+            echo "::error::Review was for commit ${VERDICT_COMMIT:0:7}, but PR merged commit ${HEAD_SHA:0:7}"
+            echo "::error::A new build+review cycle is required before release"
+            exit 1
+          fi
+
           echo "digest=$DEV_DIGEST" >> $GITHUB_OUTPUT
           echo "uri=$DEV_URI" >> $GITHUB_OUTPUT
 
-          echo "Dev image: $DEV_IMAGE"
-          echo "Dev digest: $DEV_DIGEST"
-          echo "Dev URI: $DEV_URI"
+          echo "Reviewed image: $DEV_URI"
+          echo "Reviewed digest: $DEV_DIGEST"
+          echo "Commit SHA verified: $VERDICT_COMMIT"
 
       - name: Verify build attestations
         env:
