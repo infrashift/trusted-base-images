@@ -108,40 +108,146 @@ jobs:
             -t "$IMAGE_NAME:$TAG" \
             -f Containerfiles/ubi${{ matrix.version }}-${{ matrix.variant }}.Containerfile .
           
-          # 2. Push the image
-          buildah push "$IMAGE_NAME:$TAG"
+          # 2. Push the image and capture the pushed manifest digest
+          buildah push --digestfile ./pushed-digest.txt "$IMAGE_NAME:$TAG"
+          PUSHED_DIGEST=$(cat ./pushed-digest.txt)
+          IMAGE_URI="$IMAGE_NAME@$PUSHED_DIGEST"
 
           # 3. Export to local OCI directory for Syft/Grype scanning
           buildah push "$IMAGE_NAME:$TAG" oci:./oci-image
-          
-          # 4. Capture the hex ID
-          RAW_DIGEST=$(buildah inspect --format '{{.FromImageID}}' "$IMAGE_NAME:$TAG")
-          
-          # Ensure it has the sha256 prefix for OCI tools
-          FULL_DIGEST="sha256:${RAW_DIGEST}"
-          
-          echo "image_uri=$IMAGE_NAME@$FULL_DIGEST" >> $GITHUB_OUTPUT
-          echo "digest=$FULL_DIGEST" >> $GITHUB_OUTPUT
 
-      - name: Generate and Sign Artifacts
+          echo "image_uri=$IMAGE_URI" >> $GITHUB_OUTPUT
+          echo "image_name=$IMAGE_NAME" >> $GITHUB_OUTPUT
+          echo "digest=$PUSHED_DIGEST" >> $GITHUB_OUTPUT
+
+      - name: Generate Evidence Artifacts
         env:
-          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           LOCAL_IMAGE: "oci-dir:./oci-image"
         run: |
-          echo "📦 Generating SBOM (Syft) from local storage..."
+          echo "Generating SBOM (Syft) from local storage..."
           syft "${{ env.LOCAL_IMAGE }}" -o spdx-json=sbom.json
-          
-          echo "🔍 Scanning for vulnerabilities (Grype) from local storage..."
+
+          echo "Scanning for vulnerabilities (Grype) from local storage..."
           grype "${{ env.LOCAL_IMAGE }}" -o json > cve-report.json
-          
-          echo "🖋️ Signing artifacts with Build-Actor sovereign key..."
-          # Note: We still sign using the FULL_DIGEST to ensure the signature 
-          # is bound to the immutable content-hash pushed to GHCR.
+
+          echo "Fetching GitHub Actions OIDC token..."
+          OIDC_TOKEN=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sigstore" | jq -r '.value')
+
+          echo "Capturing build tool versions..."
+          BUILDAH_VERSION=$(buildah --version | awk '{print $3}')
+          COSIGN_VERSION=$(cosign version --json | jq -r '.gitVersion')
+          SYFT_VERSION=$(syft --version | awk '{print $2}')
+          GRYPE_VERSION=$(grype --version | awk '{print $2}')
+
+          echo "Generating SLSA v1.0 build provenance..."
+          jq -n \
+            --arg buildType "https://github.com/${{ github.repository }}/build/v1" \
+            --arg sourceUri "git+https://github.com/${{ github.repository }}@${{ github.ref }}" \
+            --arg sourceDigest "${{ github.sha }}" \
+            --arg variant "${{ matrix.variant }}" \
+            --arg version "ubi${{ matrix.version }}" \
+            --arg arch "${{ matrix.arch }}" \
+            --arg containerfile "Containerfiles/ubi${{ matrix.version }}-${{ matrix.variant }}.Containerfile" \
+            --arg platform "linux/${{ matrix.arch }}" \
+            --arg buildahVersion "$BUILDAH_VERSION" \
+            --arg cosignVersion "$COSIGN_VERSION" \
+            --arg syftVersion "$SYFT_VERSION" \
+            --arg grypeVersion "$GRYPE_VERSION" \
+            --arg upstreamBase "${{ steps.metadata.outputs.base }}" \
+            --arg upstreamDigest "${{ steps.metadata.outputs.digest }}" \
+            --arg builderId "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --arg invocationId "${{ github.run_id }}/${{ github.run_attempt }}" \
+            --arg startedOn "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+            --arg oidcToken "$OIDC_TOKEN" \
+            --arg imageUri "${{ steps.build.outputs.image_uri }}" \
+            --arg imageDigest "${{ steps.build.outputs.digest }}" \
+            '{
+              "buildDefinition": {
+                "buildType": $buildType,
+                "externalParameters": {
+                  "source": {
+                    "uri": $sourceUri,
+                    "digest": { "sha1": $sourceDigest }
+                  },
+                  "variant": $variant,
+                  "version": $version,
+                  "arch": $arch
+                },
+                "internalParameters": {
+                  "containerfile": $containerfile,
+                  "platform": $platform
+                },
+                "resolvedDependencies": [
+                  {
+                    "uri": $upstreamBase,
+                    "digest": { "sha256": ($upstreamDigest | ltrimstr("sha256:")) }
+                  }
+                ]
+              },
+              "runDetails": {
+                "builder": {
+                  "id": $builderId,
+                  "version": {
+                    "buildah": $buildahVersion,
+                    "cosign": $cosignVersion,
+                    "syft": $syftVersion,
+                    "grype": $grypeVersion
+                  }
+                },
+                "metadata": {
+                  "invocationId": $invocationId,
+                  "startedOn": $startedOn,
+                  "oidcToken": $oidcToken
+                }
+              },
+              "output": {
+                "uri": $imageUri,
+                "digest": { "sha256": ($imageDigest | ltrimstr("sha256:")) }
+              }
+            }' > provenance.json
+
+      - name: Sign Evidence Blobs
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+        run: |
+          echo "Signing artifacts with Build-Actor sovereign key..."
           cosign sign-blob --tlog-upload=false --key env://COSIGN_PRIVATE_KEY \
             --output-signature sbom.json.sig sbom.json
 
           cosign sign-blob --tlog-upload=false --key env://COSIGN_PRIVATE_KEY \
             --output-signature cve-report.json.sig cve-report.json
+
+          cosign sign-blob --tlog-upload=false --key env://COSIGN_PRIVATE_KEY \
+            --output-signature provenance.json.sig provenance.json
+
+      - name: Attach Attestations to GHCR Image
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          IMAGE_URI: ${{ steps.build.outputs.image_uri }}
+        run: |
+          echo "Attaching SBOM attestation..."
+          cosign attest --yes --replace --tlog-upload=false \
+            --key env://COSIGN_PRIVATE_KEY \
+            --type spdxjson --predicate sbom.json "$IMAGE_URI"
+
+          echo "Attaching CVE report attestation..."
+          cosign attest --yes --replace --tlog-upload=false \
+            --key env://COSIGN_PRIVATE_KEY \
+            --type vuln --predicate cve-report.json "$IMAGE_URI"
+
+          echo "Attaching SLSA provenance attestation..."
+          cosign attest --yes --replace --tlog-upload=false \
+            --key env://COSIGN_PRIVATE_KEY \
+            --type slsaprovenance1 --predicate provenance.json "$IMAGE_URI"
+
+      - name: Generate Evidence Checksums
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+        run: |
+          sha256sum sbom.json sbom.json.sig cve-report.json cve-report.json.sig provenance.json provenance.json.sig > checksums.sha256
+          cosign sign-blob --tlog-upload=false --key env://COSIGN_PRIVATE_KEY \
+            --output-signature checksums.sha256.sig checksums.sha256
 
       - name: Upload Evidence Bundle
         uses: actions/upload-artifact@v4
@@ -152,3 +258,7 @@ jobs:
             sbom.json.sig
             cve-report.json
             cve-report.json.sig
+            provenance.json
+            provenance.json.sig
+            checksums.sha256
+            checksums.sha256.sig
