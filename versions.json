@@ -2,21 +2,33 @@
   "ubi9": {
     "standard": {
       "base": "registry.access.redhat.com/ubi9",
-      "digest": "sha256:b8923f58ef6aebe2b8f543f8f6c5af15c6f9aeeef34ba332f33bf7610012de0c"
+      "amd64": { "digest": "sha256:09d0f42ed3953ff69e1f3d9577633a33ce0f16a577fb3e18ce3cf6b41379386b" },
+      "arm64": { "digest": "sha256:2b9be42b19836c9056168098102f964a543e8b863af697c86fd83352d23e743a" }
     },
     "minimal": {
       "base": "registry.access.redhat.com/ubi9-minimal",
-      "digest": "sha256:759f5f42d9d6ce2a705e290b7fc549e2d2cd39312c4fa345f93c02e4abb8da95"
+      "amd64": { "digest": "sha256:42c0bdc0534c1465e623a193929a66e9abeb214c61c80c360d99a2a491b0336b" },
+      "arm64": { "digest": "sha256:680087262faf0f60b280c1d51fde762ee21879df177dd9217dd5a9f33e2a9fa2" }
     },
     "micro": {
       "base": "registry.access.redhat.com/ubi9-micro",
-      "digest": "sha256:e9765516d74cafded50d8ef593331eeca2ef6eababdda118e5297898d99b7433"
+      "amd64": { "digest": "sha256:e07e42e9fa650458e8a94d6ff19542a965e5036a8bdce72946e23e888e60201b" },
+      "arm64": { "digest": "sha256:f2e8838ebf44f30159e361fbba77d8d29e9bdba58a4ea68519b4b0b3c51e99ba" }
     },
     "init": {
       "base": "registry.access.redhat.com/ubi9-init",
-      "digest": "sha256:f9d3c9784baa730b28ab80d59dcf45ffdd2cf863c8e09a9ff6f455ef11439bd7"
+      "amd64": { "digest": "sha256:0336f68f3047089da8c73226a8286519d74fbda809d14be450af17a1807749a5" },
+      "arm64": { "digest": "sha256:e4f1d7ec5064bf5b00f87e044f8a9835aaa8d8798854a985e73c91c03fddff59" }
     },
     "updated": "2026-02-15",
     "reason": "Test OPA fix and high CVE policy"
-  }  
+  },
+  "ubi10": {
+    "minimal": {
+      "base": "registry.access.redhat.com/ubi10-minimal",
+      "amd64": { "digest": "sha256:84d365ce5e73f3f38412fcc4237afc37279c3ed7d899dddbfa24ef16b059e138" }
+    },
+    "updated": "2026-02-16",
+    "reason": "Test release workflow with ubi10-minimal"
+  }
 }

@@ -39,24 +39,32 @@ jobs:
 
   matrix-setup:
     name: Resolve Release Matrix
-    needs: gate-check
+    needs: [gate-check, resolve-review]
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
     outputs:
-      versions: ${{ steps.matrix.outputs.versions }}
-      variants: ${{ steps.matrix.outputs.variants }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      manifest_matrix: ${{ steps.matrix.outputs.manifest_matrix }}
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Download build matrix
+        uses: actions/download-artifact@v4
+        with:
+          name: build-matrix
+          run-id: ${{ needs.resolve-review.outputs.build_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract matrix from versions.json
+      - name: Load matrix
         id: matrix
         run: |
-          VERSIONS=$(jq -c '[keys[] | ltrimstr("ubi")]' versions.json)
-          VARIANTS=$(jq -c '[to_entries[].value | to_entries[] | select(.value | type == "object" and has("base")) | .key] | unique' versions.json)
-          echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
-          echo "variants=$VARIANTS" >> $GITHUB_OUTPUT
-          echo "Resolved versions: $VERSIONS"
-          echo "Resolved variants: $VARIANTS"
+          MATRIX=$(cat build-matrix.json)
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+
+          MANIFEST_MATRIX=$(jq -c '[.[] | {version, variant}] | unique' build-matrix.json)
+          echo "manifest_matrix=$MANIFEST_MATRIX" >> $GITHUB_OUTPUT
+
+          echo "Release matrix: $MATRIX"
+          echo "Manifest matrix: $MANIFEST_MATRIX"
 
   resolve-review:
     name: Resolve Review Run
@@ -135,9 +143,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: ${{ fromJSON(needs.matrix-setup.outputs.variants) }}
-        version: ${{ fromJSON(needs.matrix-setup.outputs.versions) }}
-        arch: [amd64, arm64]
+        include: ${{ fromJSON(needs.matrix-setup.outputs.matrix) }}
 
     steps:
       - name: Checkout Code
@@ -417,8 +423,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: ${{ fromJSON(needs.matrix-setup.outputs.variants) }}
-        version: ${{ fromJSON(needs.matrix-setup.outputs.versions) }}
+        include: ${{ fromJSON(needs.matrix-setup.outputs.manifest_matrix) }}
 
     steps:
       - name: Install Cosign
@@ -466,21 +471,26 @@ jobs:
         run: |
           MANIFEST="ghcr.io/${{ github.repository }}/trusted/ubi${{ matrix.version }}-${{ matrix.variant }}"
 
-          # Collect per-arch image references
-          AMD64_IMAGE="${MANIFEST}:${SHORT_SHA}-amd64"
-          ARM64_IMAGE="${MANIFEST}:${SHORT_SHA}-arm64"
+          # Dynamically collect arches from release results
+          ARCHES=()
+          for dir in results/release-result-ubi${{ matrix.version }}-${{ matrix.variant }}-*/; do
+            [ -f "${dir}release-result.json" ] || continue
+            ARCHES+=($(jq -r '.arch' "${dir}release-result.json"))
+          done
 
           echo "Creating manifest list for $MANIFEST"
-          echo "  amd64: $AMD64_IMAGE"
-          echo "  arm64: $ARM64_IMAGE"
+          for ARCH in "${ARCHES[@]}"; do
+            echo "  ${ARCH}: ${MANIFEST}:${SHORT_SHA}-${ARCH}"
+          done
 
           TAGS=("latest" "$DATE_TAG" "$SHORT_SHA")
 
           for TAG in "${TAGS[@]}"; do
             echo "Creating manifest: ${MANIFEST}:${TAG}"
             buildah manifest create "${MANIFEST}:${TAG}"
-            buildah manifest add "${MANIFEST}:${TAG}" "docker://${AMD64_IMAGE}"
-            buildah manifest add "${MANIFEST}:${TAG}" "docker://${ARM64_IMAGE}"
+            for ARCH in "${ARCHES[@]}"; do
+              buildah manifest add "${MANIFEST}:${TAG}" "docker://${MANIFEST}:${SHORT_SHA}-${ARCH}"
+            done
             buildah manifest push --all "${MANIFEST}:${TAG}" "docker://${MANIFEST}:${TAG}"
             echo "Pushed ${MANIFEST}:${TAG}"
           done
