@@ -34,12 +34,56 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Resolve build run ID
+        id: build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RELEASE_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          # The release run downloads review artifacts which contain the buildRunId
+          ARTIFACT_ID=$(gh api "/repos/${REPO}/actions/runs/${RELEASE_RUN_ID}/artifacts" \
+            --jq '[.artifacts[] | select(.name | startswith("review-"))][0].id // empty')
+
+          if [[ -z "$ARTIFACT_ID" ]]; then
+            echo "No review artifacts in release run — trying release-result"
+            # Fallback: find the build run from the merge commit
+            MERGE_SHA=$(gh api "/repos/${REPO}/actions/runs/${RELEASE_RUN_ID}" --jq '.head_sha')
+            BUILD_RUN_ID=$(gh api "/repos/${REPO}/actions/workflows/build.yml/runs?head_sha=${MERGE_SHA}&status=success&per_page=1" \
+              --jq '.workflow_runs[0].id // empty' 2>/dev/null || echo "")
+
+            if [[ -z "$BUILD_RUN_ID" ]]; then
+              # Try finding via the PR head SHA
+              PR_NUM=$(gh api "/repos/${REPO}/actions/runs/${RELEASE_RUN_ID}" --jq '.pull_requests[0].number // empty')
+              if [[ -n "$PR_NUM" ]]; then
+                HEAD_SHA=$(gh api "/repos/${REPO}/pulls/${PR_NUM}" --jq '.head.sha')
+                BUILD_RUN_ID=$(gh api "/repos/${REPO}/actions/workflows/build.yml/runs?head_sha=${HEAD_SHA}&status=success&per_page=1" \
+                  --jq '.workflow_runs[0].id // empty' 2>/dev/null || echo "")
+              fi
+            fi
+          else
+            mkdir -p /tmp/review-probe
+            gh api "/repos/${REPO}/actions/artifacts/${ARTIFACT_ID}/zip" > /tmp/review-probe/artifact.zip
+            unzip -o /tmp/review-probe/artifact.zip -d /tmp/review-probe/ > /dev/null 2>&1
+            BUILD_RUN_ID=$(jq -r '.metadata.buildRunId' /tmp/review-probe/review-verdict.json 2>/dev/null || echo "")
+          fi
+
+          if [[ -n "$BUILD_RUN_ID" && "$BUILD_RUN_ID" != "null" ]]; then
+            echo "build_run_id=$BUILD_RUN_ID" >> $GITHUB_OUTPUT
+            echo "found=true" >> $GITHUB_OUTPUT
+            echo "Build run ID: $BUILD_RUN_ID"
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+            echo "Could not resolve build run ID — CVE data will be empty"
+          fi
+
       - name: Download evidence bundles
+        if: steps.build.outputs.found == 'true'
         uses: actions/download-artifact@v4
         with:
           pattern: evidence-*
           path: evidence/
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ steps.build.outputs.build_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
