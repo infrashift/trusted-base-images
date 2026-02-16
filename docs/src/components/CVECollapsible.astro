@@ -1,0 +1,101 @@
+---
+interface CVE {
+	id: string;
+	package: string;
+	fixedIn?: string;
+}
+
+interface Props {
+	critical: CVE[];
+	high: CVE[];
+	medium: CVE[];
+	low: CVE[];
+}
+
+const { critical, high, medium, low } = Astro.props;
+
+const sections = [
+	{ label: 'Critical', items: critical, color: '#dc2626' },
+	{ label: 'High', items: high, color: '#ea580c' },
+	{ label: 'Medium', items: medium, color: '#ca8a04' },
+	{ label: 'Low', items: low, color: '#65a30d' },
+];
+
+const totalCount = critical.length + high.length + medium.length + low.length;
+---
+
+<div class="cve-collapsible">
+	<p class="cve-summary">
+		<strong>Total CVEs:</strong> {totalCount}
+		({critical.length} critical, {high.length} high, {medium.length} medium, {low.length} low)
+	</p>
+	{sections.map((section) => (
+		<details class="cve-section">
+			<summary style={`border-left: 3px solid ${section.color}; padding-left: 0.5em;`}>
+				{section.label} ({section.items.length})
+			</summary>
+			{section.items.length > 0 ? (
+				<table>
+					<thead>
+						<tr>
+							<th>CVE ID</th>
+							<th>Package</th>
+							<th>Fixed In</th>
+						</tr>
+					</thead>
+					<tbody>
+						{section.items.map((cve) => (
+							<tr>
+								<td>
+									<a href={`https://nvd.nist.gov/vuln/detail/${cve.id}`} target="_blank" rel="noopener">
+										{cve.id}
+									</a>
+								</td>
+								<td>{cve.package}</td>
+								<td>{cve.fixedIn ?? 'No fix available'}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			) : (
+				<p class="no-cves">No {section.label.toLowerCase()} CVEs found.</p>
+			)}
+		</details>
+	))}
+</div>
+
+<style>
+	.cve-collapsible {
+		margin: 1em 0;
+	}
+	.cve-summary {
+		margin-bottom: 0.75em;
+	}
+	.cve-section {
+		margin-bottom: 0.5em;
+	}
+	.cve-section summary {
+		cursor: pointer;
+		padding: 0.4em 0.5em;
+		font-weight: 600;
+	}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 0.5em;
+	}
+	th, td {
+		padding: 0.4em 0.75em;
+		text-align: left;
+		border-bottom: 1px solid var(--sl-color-gray-5);
+	}
+	th {
+		font-weight: 600;
+		background-color: var(--sl-color-gray-6);
+	}
+	.no-cves {
+		padding: 0.5em;
+		font-style: italic;
+		color: var(--sl-color-gray-3);
+	}
+</style>

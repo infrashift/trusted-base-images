@@ -1,0 +1,36 @@
+---
+title: UBI10 Minimal Inventory
+description: Current tags, digests, and CVE status for the UBI10 Minimal trusted image.
+---
+
+import TrustBadge from '../../../components/TrustBadge.astro';
+import ImageInventoryTable from '../../../components/ImageInventoryTable.astro';
+import CVECollapsible from '../../../components/CVECollapsible.astro';
+import inventory from '../../../data/inventory.json';
+
+export const data = inventory['ubi10-minimal'];
+
+## Status
+
+<TrustBadge status={data.status} />
+
+## Published Tags
+
+<ImageInventoryTable
+	imageName="ubi10-minimal"
+	registry="ghcr.io/infrashift/trusted-base-images/trusted"
+	tags={data.tags}
+/>
+
+## CVE Report
+
+<CVECollapsible
+	critical={data.cves.critical}
+	high={data.cves.high}
+	medium={data.cves.medium}
+	low={data.cves.low}
+/>
+
+## Image Details
+
+See the [UBI10 Minimal image page](/trusted-base-oci-images/images/ubi10-minimal/) for upstream base, architectures, OCI labels, and usage examples.

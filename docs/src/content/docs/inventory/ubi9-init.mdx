@@ -1,0 +1,36 @@
+---
+title: UBI9 Init Inventory
+description: Current tags, digests, and CVE status for the UBI9 Init trusted image.
+---
+
+import TrustBadge from '../../../components/TrustBadge.astro';
+import ImageInventoryTable from '../../../components/ImageInventoryTable.astro';
+import CVECollapsible from '../../../components/CVECollapsible.astro';
+import inventory from '../../../data/inventory.json';
+
+export const data = inventory['ubi9-init'];
+
+## Status
+
+<TrustBadge status={data.status} />
+
+## Published Tags
+
+<ImageInventoryTable
+	imageName="ubi9-init"
+	registry="ghcr.io/infrashift/trusted-base-images/trusted"
+	tags={data.tags}
+/>
+
+## CVE Report
+
+<CVECollapsible
+	critical={data.cves.critical}
+	high={data.cves.high}
+	medium={data.cves.medium}
+	low={data.cves.low}
+/>
+
+## Image Details
+
+See the [UBI9 Init image page](/trusted-base-oci-images/images/ubi9-init/) for upstream base, architectures, OCI labels, and usage examples.

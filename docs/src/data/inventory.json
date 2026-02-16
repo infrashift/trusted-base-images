@@ -1,0 +1,27 @@
+{
+  "ubi9-standard": {
+    "status": "trusted",
+    "tags": [],
+    "cves": { "critical": [], "high": [], "medium": [], "low": [] }
+  },
+  "ubi9-minimal": {
+    "status": "trusted",
+    "tags": [],
+    "cves": { "critical": [], "high": [], "medium": [], "low": [] }
+  },
+  "ubi9-micro": {
+    "status": "trusted",
+    "tags": [],
+    "cves": { "critical": [], "high": [], "medium": [], "low": [] }
+  },
+  "ubi9-init": {
+    "status": "trusted",
+    "tags": [],
+    "cves": { "critical": [], "high": [], "medium": [], "low": [] }
+  },
+  "ubi10-minimal": {
+    "status": "trusted",
+    "tags": [],
+    "cves": { "critical": [], "high": [], "medium": [], "low": [] }
+  }
+}

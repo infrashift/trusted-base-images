@@ -1,0 +1,80 @@
+---
+interface Tag {
+	tag: string;
+	type?: string;
+	arch?: string;
+	digest?: string;
+	date?: string;
+}
+
+interface Props {
+	imageName: string;
+	registry: string;
+	tags: Tag[];
+}
+
+const { imageName, registry, tags } = Astro.props;
+
+function truncateDigest(digest: string | undefined): string {
+	if (!digest) return '-';
+	if (digest.startsWith('sha256:')) {
+		return `sha256:${digest.slice(7, 19)}...`;
+	}
+	return `${digest.slice(0, 16)}...`;
+}
+---
+
+<div class="inventory-table">
+	<p class="registry-prefix">
+		<code>{registry}/{imageName}</code>
+	</p>
+	<table>
+		<thead>
+			<tr>
+				<th>Tag</th>
+				<th>Architecture</th>
+				<th>Digest</th>
+				<th>Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			{tags.length > 0 ? (
+				tags.map((t) => (
+					<tr>
+						<td><code>{t.tag}</code></td>
+						<td>{t.type === 'manifest-list' ? 'multi-arch' : (t.arch ?? '-')}</td>
+						<td><code title={t.digest}>{truncateDigest(t.digest)}</code></td>
+						<td>{t.date ?? '-'}</td>
+					</tr>
+				))
+			) : (
+				<tr>
+					<td colspan="4">No tags available. Inventory data will be populated after the next release.</td>
+				</tr>
+			)}
+		</tbody>
+	</table>
+</div>
+
+<style>
+	.inventory-table {
+		overflow-x: auto;
+	}
+	.registry-prefix {
+		margin-bottom: 0.5em;
+		font-size: 0.9em;
+	}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+	th, td {
+		padding: 0.5em 0.75em;
+		text-align: left;
+		border-bottom: 1px solid var(--sl-color-gray-5);
+	}
+	th {
+		font-weight: 600;
+		background-color: var(--sl-color-gray-6);
+	}
+</style>

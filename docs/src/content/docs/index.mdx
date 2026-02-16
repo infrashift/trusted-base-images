@@ -1,0 +1,37 @@
+---
+title: Trusted Base Images
+description: SLSA Level 3 compliant Red Hat UBI images, cryptographically verified from build to production.
+template: splash
+hero:
+  tagline: SLSA Level 3 compliant Red Hat UBI images, cryptographically verified from build to production.
+  actions:
+    - text: Get Started
+      link: /trusted-base-oci-images/guides/pulling-images/
+      icon: right-arrow
+    - text: Image Catalog
+      link: /trusted-base-oci-images/images/
+      icon: open-book
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Why Trusted Base Images?
+
+<CardGrid>
+	<Card title="Three-Actor Governance" icon="shield">
+		Build, Review, and Release are performed by isolated actors with separate signing keys. No single actor can push an unverified image to production.
+	</Card>
+	<Card title="Signed Attestations" icon="approve-check">
+		Every image ships with SBOM (SPDX), CVE scan (Grype), and SLSA v1.0 provenance attestations, each cryptographically signed and verifiable with cosign.
+	</Card>
+	<Card title="CVE Monitoring" icon="warning">
+		Automated vulnerability scanning with OPA policy enforcement. Images exceeding critical or high CVE thresholds are quarantined, never promoted to trusted.
+	</Card>
+	<Card title="Digest Pinning" icon="puzzle">
+		Every build is pinned to upstream per-architecture manifest digests. Tags are mutable, digests are not — ensuring reproducible, tamper-evident builds.
+	</Card>
+	<Card title="OCI Annotations" icon="information">
+		Standard OCI labels plus custom Infrashift labels provide full traceability: upstream base, digest, variant, build date, git revision, and architecture.
+	</Card>
+</CardGrid>

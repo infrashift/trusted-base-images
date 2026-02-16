@@ -1,0 +1,147 @@
+name: Update Documentation Inventory
+
+on:
+  workflow_run:
+    workflows: ["Release Images"]
+    types: [completed]
+
+jobs:
+  update-inventory:
+    name: Update Inventory Data
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    permissions:
+      contents: write
+      actions: read
+      packages: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Install Skopeo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo jq
+
+      - name: Download release results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-result-*
+          path: results/
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download evidence bundles
+        uses: actions/download-artifact@v4
+        with:
+          pattern: evidence-*
+          path: evidence/
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Generate inventory JSON
+        env:
+          REGISTRY: ghcr.io/${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          # Start with empty inventory
+          INVENTORY='{}'
+
+          # Define all images
+          IMAGES=("ubi9-standard" "ubi9-minimal" "ubi9-micro" "ubi9-init" "ubi10-minimal")
+
+          for IMAGE in "${IMAGES[@]}"; do
+            STATUS="trusted"
+            TAGS='[]'
+            CVES='{"critical":[],"high":[],"medium":[],"low":[]}'
+
+            # Collect release results for this image
+            for dir in results/release-result-${IMAGE}-*/; do
+              [ -f "${dir}release-result.json" ] || continue
+
+              RESULT_FILE="${dir}release-result.json"
+              NS=$(jq -r '.namespace' "$RESULT_FILE")
+              ARCH=$(jq -r '.arch' "$RESULT_FILE")
+              DIGEST=$(jq -r '.digest' "$RESULT_FILE")
+              DEST=$(jq -r '.dest_image' "$RESULT_FILE")
+              TAG=$(echo "$DEST" | rev | cut -d: -f1 | rev)
+
+              if [[ "$NS" != "trusted" ]]; then
+                STATUS="quarantine"
+              fi
+
+              TAGS=$(echo "$TAGS" | jq -c --arg tag "$TAG" --arg arch "$ARCH" --arg digest "$DIGEST" \
+                '. + [{"tag": $tag, "arch": $arch, "digest": $digest}]')
+
+              # Extract CVE data from evidence if available
+              # Map image name to evidence naming: ubi9-standard -> ubi9-standard
+              # Extract version and variant for evidence artifact naming
+              VERSION=$(jq -r '.version' "$RESULT_FILE")
+              VARIANT=$(jq -r '.variant' "$RESULT_FILE")
+              EVIDENCE_DIR="evidence/evidence-ubi${VERSION}-${VARIANT}-${ARCH}"
+
+              if [[ -f "${EVIDENCE_DIR}/cve-report.json" ]]; then
+                for SEVERITY in Critical High Medium Low; do
+                  SEV_LOWER=$(echo "$SEVERITY" | tr '[:upper:]' '[:lower:]')
+                  CVE_LIST=$(jq -c "[.matches[] | select(.vulnerability.severity == \"${SEVERITY}\") |
+                    {id: .vulnerability.id, package: .artifact.name, fixedIn: (.vulnerability.fix.versions[0] // null)}]" \
+                    "${EVIDENCE_DIR}/cve-report.json" 2>/dev/null || echo '[]')
+                  CVES=$(echo "$CVES" | jq -c --arg sev "$SEV_LOWER" --argjson list "$CVE_LIST" \
+                    '.[$sev] = ((.[$sev] // []) + $list | unique_by(.id))')
+                done
+              fi
+            done
+
+            # Query GHCR for manifest list tags if image is trusted
+            if [[ "$STATUS" == "trusted" ]]; then
+              MANIFEST_TAGS=$(skopeo list-tags "docker://${REGISTRY}/trusted/${IMAGE}" 2>/dev/null | jq -r '.Tags[]?' || true)
+              for MTAG in $MANIFEST_TAGS; do
+                # Skip per-arch tags (contain a hyphen followed by arch name)
+                if [[ "$MTAG" =~ -amd64$ ]] || [[ "$MTAG" =~ -arm64$ ]]; then
+                  continue
+                fi
+                # Check if this tag is already in the list
+                EXISTS=$(echo "$TAGS" | jq --arg t "$MTAG" '[.[] | select(.tag == $t)] | length')
+                if [[ "$EXISTS" == "0" ]]; then
+                  DIGEST=$(skopeo inspect --raw "docker://${REGISTRY}/trusted/${IMAGE}:${MTAG}" 2>/dev/null | sha256sum | awk '{print "sha256:"$1}' || true)
+                  TAGS=$(echo "$TAGS" | jq -c --arg tag "$MTAG" --arg digest "$DIGEST" \
+                    '. + [{"tag": $tag, "type": "manifest-list", "digest": $digest}]')
+                fi
+              done
+            fi
+
+            INVENTORY=$(echo "$INVENTORY" | jq -c --arg img "$IMAGE" --arg status "$STATUS" \
+              --argjson tags "$TAGS" --argjson cves "$CVES" \
+              '.[$img] = {"status": $status, "tags": $tags, "cves": $cves}')
+          done
+
+          echo "$INVENTORY" | jq '.' > docs/src/data/inventory.json
+          echo "Generated inventory:"
+          cat docs/src/data/inventory.json
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet docs/src/data/inventory.json; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No inventory changes detected"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Inventory changes detected"
+          fi
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/src/data/inventory.json
+          git commit -m "docs: update image inventory data
+
+          Auto-generated from Release Images workflow run #${{ github.event.workflow_run.id }}"
+          git push
