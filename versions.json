@@ -20,8 +20,8 @@
       "amd64": { "digest": "sha256:0336f68f3047089da8c73226a8286519d74fbda809d14be450af17a1807749a5" },
       "arm64": { "digest": "sha256:e4f1d7ec5064bf5b00f87e044f8a9835aaa8d8798854a985e73c91c03fddff59" }
     },
-    "updated": "2026-02-15",
-    "reason": "Test OPA fix and high CVE policy"
+    "updated": "2026-02-16",
+    "reason": "Fresh build after GHCR cleanup"
   },
   "ubi10": {
     "minimal": {
@@ -29,6 +29,6 @@
       "amd64": { "digest": "sha256:84d365ce5e73f3f38412fcc4237afc37279c3ed7d899dddbfa24ef16b059e138" }
     },
     "updated": "2026-02-16",
-    "reason": "Test release workflow with ubi10-minimal"
+    "reason": "Fresh build after GHCR cleanup"
   }
 }
