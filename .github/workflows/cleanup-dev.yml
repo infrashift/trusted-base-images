@@ -1,0 +1,127 @@
+name: Cleanup Development Images
+
+on:
+  workflow_run:
+    workflows: ["Release Images"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to clean up (e.g., 9)'
+        required: true
+        type: string
+
+jobs:
+  cleanup:
+    name: Delete Development Images
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    permissions:
+      packages: write
+      actions: read
+
+    steps:
+      - name: Resolve PR number
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            PR_NUMBER="${{ inputs.pr_number }}"
+          else
+            # Download a release-result artifact to extract the PR number
+            RELEASE_RUN_ID="${{ github.event.workflow_run.id }}"
+
+            ARTIFACT_ID=$(gh api "/repos/${REPO}/actions/runs/${RELEASE_RUN_ID}/artifacts" \
+              --jq '[.artifacts[] | select(.name | startswith("release-result-"))][0].id // empty')
+
+            if [[ -z "$ARTIFACT_ID" ]]; then
+              echo "No release-result artifacts found — nothing to clean up"
+              echo "skip=true" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+
+            mkdir -p /tmp/release-result
+            gh api "/repos/${REPO}/actions/artifacts/${ARTIFACT_ID}/zip" > /tmp/release-result/artifact.zip
+            unzip -o /tmp/release-result/artifact.zip -d /tmp/release-result/ > /dev/null 2>&1
+
+            PR_NUMBER=$(jq -r '.version' /tmp/release-result/release-result.json 2>/dev/null || echo "")
+
+            # Fallback: extract from the triggering workflow's PR
+            if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
+              PR_NUMBER=$(gh api "/repos/${REPO}/actions/runs/${RELEASE_RUN_ID}" \
+                --jq '.pull_requests[0].number // empty')
+            fi
+
+            if [[ -z "$PR_NUMBER" ]]; then
+              echo "Could not determine PR number from release run"
+              echo "skip=true" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          fi
+
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "skip=false" >> $GITHUB_OUTPUT
+          echo "Cleaning up development images for PR #${PR_NUMBER}"
+
+      - name: Delete development images
+        if: steps.pr.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
+        run: |
+          IMAGES=("ubi9-standard" "ubi9-minimal" "ubi9-micro" "ubi9-init" "ubi10-minimal")
+          ORG="infrashift"
+          REPO_PREFIX="trusted-base-images"
+
+          DELETED=0
+          SKIPPED=0
+
+          for IMAGE in "${IMAGES[@]}"; do
+            PKG_NAME="${REPO_PREFIX}/development/${IMAGE}"
+            # URL-encode the slashes
+            PKG_ENCODED="${REPO_PREFIX}%2Fdevelopment%2F${IMAGE}"
+
+            echo "Checking ${PKG_NAME}..."
+
+            # List all versions and find those matching pr-<N>-<arch> tags
+            VERSIONS=$(gh api "orgs/${ORG}/packages/container/${PKG_ENCODED}/versions" \
+              --paginate --jq '.[].id' 2>/dev/null || echo "")
+
+            if [[ -z "$VERSIONS" ]]; then
+              echo "  No package found — skipping"
+              SKIPPED=$((SKIPPED + 1))
+              continue
+            fi
+
+            for VERSION_ID in $VERSIONS; do
+              TAGS=$(gh api "orgs/${ORG}/packages/container/${PKG_ENCODED}/versions/${VERSION_ID}" \
+                --jq '.metadata.container.tags | join(",")' 2>/dev/null || echo "")
+
+              # Check if any tag matches pr-<PR_NUMBER>-<arch>
+              if echo "$TAGS" | grep -qE "pr-${PR_NUMBER}-(amd64|arm64)"; then
+                echo "  Deleting version ${VERSION_ID} (tags: ${TAGS})"
+                gh api --method DELETE \
+                  "orgs/${ORG}/packages/container/${PKG_ENCODED}/versions/${VERSION_ID}" 2>&1
+                DELETED=$((DELETED + 1))
+              fi
+            done
+          done
+
+          echo ""
+          echo "Cleanup complete: ${DELETED} versions deleted, ${SKIPPED} packages not found"
+
+          # Delete empty development packages (no remaining versions)
+          for IMAGE in "${IMAGES[@]}"; do
+            PKG_ENCODED="${REPO_PREFIX}%2Fdevelopment%2F${IMAGE}"
+            REMAINING=$(gh api "orgs/${ORG}/packages/container/${PKG_ENCODED}/versions" \
+              --jq 'length' 2>/dev/null || echo "0")
+
+            if [[ "$REMAINING" == "0" ]]; then
+              echo "Removing empty package: development/${IMAGE}"
+              gh api --method DELETE "orgs/${ORG}/packages/container/${PKG_ENCODED}" 2>/dev/null || true
+            fi
+          done
