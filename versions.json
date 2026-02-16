@@ -18,5 +18,13 @@
     },
     "updated": "2026-02-15",
     "reason": "Test OPA fix and high CVE policy"
-  }  
+  },
+  "ubi10": {
+    "minimal": {
+      "base": "registry.access.redhat.com/ubi10-minimal",
+      "digest": "sha256:84d365ce5e73f3f38412fcc4237afc37279c3ed7d899dddbfa24ef16b059e138"
+    },
+    "updated": "2026-02-16",
+    "reason": "Test release workflow with ubi10-minimal"
+  }
 }

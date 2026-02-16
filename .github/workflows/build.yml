@@ -12,21 +12,83 @@ jobs:
     name: Resolve Build Matrix
     runs-on: ubuntu-latest
     outputs:
-      versions: ${{ steps.matrix.outputs.versions }}
-      variants: ${{ steps.matrix.outputs.variants }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Extract matrix from versions.json
+      - name: Compute selective matrix
         id: matrix
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          VERSIONS=$(jq -c '[keys[] | ltrimstr("ubi")]' versions.json)
-          VARIANTS=$(jq -c '[to_entries[].value | to_entries[] | select(.value | type == "object" and has("base")) | .key] | unique' versions.json)
-          echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
-          echo "variants=$VARIANTS" >> $GITHUB_OUTPUT
-          echo "Resolved versions: $VERSIONS"
-          echo "Resolved variants: $VARIANTS"
+          set -euo pipefail
+
+          # 1. Enumerate all valid version-variant pairs from versions.json
+          ALL_PAIRS=$(jq -c '[to_entries[] | .key as $ver | .value | to_entries[] |
+            select(.value | type == "object" and has("base")) |
+            {version: ($ver | ltrimstr("ubi")), variant: .key}]' versions.json)
+          echo "All valid pairs: $ALL_PAIRS"
+
+          # 2. Detect changed Containerfiles
+          CHANGED_CF="[]"
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+            basename=$(basename "$file" .Containerfile)
+            if [[ "$basename" =~ ^ubi([0-9]+)-(.+)$ ]]; then
+              ver="${BASH_REMATCH[1]}"
+              var="${BASH_REMATCH[2]}"
+              CHANGED_CF=$(echo "$CHANGED_CF" | jq -c --arg v "$ver" --arg r "$var" \
+                '. + [{version: $v, variant: $r}]')
+            fi
+          done < <(git diff --name-only "${BASE_SHA}" HEAD -- 'Containerfiles/*.Containerfile' 2>/dev/null || true)
+          echo "Changed Containerfiles: $CHANGED_CF"
+
+          # 3. Detect changed versions.json entries (base/digest field changes)
+          BASE_VERSIONS=$(git show "${BASE_SHA}:versions.json" 2>/dev/null || echo '{}')
+          CHANGED_VJ=$(jq -c --argjson base "$BASE_VERSIONS" '
+            [to_entries[] | .key as $ver | .value | to_entries[] |
+             select(.value | type == "object" and has("base")) |
+             {version: ($ver | ltrimstr("ubi")), variant: .key,
+              base: .value.base, digest: .value.digest} |
+             select(
+               ($base[("ubi" + .version)]?[.variant]?.base // null) != .base or
+               ($base[("ubi" + .version)]?[.variant]?.digest // null) != .digest
+             ) |
+             {version, variant}
+            ]' versions.json)
+          echo "Changed versions.json entries: $CHANGED_VJ"
+
+          # 4. Union and deduplicate
+          UNION=$(jq -c -n --argjson cf "$CHANGED_CF" --argjson vj "$CHANGED_VJ" \
+            '($cf + $vj) | unique')
+
+          # 5. Validate against all valid pairs (filter out deleted entries)
+          FILTERED=$(jq -c --argjson all "$ALL_PAIRS" \
+            '[.[] | . as $item | select($all | any(. == $item))]' <<< "$UNION")
+          echo "Filtered changes: $FILTERED"
+
+          # 6. Fallback to all pairs if nothing changed
+          if [[ "$FILTERED" == "[]" ]]; then
+            echo "No specific changes detected, falling back to all valid pairs"
+            FILTERED="$ALL_PAIRS"
+          fi
+
+          # 7. Expand by architecture
+          MATRIX=$(jq -c '[.[] | . as $pair | ("amd64", "arm64") | $pair + {arch: .}]' \
+            <<< "$FILTERED")
+          echo "Final matrix: $MATRIX"
+
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo "$MATRIX" > build-matrix.json
+
+      - name: Upload build matrix
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-matrix
+          path: build-matrix.json
 
   build-and-sign:
     name: Build UBI Variant
@@ -41,9 +103,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: ${{ fromJSON(needs.matrix-setup.outputs.variants) }}
-        version: ${{ fromJSON(needs.matrix-setup.outputs.versions) }}
-        arch: [amd64, arm64]
+        include: ${{ fromJSON(needs.matrix-setup.outputs.matrix) }}
 
     steps:
       - name: Checkout Code
