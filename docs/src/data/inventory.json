@@ -16,8 +16,1060 @@
     "cves": {
       "critical": [],
       "high": [],
-      "medium": [],
-      "low": []
+      "medium": [
+        {
+          "id": "CVE-2005-2541",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-30571",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-45803",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-29040",
+          "package": "tpm2-tss",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11081",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11082",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11083",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11468",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-12781",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-13837",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14017",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14087",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14512",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14831",
+          "package": "gnutls",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15282",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15366",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15367",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-29768",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-4516",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-50181",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-50182",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5245",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5278",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-60753",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-64118",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-68972",
+          "package": "gnupg2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0672",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0865",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0915",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0990",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1299",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1484",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1489",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1757",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-2100",
+          "package": "p11-kit",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-22185",
+          "package": "openldap",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-25749",
+          "package": "vim-minimal",
+          "fixedIn": null
+        }
+      ],
+      "low": [
+        {
+          "id": "CVE-2021-3572",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-3927",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-3928",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-3968",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-3973",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-3974",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-4136",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-4166",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-4173",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-4187",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-0213",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-0351",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-1616",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-1619",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-1620",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-1674",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-1720",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-1725",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2042",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2124",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2125",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2126",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2129",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2175",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2182",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2183",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2206",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2207",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2208",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2210",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2257",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2284",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2285",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2286",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2287",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2304",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2343",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2344",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2345",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2522",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-27943",
+          "package": "libgcc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2817",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2819",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2845",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2849",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2862",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2874",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2889",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2923",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2946",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2980",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2982",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3016",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3037",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3099",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3134",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3153",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3219",
+          "package": "gnupg2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3234",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3235",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3256",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3278",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3296",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3297",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3324",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3352",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3705",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-41409",
+          "package": "pcre2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-4141",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-4292",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-4293",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-47007",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-47010",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-47011",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-0049",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-0051",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-0054",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-0288",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-0433",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-0512",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-1127",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-1170",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-1175",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-1264",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-2609",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-2610",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-2953",
+          "package": "openldap",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-32636",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-39804",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4156",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-45322",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-46246",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4734",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4735",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4738",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4751",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4781",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48231",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48232",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48233",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48234",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48235",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48236",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48237",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48706",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-50495",
+          "package": "ncurses-base",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-5344",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-5441",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-5535",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-0232",
+          "package": "sqlite-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-11053",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-13176",
+          "package": "openssl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-22667",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-25260",
+          "package": "elfutils-default-yama-scope",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-34459",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-41957",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-41965",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-41996",
+          "package": "openssl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-43374",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-43802",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-45306",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-47814",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-57360",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-7264",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-9681",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11412",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11413",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11414",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11494",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11495",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1150",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1151",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1152",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1153",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11839",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11840",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1215",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-13151",
+          "package": "libtasn1",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1371",
+          "package": "elfutils-default-yama-scope",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1376",
+          "package": "elfutils-default-yama-scope",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1377",
+          "package": "elfutils-default-yama-scope",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15281",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1632",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1795",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-22134",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-24014",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-26603",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-27113",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-30258",
+          "package": "gnupg2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-3198",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-3360",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5915",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5916",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5917",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5918",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-6170",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66382",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66861",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66862",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66863",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66864",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66865",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66866",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-7039",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-9232",
+          "package": "openssl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-9820",
+          "package": "gnutls",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0861",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0988",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0989",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0992",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1485",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-24515",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-24883",
+          "package": "gnupg2",
+          "fixedIn": null
+        }
+      ]
     }
   },
   "ubi9-minimal": {
@@ -37,8 +1089,260 @@
     "cves": {
       "critical": [],
       "high": [],
-      "medium": [],
-      "low": []
+      "medium": [
+        {
+          "id": "CVE-2023-30571",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14017",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14087",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14512",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14831",
+          "package": "gnutls",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5278",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-60753",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-68972",
+          "package": "gnupg2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0915",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0990",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1484",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1489",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1757",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-2100",
+          "package": "p11-kit",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-22185",
+          "package": "openldap",
+          "fixedIn": null
+        }
+      ],
+      "low": [
+        {
+          "id": "CVE-2022-27943",
+          "package": "libgcc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3219",
+          "package": "gnupg2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-41409",
+          "package": "pcre2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-2953",
+          "package": "openldap",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-32636",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4156",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-45322",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-50495",
+          "package": "ncurses-base",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-0232",
+          "package": "sqlite-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-11053",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-13176",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-34459",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-41996",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-7264",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-9681",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-13151",
+          "package": "libtasn1",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15281",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1632",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-27113",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-30258",
+          "package": "gnupg2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-3360",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5915",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5916",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5917",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5918",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-6170",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-7039",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-9232",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-9820",
+          "package": "gnutls",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0861",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0988",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0989",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0992",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1485",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-24883",
+          "package": "gnupg2",
+          "fixedIn": null
+        }
+      ]
     }
   },
   "ubi9-micro": {
@@ -58,8 +1362,45 @@
     "cves": {
       "critical": [],
       "high": [],
-      "medium": [],
-      "low": []
+      "medium": [
+        {
+          "id": "CVE-2025-5278",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0915",
+          "package": "glibc",
+          "fixedIn": null
+        }
+      ],
+      "low": [
+        {
+          "id": "CVE-2022-27943",
+          "package": "libgcc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-41409",
+          "package": "pcre2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-50495",
+          "package": "ncurses-base",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15281",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0861",
+          "package": "glibc",
+          "fixedIn": null
+        }
+      ]
     }
   },
   "ubi9-init": {
@@ -78,9 +1419,1137 @@
     ],
     "cves": {
       "critical": [],
-      "high": [],
-      "medium": [],
-      "low": []
+      "high": [
+        {
+          "id": "CVE-2025-15467",
+          "package": "openssl",
+          "fixedIn": "1:3.5.1-7.el9_7"
+        }
+      ],
+      "medium": [
+        {
+          "id": "CVE-2005-2541",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-30571",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-45803",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-29040",
+          "package": "tpm2-tss",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11081",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11082",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11083",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11187",
+          "package": "openssl",
+          "fixedIn": "1:3.5.1-7.el9_7"
+        },
+        {
+          "id": "CVE-2025-11468",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-12084",
+          "package": "python3",
+          "fixedIn": "0:3.9.25-3.el9_7"
+        },
+        {
+          "id": "CVE-2025-12781",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-13837",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14017",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14087",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14104",
+          "package": "libblkid",
+          "fixedIn": "0:2.37.4-21.el9_7"
+        },
+        {
+          "id": "CVE-2025-14512",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14831",
+          "package": "gnutls",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15282",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15366",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15367",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-29768",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-4516",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-50181",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-50182",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5245",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5278",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-60753",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-64118",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-68972",
+          "package": "gnupg2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69419",
+          "package": "openssl",
+          "fixedIn": "1:3.5.1-7.el9_7"
+        },
+        {
+          "id": "CVE-2025-9086",
+          "package": "curl-minimal",
+          "fixedIn": "0:7.76.1-35.el9_7.3"
+        },
+        {
+          "id": "CVE-2026-0672",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0865",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0915",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0990",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1299",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1484",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1489",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1757",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-2100",
+          "package": "p11-kit",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-22185",
+          "package": "openldap",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-25749",
+          "package": "vim-minimal",
+          "fixedIn": null
+        }
+      ],
+      "low": [
+        {
+          "id": "CVE-2021-3572",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-3927",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-3928",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-3968",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-3973",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-3974",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-4136",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-4166",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-4173",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-4187",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-0213",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-0351",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-1616",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-1619",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-1620",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-1674",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-1720",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-1725",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2042",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2124",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2125",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2126",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2129",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2175",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2182",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2183",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2206",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2207",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2208",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2210",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2257",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2284",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2285",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2286",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2287",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2304",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2343",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2344",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2345",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2522",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-27943",
+          "package": "libgcc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2817",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2819",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2845",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2849",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2862",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2874",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2889",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2923",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2946",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2980",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-2982",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3016",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3037",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3099",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3134",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3153",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3219",
+          "package": "gnupg2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3234",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3235",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3256",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3278",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3296",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3297",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3324",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3352",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-3705",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-41409",
+          "package": "pcre2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-4141",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-4292",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-4293",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-47007",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-47010",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-47011",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-0049",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-0051",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-0054",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-0288",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-0433",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-0512",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-1127",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-1170",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-1175",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-1264",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-2609",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-2610",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-2953",
+          "package": "openldap",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-32636",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-39804",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4156",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-45322",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-46246",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4734",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4735",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4738",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4751",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-4781",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48231",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48232",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48233",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48234",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48235",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48236",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48237",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-48706",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-50495",
+          "package": "ncurses-base",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-5344",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-5441",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-5535",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-0232",
+          "package": "sqlite-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-11053",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-13176",
+          "package": "openssl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-22667",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-25260",
+          "package": "elfutils-default-yama-scope",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-34459",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-41957",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-41965",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-41996",
+          "package": "openssl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-43374",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-43802",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-45306",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-47814",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-57360",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-7264",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-9681",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11412",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11413",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11414",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11494",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11495",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1150",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1151",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1152",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1153",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11839",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-11840",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1215",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-13151",
+          "package": "libtasn1",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1371",
+          "package": "elfutils-default-yama-scope",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1376",
+          "package": "elfutils-default-yama-scope",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1377",
+          "package": "elfutils-default-yama-scope",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15281",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15468",
+          "package": "openssl",
+          "fixedIn": "1:3.5.1-7.el9_7"
+        },
+        {
+          "id": "CVE-2025-15469",
+          "package": "openssl",
+          "fixedIn": "1:3.5.1-7.el9_7"
+        },
+        {
+          "id": "CVE-2025-1632",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1795",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-22134",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-24014",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-26603",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-27113",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-30258",
+          "package": "gnupg2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-3198",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-3360",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5915",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5916",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5917",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5918",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-6170",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66199",
+          "package": "openssl",
+          "fixedIn": "1:3.5.1-7.el9_7"
+        },
+        {
+          "id": "CVE-2025-66382",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66861",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66862",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66863",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66864",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66865",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-66866",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-68160",
+          "package": "openssl",
+          "fixedIn": "1:3.5.1-7.el9_7"
+        },
+        {
+          "id": "CVE-2025-69418",
+          "package": "openssl",
+          "fixedIn": "1:3.5.1-7.el9_7"
+        },
+        {
+          "id": "CVE-2025-69420",
+          "package": "openssl",
+          "fixedIn": "1:3.5.1-7.el9_7"
+        },
+        {
+          "id": "CVE-2025-69421",
+          "package": "openssl",
+          "fixedIn": "1:3.5.1-7.el9_7"
+        },
+        {
+          "id": "CVE-2025-7039",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-9232",
+          "package": "openssl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-9820",
+          "package": "gnutls",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0861",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0988",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0989",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0992",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1485",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-22795",
+          "package": "openssl",
+          "fixedIn": "1:3.5.1-7.el9_7"
+        },
+        {
+          "id": "CVE-2026-22796",
+          "package": "openssl",
+          "fixedIn": "1:3.5.1-7.el9_7"
+        },
+        {
+          "id": "CVE-2026-24515",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-24883",
+          "package": "gnupg2",
+          "fixedIn": null
+        }
+      ]
     }
   },
   "ubi10-minimal": {
@@ -94,9 +2563,272 @@
     ],
     "cves": {
       "critical": [],
-      "high": [],
-      "medium": [],
-      "low": []
+      "high": [
+        {
+          "id": "CVE-2024-56171",
+          "package": "libxml2",
+          "fixedIn": null
+        }
+      ],
+      "medium": [
+        {
+          "id": "CVE-2024-12133",
+          "package": "libtasn1",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-12224",
+          "package": "rpm-sequoia",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-12243",
+          "package": "gnutls",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-28834",
+          "package": "gnutls",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-28835",
+          "package": "gnutls",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-6197",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14017",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14087",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14512",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-14831",
+          "package": "gnutls",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-29087",
+          "package": "sqlite-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-4598",
+          "package": "systemd-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5278",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-60753",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-67897",
+          "package": "rpm-sequoia",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-7458",
+          "package": "sqlite-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0990",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1484",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1489",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1757",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-2100",
+          "package": "p11-kit",
+          "fixedIn": null
+        }
+      ],
+      "low": [
+        {
+          "id": "CVE-2023-53160",
+          "package": "rpm-sequoia",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-53161",
+          "package": "rpm-sequoia",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-11053",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-13176",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-34459",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-41996",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-4603",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-4741",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-5535",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-58261",
+          "package": "rpm-sequoia",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2024-7264",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-10148",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-13151",
+          "package": "libtasn1",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15281",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-1632",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-27113",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-3360",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5915",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5916",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5917",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-5918",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-6052",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-6170",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-7039",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-9232",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-9820",
+          "package": "gnutls",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0988",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0989",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-0992",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1485",
+          "package": "glib2",
+          "fixedIn": null
+        }
+      ]
     }
   }
 }
