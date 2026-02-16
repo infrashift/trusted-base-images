@@ -1,0 +1,12 @@
+name: 'TBI PDP Gate'
+description: 'Enforces OPA policies on secrets and signatures'
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Gatekeeper
+      shell: bash
+      # We reference the root scripts folder directly
+      run: ${{ github.action_path }}/../../../scripts/run-gatekeeper.sh
+      env:
+        # Pass variables to the script to keep it flexible
+        POLICY_PATH: '.github/pdp/policies.rego'

@@ -1,361 +1,123 @@
-name: Build and Publish Base UBI Images
+name: CI Build & Audit
 
 on:
   pull_request:
-  push:
-    branches: [development, main]
-  schedule:
-    - cron: '0 0 * * *'
-
-permissions:
-  contents: write
-  packages: write
-  id-token: write
-  issues: write
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/base-ubi-images
+    branches: [ main ]
 
 jobs:
-  check-ubi-update:
-    runs-on: ubuntu-22.04
-    if: github.event_name == 'schedule'
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check UBI Updates
-        run: |
-          # Placeholder: Add logic to check for UBI updates if needed
-          echo "Scheduled UBI update check not implemented yet."
+  build-and-sign:
+    name: Build UBI Variant
+    runs-on: ubuntu-latest
+    environment: Build-Actor
+    permissions:
+      contents: read
+      packages: write
+      id-token: write # Required if you eventually use keyless signing
 
-  scan-secrets:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          config-path: .gitleaks.toml
-          fail-on-leak: true
-          output: gitleaks-report.json
-
-  verify-commits:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Check Commit Signatures
-        id: check-signatures
-        run: |
-          git log --format='%H %G?' > commit-signatures.txt
-          jq -R -s 'split("\n") | map(select(length > 0) | split(" ") | {"sha": .[0], "signed": (.[1] == "G" or .[1] == "E")})' commit-signatures.txt > commits.json
-      - name: Install OPA
-        run: |
-          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64
-          chmod +x opa
-      - name: Enforce Signed Commits with OPA
-        run: |
-          ./opa eval --input commits.json --data .github/signed_commits.rego "data.git.allow" --format raw > opa-commits-result.txt
-          if [ "$(cat opa-commits-result.txt)" != "true" ]; then
-            echo "Unsigned commits detected!"
-            exit 1
-          fi
-
-  build-and-verify:
-    runs-on: ubuntu-22.04
-    needs: [scan-secrets, verify-commits]
     strategy:
+      fail-fast: false
       matrix:
-        image: [ubi8, ubi9]
+        variant: [standard, minimal, micro, init]
+        version: [9, 10]
+        arch: [amd64, arm64]
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build with SLSA
-        uses: slsa-framework/slsa-github-generator/.github/workflows/builder_container_slsa3.yml@v2.1.0
-        id: slsa
-        with:
-          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tag: ${{ github.sha }}-${{ matrix.image }}
-          dockerfile: ${{ matrix.image }}/Containerfile
-
-      - name: Generate CalVer Tag
-        id: calver
-        run: |
-          CALVER=$(date +%Y.%m.%d)
-          SHA256=$(docker inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}-${{ matrix.image }} | jq -r '.[0].Id' | cut -d: -f2 | cut -c 1-12)
-          TAG="${CALVER}-${SHA256}-${{ matrix.image }}"
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-
-      - name: Tag and Push Image
-        run: |
-          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}-${{ matrix.image }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }}
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }}
-
-      - name: Install InfraTest
-        run: |
-          curl -L https://github.com/infratest/infratest/releases/latest/download/infratest-linux-amd64.tar.gz | tar -xz -C /usr/local/bin
-      - name: Test Image
-        id: infratest
-        run: |
-          infratest run ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }} --command "bash -c 'microdnf --version'" && echo "success=true" >> $GITHUB_OUTPUT || echo "success=false" >> $GITHUB_OUTPUT
-
-      - name: Install Syft
-        run: curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s infinity -b /usr/local/bin
-      - name: Install Grype
-        run: curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s infinity -b /usr/local/bin
-
-      - name: Generate SBOM
-        run: syft ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }} -o cyclonedx-json > sbom-${{ matrix.image }}.json
-
-      - name: Scan SBOM with Grype
-        run: grype sbom:sbom-${{ matrix.image }}.json -o json > grype-${{ matrix.image }}.json
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3
+        uses: sigstore/cosign-installer@v3.4.0
 
-      - name: Sign Image with Cosign (OIDC)
+      - name: Install Syft & Grype
         run: |
-          cosign sign --oidc-issuer https://token.actions.githubusercontent.com \
-            --yes ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }}
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
 
-      - name: Sign and Attach SBOM
+      - name: Install Buildah
         run: |
-          cosign attest --predicate sbom-${{ matrix.image }}.json --type cyclonedx \
-            --oidc-issuer https://token.actions.githubusercontent.com \
-            --yes ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }}
-          cosign sign --attachment sbom \
-            --oidc-issuer https://token.actions.githubusercontent.com \
-            --yes ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }}
+          sudo apt-get update
+          sudo apt-get install -y buildah
 
-      - name: Sign and Attach Grype Results
-        run: |
-          cosign attest --predicate grype-${{ matrix.image }}.json --type custom \
-            --oidc-issuer https://token.actions.githubusercontent.com \
-            --yes ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }}
-          cosign sign --attachment attest \
-            --oidc-issuer https://token.actions.githubusercontent.com \
-            --yes ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }}
-
-      - name: Install OPA
-        run: |
-          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64
-          chmod +x opa
-
-      - name: Enforce InfraTest Policy
-        id: infratest-policy
-        run: |
-          jq -n --arg success "${{ steps.infratest.outputs.success }}" '{"infratest": {"success": $success == "true"}}' > infratest-input-${{ matrix.image }}.json
-          ./opa eval --input infratest-input-${{ matrix.image }}.json --data .github/infratest.rego "data.infratest.allow" --format raw > opa-infratest-result.txt
-          if [ "$(cat opa-infratest-result.txt)" != "true" ]; then
-            echo "InfraTest policy violation for ${{ matrix.image }}"
-            echo "violated=true" >> $GITHUB_OUTPUT
-            exit 1
-          fi
-
-      - name: Enforce Labels and Security Context
-        id: labels-security-policy
-        run: |
-          LABELS=$(docker inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }} | jq -r '.[0].Config.Labels | tojson')
-          USER=$(docker inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }} | jq -r '.[0].Config.User // "0" | tonumber')
-          CAPS=$(docker inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }} | jq -r '.[0].Config.CapAdd // [] | tojson')
-          PRIVILEGED=$(docker inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }} | jq -r '.[0].Config.Privileged // false')
-          jq -n --argjson labels "$LABELS" --argjson user "$USER" --argjson caps "$CAPS" --argjson priv "$PRIVILEGED" \
-            '{"labels": $labels, "user_id": $user, "group_id": 0, "privileged": $priv, "capabilities": $caps}' > labels-security-input-${{ matrix.image }}.json
-
-          ./opa eval --input labels-security-input-${{ matrix.image }}.json --data .github/labels.rego "data.labels.allow" --format raw > opa-labels-result.txt
-          if [ "$(cat opa-labels-result.txt)" != "true" ]; then
-            echo "Labels policy violation for ${{ matrix.image }}"
-            echo "violated=true" >> $GITHUB_OUTPUT
-            exit 1
-          fi
-
-          ./opa eval --input labels-security-input-${{ matrix.image }}.json --data .github/security_context.rego "data.security_context.allow" --format raw > opa-security-result.txt
-          ./opa eval --input labels-security-input-${{ matrix.image }}.json --data .github/openshift.rego "data.openshift.allow" --format raw > opa-openshift-result.txt
-          if [ "$(cat opa-security-result.txt)" != "true" ] || [ "$(cat opa-openshift-result.txt)" != "true" ]; then
-            echo "Security/OpenShift policy violation for ${{ matrix.image }}"
-            echo "violated=true" >> $GITHUB_OUTPUT
-            exit 1
-          fi
-
-      - name: Verify Signatures and Enforce Container Policy
-        id: container-policy
-        run: |
-          [ -s "sbom-${{ matrix.image }}.json" ] && SBOM_EXISTS=true || SBOM_EXISTS=false
-          cosign verify-attestation --type cyclonedx --oidc-issuer https://token.actions.githubusercontent.com \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }} > /dev/null 2>&1 && SBOM_SIGNED=true || SBOM_SIGNED=false
-          cosign verify --oidc-issuer https://token.actions.githubusercontent.com \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }} > /dev/null 2>&1 && IMAGE_SIGNED=true || IMAGE_SIGNED=false
-          FULL_HASH=$(docker inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.calver.outputs.tag }} | jq -r '.[0].Id')
-          jq -n --arg sbom_exists "$SBOM_EXISTS" --arg sbom_signed "$SBOM_SIGNED" \
-            --arg image_signed "$IMAGE_SIGNED" --arg tag "${{ steps.calver.outputs.tag }}" \
-            --arg full_hash "$FULL_HASH" \
-            '{"sbom": {"exists": $sbom_exists == "true", "signed": $sbom_signed == "true", "signature_valid": $sbom_signed == "true"}, "image": {"signed": $image_signed == "true", "signature_valid": $image_signed == "true", "tag": $tag, "full_hash": $full_hash}}' > container-input-${{ matrix.image }}.json
-          ./opa eval --input container-input-${{ matrix.image }}.json --data .github/container_security.rego "data.container.allow" --format raw > opa-container-result.txt
-          if [ "$(cat opa-container-result.txt)" != "true" ]; then
-            echo "Container security policy violation for ${{ matrix.image }}"
-            echo "violated=true" >> $GITHUB_OUTPUT
-            exit 1
-          fi
-
-      - name: Enforce Grype Policy with OPA
-        id: grype-policy
-        run: |
-          ./opa eval --input grype-${{ matrix.image }}.json --data .github/policy.rego "data.grype.allow" --format raw > opa-grype-result.txt
-          if [ "$(cat opa-grype-result.txt)" != "true" ]; then
-            echo "Grype policy violation: CVEs found in ${{ matrix.image }}"
-            echo "violated=true" >> $GITHUB_OUTPUT
-            exit 1
-          fi
-
-      - name: Upload Artifacts
-        if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: security-reports-${{ matrix.image }}
-          path: |
-            sbom-${{ matrix.image }}.json
-            grype-${{ matrix.image }}.json
-            commits.json
-            container-input-${{ matrix.image }}.json
-            infratest-input-${{ matrix.image }}.json
-            labels-security-input-${{ matrix.image }}.json
-
-  decorate-pr:
-    runs-on: ubuntu-22.04
-    if: github.event_name == 'pull_request'
-    needs: build-and-verify
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: security-reports-ubi8
-      - uses: actions/download-artifact@v4
-        with:
-          name: security-reports-ubi9
-      - name: Install OPA
-        run: |
-          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64
-          chmod +x opa
-      - name: Comment PR and Create Issues
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const exec = require('child_process').execSync;
-
-            function getViolations(file, policy) {
-              const result = exec(`./opa eval --input ${file} --data .github/${policy} "data.${policy.split('.')[0]}.violations" --format json`).toString();
-              return JSON.parse(result).result[0].expressions[0].value;
-            }
-
-            let comment = "Security Checks:\n";
-            let issues = [];
-
-            for (const image of ['ubi8', 'ubi9']) {
-              const grype = JSON.parse(fs.readFileSync(`grype-${image}.json`, 'utf8'));
-              const vuln = grype.matches.filter(m => ["Critical", "High", "Medium"].includes(m.vulnerability.severity));
-              if (vuln.length > 0) {
-                issues.push({
-                  title: `Vulnerabilities Found in ${image} for PR #${context.issue.number}`,
-                  body: `### ${image} Vulnerabilities\n` + vuln.map(v => `- ${v.vulnerability.id} (${v.vulnerability.severity})`).join("\n") + "\nFix these before merging.",
-                  labels: ["security", "vulnerability"]
-                });
-              }
-              comment += `- Grype (${image}): ${vuln.length} vulnerabilities\n`;
-
-              const infratestV = getViolations(`infratest-input-${image}.json`, 'infratest.rego');
-              if (Object.keys(infratestV).length > 0) {
-                issues.push({
-                  title: `InfraTest Failed in ${image} for PR #${context.issue.number}`,
-                  body: `InfraTest failed for ${image}. Ensure tests pass.`,
-                  labels: ["security", "policy"]
-                });
-              }
-              comment += `- InfraTest (${image}): ${Object.keys(infratestV).length > 0 ? 'Failed' : 'Passed'}\n`;
-
-              const labelsV = getViolations(`labels-security-input-${image}.json`, 'labels.rego');
-              const securityV = getViolations(`labels-security-input-${image}.json`, 'security_context.rego');
-              const openshiftV = getViolations(`labels-security-input-${image}.json`, 'openshift.rego');
-              const combinedV = Object.assign({}, labelsV, securityV, openshiftV);
-              if (Object.keys(combinedV).length > 0) {
-                issues.push({
-                  title: `Labels/Security/OpenShift Policy Violations in ${image} for PR #${context.issue.number}`,
-                  body: `### ${image} Violations\n` + Object.keys(combinedV).map(v => `- ${v}`).join("\n") + "\nResolve these issues (e.g., missing io.infrashift.image labels).",
-                  labels: ["security", "policy"]
-                });
-              }
-              comment += `- Labels/Security/OpenShift (${image}): ${Object.keys(combinedV).length > 0 ? 'Violations found' : 'Passed'}\n`;
-
-              const containerV = getViolations(`container-input-${image}.json`, 'container_security.rego');
-              if (Object.keys(containerV).length > 0) {
-                issues.push({
-                  title: `Container Policy Violations in ${image} for PR #${context.issue.number}`,
-                  body: `### ${image} Violations\n` + Object.keys(containerV).map(v => `- ${v}`).join("\n") + "\nResolve these issues.",
-                  labels: ["security", "policy"]
-                });
-              }
-              comment += `- Container Policy (${image}): ${Object.keys(containerV).length > 0 ? 'Violations found' : 'Passed'}\n`;
-            }
-
-            const commits = JSON.parse(fs.readFileSync('commits.json', 'utf8'));
-            const unsigned = commits.filter(c => !c.signed);
-            if (unsigned.length > 0) {
-              issues.push({
-                title: `Unsigned Commits in PR #${context.issue.number}`,
-                body: "Unsigned Commits Detected:\n" + unsigned.map(c => `- ${c.sha}`).join("\n") + "\nAll commits must be signed.",
-                labels: ["security", "policy"]
-              });
-            }
-            comment += `- Signed Commits: ${unsigned.length} unsigned\n`;
-
-            for (const issue of issues) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: issue.title,
-                body: issue.body,
-                labels: issue.labels
-              });
-            }
-
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
-
-  publish:
-    runs-on: ubuntu-22.04
-    if: github.ref == 'refs/heads/main'
-    needs: build-and-verify
-    steps:
-      - uses: actions/checkout@v4
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Pull and Retag Images
+
+      - name: Load Upstream Metadata
+        id: metadata
         run: |
-          for image in ubi8 ubi9; do
-            CALVER=$(date +%Y.%m.%d)
-            SHA256=$(docker inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}-${image} | jq -r '.[0].Id' | cut -d: -f2 | cut -c 1-12)
-            TAG="${CALVER}-${SHA256}-${image}"
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG
-            docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${image}
-            docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${image}
-          done
+          # Querying: .ubi9.standard.base and .ubi9.standard.digest
+          KEY_VER="ubi${{ matrix.version }}"
+          VAR="${{ matrix.variant }}"
+          
+          BASE=$(jq -r ".$KEY_VER.$VAR.base" versions.json)
+          DIGEST=$(jq -r ".$KEY_VER.$VAR.digest" versions.json)
+          
+          # Safety check: fail if jq returns null (variant not defined in JSON)
+          if [[ "$BASE" == "null" ]]; then
+            echo "Error: Variant $VAR not found for $KEY_VER in versions.json"
+            exit 1
+          fi
+
+          echo "base=$BASE" >> $GITHUB_OUTPUT
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+
+      - name: Build Image with Buildah
+        id: build
+        env:
+          # Use a 'development/' namespace for all PR builds
+          REGISTRY: ghcr.io/${{ github.repository }}/development
+          PR_NUM: ${{ github.event.pull_request.number }}
+        run: |
+          # Construct the namespaced path
+          # Example: ghcr.io/infrashift/trusted-base-images/development/ubi9-standard
+          IMAGE_NAME="${REGISTRY}/ubi${{ matrix.version }}-${{ matrix.variant }}"
+          TAG="pr-${PR_NUM}-${{ matrix.arch }}"
+          
+          echo "Building Development Image: $IMAGE_NAME:$TAG"
+          
+          buildah bud \
+            --platform linux/${{ matrix.arch }} \
+            --build-arg UPSTREAM_BASE="${{ steps.metadata.outputs.base }}" \
+            --build-arg UPSTREAM_DIGEST="${{ steps.metadata.outputs.digest }}" \
+            --build-arg GIT_COMMIT="${{ github.sha }}" \
+            --build-arg BUILD_DATE="$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+            --build-arg TARGETARCH="${{ matrix.arch }}" \
+            -t "$IMAGE_NAME:$TAG" \
+            -f Containerfiles/ubi${{ matrix.version }}-${{ matrix.variant }}.Containerfile .
+          
+          buildah push "$IMAGE_NAME:$TAG"
+          
+          # Capture the immutable digest for the Review-Actor
+          DIGEST=$(buildah inspect --format '{{.FromAS}}' "$IMAGE_NAME:$TAG")
+          echo "image_uri=$IMAGE_NAME@$DIGEST" >> $GITHUB_OUTPUT
+
+      - name: Generate and Sign Artifacts
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          IMAGE_URI: ${{ steps.build.outputs.image_uri }}
+        run: |
+          echo "Generating SBOM (Syft)..."
+          syft "$IMAGE_URI" -o spdx-json=sbom.json
+          
+          echo "Scanning for vulnerabilities (Grype)..."
+          grype "$IMAGE_URI" -o json > cve-report.json
+          
+          echo "Signing artifacts with Build-Actor sovereign key..."
+          cosign sign-blob --key env://COSIGN_PRIVATE_KEY \
+            --output-signature sbom.json.sig sbom.json
+          
+          cosign sign-blob --key env://COSIGN_PRIVATE_KEY \
+            --output-signature cve-report.json.sig cve-report.json
+
+      - name: Upload Evidence Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-ubi${{ matrix.version }}-${{ matrix.variant }}-${{ matrix.arch }}
+          path: |
+            sbom.json
+            sbom.json.sig
+            cve-report.json
+            cve-report.json.sig

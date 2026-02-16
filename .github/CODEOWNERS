@@ -1,0 +1,16 @@
+# Global owners (backup)
+* @infrashift/platform-engineers
+
+# Security Policies & PDP logic
+# Any change to Rego files or Public Keys requires Security Team approval
+.github/pdp/            @infrashift/security-admins
+.github/pdp/keys/       @infrashift/security-admins
+
+# Workflow Orchestration
+# Prevents unauthorized changes to the actor/environment mappings
+.github/workflows/      @infrashift/devops-leads
+.github/actions/        @infrashift/devops-leads
+
+# Scripts (Executable logic)
+# Ensure the "engines" of the pipeline are vetted
+/scripts/               @infrashift/devops-leads

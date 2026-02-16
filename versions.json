@@ -1,0 +1,30 @@
+{
+  "ubi9": {
+    "standard": {
+      "base": "registry.access.redhat.com/ubi9",
+      "digest": "sha256:b8923f58ef6aebe2b8f543f8f6c5af15c6f9aeeef34ba332f33bf7610012de0c"
+    },
+    "minimal": {
+      "base": "registry.access.redhat.com/ubi9-minimal",
+      "digest": "sha256:5688536f9872e452144a142079f8266205e46535560b45d070b4c7406852f862"
+    },
+    "micro": {
+      "base": "registry.access.redhat.com/ubi9-micro",
+      "digest": "sha256:2f121287c24f6918641198642a8b9e69314987a0276182375618237561823756"
+    },
+    "init": {
+      "base": "registry.access.redhat.com/ubi9-init",
+      "digest": "sha256:88923f58ef6aebe2b8f543f8f6c5af15c6f9aeeef34ba332f33bf7610012de0c"
+    },
+    "updated": "2026-02-15",
+    "reason": "Baseline for Trusted Images"
+  },
+  "ubi10": {
+    "standard": {
+      "base": "registry.access.redhat.com/ubi10",
+      "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "updated": "2026-02-15",
+    "reason": "Initial UBI10 Support"
+  }
+}
