@@ -5,8 +5,29 @@ on:
     branches: [ main ]
 
 jobs:
+  matrix-setup:
+    name: Resolve Build Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.matrix.outputs.versions }}
+      variants: ${{ steps.matrix.outputs.variants }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Extract matrix from versions.json
+        id: matrix
+        run: |
+          VERSIONS=$(jq -c '[keys[] | ltrimstr("ubi")]' versions.json)
+          VARIANTS=$(jq -c '[to_entries[].value | to_entries[] | select(.value | type == "object" and has("base")) | .key] | unique' versions.json)
+          echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
+          echo "variants=$VARIANTS" >> $GITHUB_OUTPUT
+          echo "Resolved versions: $VERSIONS"
+          echo "Resolved variants: $VARIANTS"
+
   build-and-sign:
     name: Build UBI Variant
+    needs: matrix-setup
     runs-on: ubuntu-latest
     environment: Build-Actor
     permissions:
@@ -17,8 +38,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [standard, minimal, micro, init]
-        version: [9, 10]
+        variant: ${{ fromJSON(needs.matrix-setup.outputs.variants) }}
+        version: ${{ fromJSON(needs.matrix-setup.outputs.versions) }}
         arch: [amd64, arm64]
 
     steps:
@@ -89,8 +110,11 @@ jobs:
           
           # 2. Push the image
           buildah push "$IMAGE_NAME:$TAG"
+
+          # 3. Export to local OCI directory for Syft/Grype scanning
+          buildah push "$IMAGE_NAME:$TAG" oci:./oci-image
           
-          # 3. Capture the hex ID
+          # 4. Capture the hex ID
           RAW_DIGEST=$(buildah inspect --format '{{.FromImageID}}' "$IMAGE_NAME:$TAG")
           
           # Ensure it has the sha256 prefix for OCI tools
@@ -102,9 +126,7 @@ jobs:
       - name: Generate and Sign Artifacts
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-          # We use the IMAGE_NAME:TAG for local lookups instead of the Digest URI
-          # because local storage drivers are tag-aware.
-          LOCAL_IMAGE: "containers-storage:ghcr.io/${{ github.repository }}/development/ubi${{ matrix.version }}-${{ matrix.variant }}:pr-${{ github.event.pull_request.number }}-${{ matrix.arch }}"
+          LOCAL_IMAGE: "oci-dir:./oci-image"
         run: |
           echo "📦 Generating SBOM (Syft) from local storage..."
           syft "${{ env.LOCAL_IMAGE }}" -o spdx-json=sbom.json

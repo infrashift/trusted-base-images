@@ -6,15 +6,15 @@
     },
     "minimal": {
       "base": "registry.access.redhat.com/ubi9-minimal",
-      "digest": "sha256:5688536f9872e452144a142079f8266205e46535560b45d070b4c7406852f862"
+      "digest": "sha256:759f5f42d9d6ce2a705e290b7fc549e2d2cd39312c4fa345f93c02e4abb8da95"
     },
     "micro": {
       "base": "registry.access.redhat.com/ubi9-micro",
-      "digest": "sha256:2f121287c24f6918641198642a8b9e69314987a0276182375618237561823756"
+      "digest": "sha256:e9765516d74cafded50d8ef593331eeca2ef6eababdda118e5297898d99b7433"
     },
     "init": {
       "base": "registry.access.redhat.com/ubi9-init",
-      "digest": "sha256:88923f58ef6aebe2b8f543f8f6c5af15c6f9aeeef34ba332f33bf7610012de0c"
+      "digest": "sha256:f9d3c9784baa730b28ab80d59dcf45ffdd2cf863c8e09a9ff6f455ef11439bd7"
     },
     "updated": "2026-02-15",
     "reason": "Baseline images"
