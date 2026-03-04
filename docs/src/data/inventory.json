@@ -3,14 +3,89 @@
     "status": "trusted",
     "tags": [
       {
-        "tag": "48d891a-amd64",
+        "tag": "a06b10a-amd64",
         "arch": "amd64",
+        "digest": "sha256:6c72f2f5f23b96d296bad5fd20bab2554a5c9f944917f7dad410a17158a3c1da"
+      },
+      {
+        "tag": "a06b10a-arm64",
+        "arch": "arm64",
+        "digest": "sha256:9a49f24477aea041eb0b1e340f388eb9874e3a9c05835b8f6736c395cd573fba"
+      },
+      {
+        "tag": "sha256-a0bf654f8412b975fbe95defc5d59f35411d12b9b4113ff23bbffbffbc3bfe94",
+        "type": "manifest-list",
         "digest": "sha256:a0bf654f8412b975fbe95defc5d59f35411d12b9b4113ff23bbffbffbc3bfe94"
       },
       {
-        "tag": "48d891a-arm64",
-        "arch": "arm64",
+        "tag": "sha256-a0bf654f8412b975fbe95defc5d59f35411d12b9b4113ff23bbffbffbc3bfe94.att",
+        "type": "manifest-list",
+        "digest": "sha256:f68f2c992bce1fefad8240b9d5368da299c3297844981f8309357ffc638ef8c8"
+      },
+      {
+        "tag": "sha256-ba7d50e75dfc32ba74252f000415f8f42e1b3b308f96c52e690a056f6fac97bb",
+        "type": "manifest-list",
         "digest": "sha256:ba7d50e75dfc32ba74252f000415f8f42e1b3b308f96c52e690a056f6fac97bb"
+      },
+      {
+        "tag": "sha256-ba7d50e75dfc32ba74252f000415f8f42e1b3b308f96c52e690a056f6fac97bb.att",
+        "type": "manifest-list",
+        "digest": "sha256:02435b4c80b79f8dea037928286fb2d01e93e583b9c4856aa7d2728dc7353921"
+      },
+      {
+        "tag": "latest",
+        "type": "manifest-list",
+        "digest": "sha256:63154d5ad8532847fc2be4c66935749450a989c503dfae32a3c2f2ffed70e61e"
+      },
+      {
+        "tag": "20260216",
+        "type": "manifest-list",
+        "digest": "sha256:f938c070dc5906b9915a0c056e85a002a00900af17a08bfa4783fb80a45ad889"
+      },
+      {
+        "tag": "48d891a",
+        "type": "manifest-list",
+        "digest": "sha256:f938c070dc5906b9915a0c056e85a002a00900af17a08bfa4783fb80a45ad889"
+      },
+      {
+        "tag": "sha256-f938c070dc5906b9915a0c056e85a002a00900af17a08bfa4783fb80a45ad889.sig",
+        "type": "manifest-list",
+        "digest": "sha256:8858f5cb0a7f796eb811aac403620556879696660afa8d9ec158b31c680c0918"
+      },
+      {
+        "tag": "sha256-9a49f24477aea041eb0b1e340f388eb9874e3a9c05835b8f6736c395cd573fba",
+        "type": "manifest-list",
+        "digest": "sha256:9a49f24477aea041eb0b1e340f388eb9874e3a9c05835b8f6736c395cd573fba"
+      },
+      {
+        "tag": "sha256-9a49f24477aea041eb0b1e340f388eb9874e3a9c05835b8f6736c395cd573fba.att",
+        "type": "manifest-list",
+        "digest": "sha256:c76fe6297909017d31b92186ed28de427c57a6f69a9e52db2231da0e6e9a9196"
+      },
+      {
+        "tag": "sha256-6c72f2f5f23b96d296bad5fd20bab2554a5c9f944917f7dad410a17158a3c1da",
+        "type": "manifest-list",
+        "digest": "sha256:6c72f2f5f23b96d296bad5fd20bab2554a5c9f944917f7dad410a17158a3c1da"
+      },
+      {
+        "tag": "sha256-6c72f2f5f23b96d296bad5fd20bab2554a5c9f944917f7dad410a17158a3c1da.att",
+        "type": "manifest-list",
+        "digest": "sha256:de9c99f930864d2accbf7b9beb0a1bfda8edf4a21315a33acbb3377564001bd8"
+      },
+      {
+        "tag": "20260304",
+        "type": "manifest-list",
+        "digest": "sha256:63154d5ad8532847fc2be4c66935749450a989c503dfae32a3c2f2ffed70e61e"
+      },
+      {
+        "tag": "a06b10a",
+        "type": "manifest-list",
+        "digest": "sha256:63154d5ad8532847fc2be4c66935749450a989c503dfae32a3c2f2ffed70e61e"
+      },
+      {
+        "tag": "sha256-63154d5ad8532847fc2be4c66935749450a989c503dfae32a3c2f2ffed70e61e.sig",
+        "type": "manifest-list",
+        "digest": "sha256:a7ee9f0f7e832fbc5ef7387c73be75c0353d12bd0e8c571b2eb4e31998e955cd"
       }
     ],
     "cves": {
@@ -160,7 +235,7 @@
         {
           "id": "CVE-2026-0915",
           "package": "glibc",
-          "fixedIn": null
+          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2026-0990",
@@ -200,6 +275,46 @@
         {
           "id": "CVE-2026-25749",
           "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-26960",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28417",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28418",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28419",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28420",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28421",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3441",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3442",
+          "package": "gdb-gdbserver",
           "fixedIn": null
         }
       ],
@@ -912,7 +1027,7 @@
         {
           "id": "CVE-2025-15281",
           "package": "glibc",
-          "fixedIn": null
+          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2025-1632",
@@ -1037,7 +1152,7 @@
         {
           "id": "CVE-2026-0861",
           "package": "glibc",
-          "fixedIn": null
+          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2026-0988",
@@ -1068,6 +1183,21 @@
           "id": "CVE-2026-24883",
           "package": "gnupg2",
           "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-26269",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-27171",
+          "package": "zlib",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28422",
+          "package": "vim-minimal",
+          "fixedIn": null
         }
       ]
     }
@@ -1076,14 +1206,89 @@
     "status": "trusted",
     "tags": [
       {
-        "tag": "48d891a-amd64",
+        "tag": "a06b10a-amd64",
         "arch": "amd64",
+        "digest": "sha256:1f47e3c3a6f7ba273c53123346b9334cc42c5557a534fb2555645994eae1355e"
+      },
+      {
+        "tag": "a06b10a-arm64",
+        "arch": "arm64",
+        "digest": "sha256:db9fbb473e9bf1bd3a4063cfe74d189029cdfd41b8cff7cb4e67136b1d056ddd"
+      },
+      {
+        "tag": "sha256-554931b52f4fa596166b67cbe6a663d0ea2f16df916952b68b743d5a836454a8",
+        "type": "manifest-list",
+        "digest": "sha256:554931b52f4fa596166b67cbe6a663d0ea2f16df916952b68b743d5a836454a8"
+      },
+      {
+        "tag": "sha256-554931b52f4fa596166b67cbe6a663d0ea2f16df916952b68b743d5a836454a8.att",
+        "type": "manifest-list",
+        "digest": "sha256:354df130107fbc1c01d55fd38da04bd08076987eeb7b78d0e88608a3cea0e146"
+      },
+      {
+        "tag": "sha256-1f3784171328e103569949dc9c45b292cac209d484a3191cee2ddaf5e83faeea",
+        "type": "manifest-list",
         "digest": "sha256:1f3784171328e103569949dc9c45b292cac209d484a3191cee2ddaf5e83faeea"
       },
       {
-        "tag": "48d891a-arm64",
-        "arch": "arm64",
-        "digest": "sha256:554931b52f4fa596166b67cbe6a663d0ea2f16df916952b68b743d5a836454a8"
+        "tag": "sha256-1f3784171328e103569949dc9c45b292cac209d484a3191cee2ddaf5e83faeea.att",
+        "type": "manifest-list",
+        "digest": "sha256:851ab8bb1bbd25a5ba5c7e9c08318801e10b29020f0cb7f2dfb869ddc51f469f"
+      },
+      {
+        "tag": "latest",
+        "type": "manifest-list",
+        "digest": "sha256:08a5f6fca13ef8a2fd66cf7fafc50e3b75be747ea2112d908d11165fcccd4626"
+      },
+      {
+        "tag": "20260216",
+        "type": "manifest-list",
+        "digest": "sha256:93d88a33dee8a1f207078b8d0394a9ab3ede60357c3d86d57452cb765b84cb35"
+      },
+      {
+        "tag": "48d891a",
+        "type": "manifest-list",
+        "digest": "sha256:93d88a33dee8a1f207078b8d0394a9ab3ede60357c3d86d57452cb765b84cb35"
+      },
+      {
+        "tag": "sha256-93d88a33dee8a1f207078b8d0394a9ab3ede60357c3d86d57452cb765b84cb35.sig",
+        "type": "manifest-list",
+        "digest": "sha256:ed4a6661985ea15b4a240fb709f37ccb598380d8c287fdfdfdd884fade1c0f6e"
+      },
+      {
+        "tag": "sha256-1f47e3c3a6f7ba273c53123346b9334cc42c5557a534fb2555645994eae1355e",
+        "type": "manifest-list",
+        "digest": "sha256:1f47e3c3a6f7ba273c53123346b9334cc42c5557a534fb2555645994eae1355e"
+      },
+      {
+        "tag": "sha256-1f47e3c3a6f7ba273c53123346b9334cc42c5557a534fb2555645994eae1355e.att",
+        "type": "manifest-list",
+        "digest": "sha256:be72c0a4bf0269c7f2b54223cb5976fe5a3d3974fa59b80dbddaaf460c0df160"
+      },
+      {
+        "tag": "sha256-db9fbb473e9bf1bd3a4063cfe74d189029cdfd41b8cff7cb4e67136b1d056ddd",
+        "type": "manifest-list",
+        "digest": "sha256:db9fbb473e9bf1bd3a4063cfe74d189029cdfd41b8cff7cb4e67136b1d056ddd"
+      },
+      {
+        "tag": "sha256-db9fbb473e9bf1bd3a4063cfe74d189029cdfd41b8cff7cb4e67136b1d056ddd.att",
+        "type": "manifest-list",
+        "digest": "sha256:7a7323899b54418e53a670b17e2cba1ebce974416c4f20aa1d2a67a2e033a230"
+      },
+      {
+        "tag": "20260304",
+        "type": "manifest-list",
+        "digest": "sha256:08a5f6fca13ef8a2fd66cf7fafc50e3b75be747ea2112d908d11165fcccd4626"
+      },
+      {
+        "tag": "a06b10a",
+        "type": "manifest-list",
+        "digest": "sha256:08a5f6fca13ef8a2fd66cf7fafc50e3b75be747ea2112d908d11165fcccd4626"
+      },
+      {
+        "tag": "sha256-08a5f6fca13ef8a2fd66cf7fafc50e3b75be747ea2112d908d11165fcccd4626.sig",
+        "type": "manifest-list",
+        "digest": "sha256:f80aac62834239454b08bc56514c7e0cfed1dba81e0e97aa7c7626b6566a9729"
       }
     ],
     "cves": {
@@ -1133,7 +1338,7 @@
         {
           "id": "CVE-2026-0915",
           "package": "glibc",
-          "fixedIn": null
+          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2026-0990",
@@ -1250,7 +1455,7 @@
         {
           "id": "CVE-2025-15281",
           "package": "glibc",
-          "fixedIn": null
+          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2025-1632",
@@ -1315,7 +1520,7 @@
         {
           "id": "CVE-2026-0861",
           "package": "glibc",
-          "fixedIn": null
+          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2026-0988",
@@ -1341,6 +1546,11 @@
           "id": "CVE-2026-24883",
           "package": "gnupg2",
           "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-27171",
+          "package": "zlib",
+          "fixedIn": null
         }
       ]
     }
@@ -1349,14 +1559,89 @@
     "status": "trusted",
     "tags": [
       {
-        "tag": "48d891a-amd64",
+        "tag": "a06b10a-amd64",
         "arch": "amd64",
+        "digest": "sha256:7ceda67f5c5cbd36d89a5f14b413b83874c9d2e438cadc8600937c33e721ef77"
+      },
+      {
+        "tag": "a06b10a-arm64",
+        "arch": "arm64",
+        "digest": "sha256:b752ad113c50492090e9279ff16e913bf68630c11f7531f6c39b13b9e4595214"
+      },
+      {
+        "tag": "sha256-04cd7da1ebad5f6a5545ad4c8675aea05548ad1623b706cc8c243ab866f4cce3",
+        "type": "manifest-list",
+        "digest": "sha256:04cd7da1ebad5f6a5545ad4c8675aea05548ad1623b706cc8c243ab866f4cce3"
+      },
+      {
+        "tag": "sha256-04cd7da1ebad5f6a5545ad4c8675aea05548ad1623b706cc8c243ab866f4cce3.att",
+        "type": "manifest-list",
+        "digest": "sha256:1e16fa8ee086966dfb0a619bd47a37a06b4a0528b1d59dd5cc734ef1860021b6"
+      },
+      {
+        "tag": "sha256-4b0683f0567bd6ea84b75ef56fb0bf17f991cbd17c59984daa75835ac9101817.att",
+        "type": "manifest-list",
+        "digest": "sha256:131422f57e4bae79ca54f72497ed166b94d98ef33b27a3ef03d716d9cc6e4b9a"
+      },
+      {
+        "tag": "sha256-4b0683f0567bd6ea84b75ef56fb0bf17f991cbd17c59984daa75835ac9101817",
+        "type": "manifest-list",
         "digest": "sha256:4b0683f0567bd6ea84b75ef56fb0bf17f991cbd17c59984daa75835ac9101817"
       },
       {
-        "tag": "48d891a-arm64",
-        "arch": "arm64",
-        "digest": "sha256:04cd7da1ebad5f6a5545ad4c8675aea05548ad1623b706cc8c243ab866f4cce3"
+        "tag": "latest",
+        "type": "manifest-list",
+        "digest": "sha256:4a594d078a6f696bf37249da439217971b2b793204dd99ccc85d31a4b1320749"
+      },
+      {
+        "tag": "20260216",
+        "type": "manifest-list",
+        "digest": "sha256:9462804e0459cdfcbdc47acd97728e8d424da2ac42d799f6603dba397da15459"
+      },
+      {
+        "tag": "48d891a",
+        "type": "manifest-list",
+        "digest": "sha256:9462804e0459cdfcbdc47acd97728e8d424da2ac42d799f6603dba397da15459"
+      },
+      {
+        "tag": "sha256-9462804e0459cdfcbdc47acd97728e8d424da2ac42d799f6603dba397da15459.sig",
+        "type": "manifest-list",
+        "digest": "sha256:9f1c5cc6b9c538715233872e5f4aeb1fce428e070d86a23dc9d38670351261cc"
+      },
+      {
+        "tag": "sha256-7ceda67f5c5cbd36d89a5f14b413b83874c9d2e438cadc8600937c33e721ef77",
+        "type": "manifest-list",
+        "digest": "sha256:7ceda67f5c5cbd36d89a5f14b413b83874c9d2e438cadc8600937c33e721ef77"
+      },
+      {
+        "tag": "sha256-7ceda67f5c5cbd36d89a5f14b413b83874c9d2e438cadc8600937c33e721ef77.att",
+        "type": "manifest-list",
+        "digest": "sha256:3864a4c2e9dffd3f6f3bdd1cab2d6ee4f0ed5cc387769f28bdd513caec6bb5aa"
+      },
+      {
+        "tag": "sha256-b752ad113c50492090e9279ff16e913bf68630c11f7531f6c39b13b9e4595214",
+        "type": "manifest-list",
+        "digest": "sha256:b752ad113c50492090e9279ff16e913bf68630c11f7531f6c39b13b9e4595214"
+      },
+      {
+        "tag": "sha256-b752ad113c50492090e9279ff16e913bf68630c11f7531f6c39b13b9e4595214.att",
+        "type": "manifest-list",
+        "digest": "sha256:9f19bdfac3a925542a32e839790520b5bf86ac38e638b7f25cb8181a02959cb0"
+      },
+      {
+        "tag": "20260304",
+        "type": "manifest-list",
+        "digest": "sha256:4a594d078a6f696bf37249da439217971b2b793204dd99ccc85d31a4b1320749"
+      },
+      {
+        "tag": "a06b10a",
+        "type": "manifest-list",
+        "digest": "sha256:4a594d078a6f696bf37249da439217971b2b793204dd99ccc85d31a4b1320749"
+      },
+      {
+        "tag": "sha256-4a594d078a6f696bf37249da439217971b2b793204dd99ccc85d31a4b1320749.sig",
+        "type": "manifest-list",
+        "digest": "sha256:ba9b9ccb8708472f565ecd1b1cdcb7b44f945a4d427d6ff9cc5da23d0834cfff"
       }
     ],
     "cves": {
@@ -1371,7 +1656,7 @@
         {
           "id": "CVE-2026-0915",
           "package": "glibc",
-          "fixedIn": null
+          "fixedIn": "0:2.34-231.el9_7.10"
         }
       ],
       "low": [
@@ -1393,12 +1678,12 @@
         {
           "id": "CVE-2025-15281",
           "package": "glibc",
-          "fixedIn": null
+          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2026-0861",
           "package": "glibc",
-          "fixedIn": null
+          "fixedIn": "0:2.34-231.el9_7.10"
         }
       ]
     }
@@ -1407,14 +1692,14 @@
     "status": "quarantine",
     "tags": [
       {
-        "tag": "pr-9-amd64",
+        "tag": "pr-10-amd64",
         "arch": "amd64",
-        "digest": "sha256:7d05e5cd50d22ed110f65c5e57e5a632e521b344a22325251b3febc3e17f1bfc"
+        "digest": "sha256:3bd5acb3ad8adc8c7a67d5c895454a04bfd5d59955cc926b4db6c0ba2fd482fe"
       },
       {
-        "tag": "pr-9-arm64",
+        "tag": "pr-10-arm64",
         "arch": "arm64",
-        "digest": "sha256:813ad30d59db57f3ef36dc3b0a3d6fd4182d5ce7c93ede35b23e114b0b7e43e1"
+        "digest": "sha256:ed15931e4c2cd34980cbb13c791ab44add667b782c470c5a4584e14a1d70a556"
       }
     ],
     "cves": {
@@ -1595,7 +1880,7 @@
         {
           "id": "CVE-2026-0915",
           "package": "glibc",
-          "fixedIn": null
+          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2026-0990",
@@ -1635,6 +1920,46 @@
         {
           "id": "CVE-2026-25749",
           "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-26960",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28417",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28418",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28419",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28420",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28421",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3441",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3442",
+          "package": "gdb-gdbserver",
           "fixedIn": null
         }
       ],
@@ -2347,7 +2672,7 @@
         {
           "id": "CVE-2025-15281",
           "package": "glibc",
-          "fixedIn": null
+          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2025-15468",
@@ -2507,7 +2832,7 @@
         {
           "id": "CVE-2026-0861",
           "package": "glibc",
-          "fixedIn": null
+          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2026-0988",
@@ -2548,6 +2873,21 @@
           "id": "CVE-2026-24883",
           "package": "gnupg2",
           "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-26269",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-27171",
+          "package": "zlib",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28422",
+          "package": "vim-minimal",
+          "fixedIn": null
         }
       ]
     }
@@ -2556,9 +2896,9 @@
     "status": "quarantine",
     "tags": [
       {
-        "tag": "pr-9-amd64",
+        "tag": "pr-10-amd64",
         "arch": "amd64",
-        "digest": "sha256:74325d3f118ad5bfb5806e7c26492eb3108e3e1a699edaf845077047633c885a"
+        "digest": "sha256:918e9a514892e4affef250e16d9a27ed52a7b79b4c2180b30c943c6ca6e0d9c9"
       }
     ],
     "cves": {
@@ -2597,11 +2937,6 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2024-6197",
-          "package": "curl",
-          "fixedIn": null
-        },
-        {
           "id": "CVE-2025-14017",
           "package": "curl",
           "fixedIn": null
@@ -2619,7 +2954,7 @@
         {
           "id": "CVE-2025-14831",
           "package": "gnutls",
-          "fixedIn": null
+          "fixedIn": "0:3.8.10-3.el10_1"
         },
         {
           "id": "CVE-2025-29087",
@@ -2674,6 +3009,11 @@
         {
           "id": "CVE-2026-2100",
           "package": "p11-kit",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-2625",
+          "package": "rpm-sequoia",
           "fixedIn": null
         }
       ],
@@ -2806,7 +3146,7 @@
         {
           "id": "CVE-2025-9820",
           "package": "gnutls",
-          "fixedIn": null
+          "fixedIn": "0:3.8.10-3.el10_1"
         },
         {
           "id": "CVE-2026-0988",
@@ -2832,8 +3172,44 @@
     }
   },
   "fedora43-minimal": {
-    "status": "pending",
-    "tags": [],
+    "status": "trusted",
+    "tags": [
+      {
+        "tag": "a06b10a-amd64",
+        "arch": "amd64",
+        "digest": "sha256:cc9bdc4e9cd7330df6d15ee1bfa3c73390a78dd439c926678a16a6ed7b9553da"
+      },
+      {
+        "tag": "sha256-cc9bdc4e9cd7330df6d15ee1bfa3c73390a78dd439c926678a16a6ed7b9553da",
+        "type": "manifest-list",
+        "digest": "sha256:cc9bdc4e9cd7330df6d15ee1bfa3c73390a78dd439c926678a16a6ed7b9553da"
+      },
+      {
+        "tag": "sha256-cc9bdc4e9cd7330df6d15ee1bfa3c73390a78dd439c926678a16a6ed7b9553da.att",
+        "type": "manifest-list",
+        "digest": "sha256:c7bfbd00e971ee371c02a7298838f20565be74951d90434ba216893cf6864440"
+      },
+      {
+        "tag": "latest",
+        "type": "manifest-list",
+        "digest": "sha256:8263753328e45e77899fb0bd940877086a67fa14e4cb2315bf2374f4ddc2b76e"
+      },
+      {
+        "tag": "20260304",
+        "type": "manifest-list",
+        "digest": "sha256:8263753328e45e77899fb0bd940877086a67fa14e4cb2315bf2374f4ddc2b76e"
+      },
+      {
+        "tag": "a06b10a",
+        "type": "manifest-list",
+        "digest": "sha256:8263753328e45e77899fb0bd940877086a67fa14e4cb2315bf2374f4ddc2b76e"
+      },
+      {
+        "tag": "sha256-8263753328e45e77899fb0bd940877086a67fa14e4cb2315bf2374f4ddc2b76e.sig",
+        "type": "manifest-list",
+        "digest": "sha256:c6d96ac166cacced09bd74e47f6aed988c01989a35bf0b9dd34d9951b6edb20b"
+      }
+    ],
     "cves": {
       "critical": [],
       "high": [],
