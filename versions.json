@@ -37,6 +37,6 @@
       "amd64": { "digest": "sha256:6807db6619d7711b7b0665af7cb99f9dc1a1b6cd9425b3bdf9e20818670235f7" }
     },
     "updated": "2026-03-03",
-    "reason": "Add Fedora 43 minimal base image"
+    "reason": "Initial Fedora 43 minimal build"
   }
 }
