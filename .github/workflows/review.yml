@@ -53,7 +53,7 @@ jobs:
           echo "Review matrix: $MATRIX"
 
   review:
-    name: Review UBI Variant
+    name: Review Image Variant
     needs: [gate-check, matrix-setup]
     runs-on: ubuntu-latest
     environment: Review-Actor
@@ -91,7 +91,7 @@ jobs:
       - name: Download Evidence Bundle
         uses: actions/download-artifact@v4
         with:
-          name: evidence-ubi${{ matrix.version }}-${{ matrix.variant }}-${{ matrix.arch }}
+          name: evidence-${{ matrix.image }}-${{ matrix.arch }}
           path: evidence/
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -162,7 +162,7 @@ jobs:
         id: upstream
         run: |
           PROV_DIGEST=$(jq -r '.buildDefinition.resolvedDependencies[0].digest.sha256' evidence/provenance.json)
-          EXPECTED_DIGEST=$(jq -r '.ubi${{ matrix.version }}.${{ matrix.variant }}.${{ matrix.arch }}.digest' versions.json | sed 's/^sha256://')
+          EXPECTED_DIGEST=$(jq -r '.${{ matrix.distro_key }}.${{ matrix.variant }}.${{ matrix.arch }}.digest' versions.json | sed 's/^sha256://')
 
           echo "Provenance upstream digest: $PROV_DIGEST"
           echo "versions.json digest:       $EXPECTED_DIGEST"
@@ -251,7 +251,7 @@ jobs:
             --arg uri "$IMAGE_URI" \
             --arg digest "$IMAGE_DIGEST" \
             --arg variant "${{ matrix.variant }}" \
-            --arg version "ubi${{ matrix.version }}" \
+            --arg version "${{ matrix.distro_key }}" \
             --arg arch "${{ matrix.arch }}" \
             --arg cveResult "$CVE_RESULT" \
             --argjson critical "${CVE_CRITICAL}" \
@@ -333,7 +333,7 @@ jobs:
       - name: Upload Review Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: review-ubi${{ matrix.version }}-${{ matrix.variant }}-${{ matrix.arch }}
+          name: review-${{ matrix.image }}-${{ matrix.arch }}
           path: |
             review-verdict.json
             review-verdict.json.sig

@@ -1,9 +1,9 @@
 ---
 title: Image Catalog
-description: Overview of all Trusted Base Images built from Red Hat Universal Base Images.
+description: Overview of all Trusted Base Images.
 ---
 
-Trusted Base Images provides hardened, SLSA Level 3 compliant variants of Red Hat Universal Base Images (UBI). Each image is built from digest-pinned upstream sources, scanned for vulnerabilities, and cryptographically signed through a three-actor governance chain.
+Trusted Base Images provides hardened, SLSA Level 3 compliant container base images. Each image is built from digest-pinned upstream sources, scanned for vulnerabilities, and cryptographically signed through a three-actor governance chain.
 
 ## Available Images
 
@@ -24,6 +24,16 @@ Trusted Base Images provides hardened, SLSA Level 3 compliant variants of Red Ha
 
 :::caution
 UBI10 images are currently available for amd64 only. arm64 support will be added when upstream provides it.
+:::
+
+### Fedora 43
+
+| Image | Variant | Upstream Source | Architectures | Use Case |
+|-------|---------|----------------|:-------------:|----------|
+| [Fedora 43 Minimal](/trusted-base-images/images/fedora43-minimal/) | `minimal` | [fedora-minimal](https://fedoraproject.org/containers/) | amd64 | Fedora-based workloads with minimal footprint |
+
+:::caution
+Fedora 43 images are currently available for amd64 only.
 :::
 
 ## Registry

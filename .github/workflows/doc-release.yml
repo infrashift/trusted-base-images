@@ -104,8 +104,10 @@ jobs:
           # Start with empty inventory
           INVENTORY='{}'
 
-          # Define all images
-          IMAGES=("ubi9-standard" "ubi9-minimal" "ubi9-micro" "ubi9-init" "ubi10-minimal")
+          # Derive image list from versions.json
+          IMAGES=($(jq -r 'to_entries[] | .key as $dk | .value | to_entries[] |
+            select(.value | type == "object" and has("base")) |
+            "\($dk)-\(.key)"' versions.json))
 
           for IMAGE in "${IMAGES[@]}"; do
             STATUS="trusted"
@@ -131,11 +133,7 @@ jobs:
                 '. + [{"tag": $tag, "arch": $arch, "digest": $digest}]')
 
               # Extract CVE data from evidence if available
-              # Map image name to evidence naming: ubi9-standard -> ubi9-standard
-              # Extract version and variant for evidence artifact naming
-              VERSION=$(jq -r '.version' "$RESULT_FILE")
-              VARIANT=$(jq -r '.variant' "$RESULT_FILE")
-              EVIDENCE_DIR="evidence/evidence-ubi${VERSION}-${VARIANT}-${ARCH}"
+              EVIDENCE_DIR="evidence/evidence-${IMAGE}-${ARCH}"
 
               if [[ -f "${EVIDENCE_DIR}/cve-report.json" ]]; then
                 for SEVERITY in Critical High Medium Low; do

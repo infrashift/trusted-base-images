@@ -26,48 +26,45 @@ jobs:
         run: |
           set -euo pipefail
 
-          # 1. Enumerate all valid {version, variant, arch} triples from versions.json
-          ALL_TRIPLES=$(jq -c '[to_entries[] | .key as $ver | .value | to_entries[] |
+          # 1. Enumerate all valid {image, distro_key, version, variant, arch} triples from versions.json
+          ALL_TRIPLES=$(jq -c '[to_entries[] | .key as $dk | .value | to_entries[] |
             select(.value | type == "object" and has("base")) |
             .key as $var | .value | to_entries[] |
             select(.key != "base" and (.value | type == "object" and has("digest"))) |
-            {version: ($ver | ltrimstr("ubi")), variant: $var, arch: .key}]' versions.json)
+            {image: ($dk + "-" + $var), distro_key: $dk,
+             version: ($dk | ltrimstr("ubi")), variant: $var, arch: .key}]' versions.json)
           echo "All valid triples: $ALL_TRIPLES"
 
-          # 2. Detect changed Containerfiles → (version, variant) pairs
-          CHANGED_PAIRS="[]"
+          # 2. Detect changed Containerfiles → image names
+          CHANGED_IMAGES="[]"
           while IFS= read -r file; do
             [[ -z "$file" ]] && continue
-            basename=$(basename "$file" .Containerfile)
-            if [[ "$basename" =~ ^ubi([0-9]+)-(.+)$ ]]; then
-              ver="${BASH_REMATCH[1]}"
-              var="${BASH_REMATCH[2]}"
-              CHANGED_PAIRS=$(echo "$CHANGED_PAIRS" | jq -c --arg v "$ver" --arg r "$var" \
-                '. + [{version: $v, variant: $r}]')
-            fi
+            img=$(basename "$file" .Containerfile)
+            CHANGED_IMAGES=$(echo "$CHANGED_IMAGES" | jq -c --arg i "$img" '. + [$i]')
           done < <(git diff --name-only "${BASE_SHA}" HEAD -- 'Containerfiles/*.Containerfile' 2>/dev/null || true)
-          echo "Changed Containerfiles: $CHANGED_PAIRS"
+          echo "Changed Containerfiles: $CHANGED_IMAGES"
 
-          # Expand changed pairs to all arches for those pairs from ALL_TRIPLES
-          CHANGED_CF=$(jq -c --argjson pairs "$CHANGED_PAIRS" \
-            '[.[] | . as $t | select($pairs | any(.version == $t.version and .variant == $t.variant))]' <<< "$ALL_TRIPLES")
+          # Expand changed images to all arches from ALL_TRIPLES
+          CHANGED_CF=$(jq -c --argjson imgs "$CHANGED_IMAGES" \
+            '[.[] | select(.image as $i | $imgs | any(. == $i))]' <<< "$ALL_TRIPLES")
 
           # 3. Detect changed versions.json entries (per-arch digest and base changes)
           BASE_VERSIONS=$(git show "${BASE_SHA}:versions.json" 2>/dev/null || echo '{}')
           CHANGED_VJ=$(jq -c --argjson base "$BASE_VERSIONS" '
-            [to_entries[] | .key as $ver | .value | to_entries[] |
+            [to_entries[] | .key as $dk | .value | to_entries[] |
              select(.value | type == "object" and has("base")) |
              .key as $var | .value |
              . as $variant |
              to_entries[] |
              select(.key != "base" and (.value | type == "object" and has("digest"))) |
-             {version: ($ver | ltrimstr("ubi")), variant: $var, arch: .key,
+             {image: ($dk + "-" + $var), distro_key: $dk,
+              version: ($dk | ltrimstr("ubi")), variant: $var, arch: .key,
               base: $variant.base, digest: .value.digest} |
              select(
-               ($base[("ubi" + .version)]?[.variant]?.base // null) != .base or
-               ($base[("ubi" + .version)]?[.variant]?[.arch]?.digest // null) != .digest
+               ($base[$dk]?[$var]?.base // null) != .base or
+               ($base[$dk]?[$var]?[.arch]?.digest // null) != .digest
              ) |
-             {version, variant, arch}
+             {image, distro_key, version, variant, arch}
             ]' versions.json)
           echo "Changed versions.json entries: $CHANGED_VJ"
 
@@ -97,7 +94,7 @@ jobs:
           path: build-matrix.json
 
   build-and-sign:
-    name: Build UBI Variant
+    name: Build Image Variant
     needs: matrix-setup
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     environment: Build-Actor
@@ -138,7 +135,7 @@ jobs:
       - name: Load Upstream Metadata
         id: metadata
         run: |
-          KEY_VER="ubi${{ matrix.version }}"
+          KEY_VER="${{ matrix.distro_key }}"
           VAR="${{ matrix.variant }}"
           ARCH="${{ matrix.arch }}"
 
@@ -160,7 +157,7 @@ jobs:
           REGISTRY: ghcr.io/${{ github.repository }}/development
           PR_NUM: ${{ github.event.pull_request.number }}
         run: |
-          IMAGE_NAME="${REGISTRY}/ubi${{ matrix.version }}-${{ matrix.variant }}"
+          IMAGE_NAME="${REGISTRY}/${{ matrix.image }}"
           TAG="pr-${PR_NUM}-${{ matrix.arch }}"
           
           echo "Building Development Image: $IMAGE_NAME:$TAG"
@@ -175,7 +172,7 @@ jobs:
             --build-arg BUILD_DATE="$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
             --build-arg TARGETARCH="${{ matrix.arch }}" \
             -t "$IMAGE_NAME:$TAG" \
-            -f Containerfiles/ubi${{ matrix.version }}-${{ matrix.variant }}.Containerfile .
+            -f Containerfiles/${{ matrix.image }}.Containerfile .
           
           # 2. Push the image and capture the pushed manifest digest
           buildah push --digestfile ./pushed-digest.txt "$IMAGE_NAME:$TAG"
@@ -215,9 +212,9 @@ jobs:
             --arg sourceUri "git+https://github.com/${{ github.repository }}@${{ github.ref }}" \
             --arg sourceDigest "${{ github.sha }}" \
             --arg variant "${{ matrix.variant }}" \
-            --arg version "ubi${{ matrix.version }}" \
+            --arg version "${{ matrix.distro_key }}" \
             --arg arch "${{ matrix.arch }}" \
-            --arg containerfile "Containerfiles/ubi${{ matrix.version }}-${{ matrix.variant }}.Containerfile" \
+            --arg containerfile "Containerfiles/${{ matrix.image }}.Containerfile" \
             --arg platform "linux/${{ matrix.arch }}" \
             --arg buildahVersion "$BUILDAH_VERSION" \
             --arg cosignVersion "$COSIGN_VERSION" \
@@ -321,7 +318,7 @@ jobs:
       - name: Upload Evidence Bundle
         uses: actions/upload-artifact@v4
         with:
-          name: evidence-ubi${{ matrix.version }}-${{ matrix.variant }}-${{ matrix.arch }}
+          name: evidence-${{ matrix.image }}-${{ matrix.arch }}
           path: |
             sbom.json
             sbom.json.sig

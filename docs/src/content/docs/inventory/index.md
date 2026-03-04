@@ -28,3 +28,4 @@ Each image in the inventory has one of two statuses:
 | UBI9 Micro | [Inventory](/trusted-base-images/inventory/ubi9-micro/) |
 | UBI9 Init | [Inventory](/trusted-base-images/inventory/ubi9-init/) |
 | UBI10 Minimal | [Inventory](/trusted-base-images/inventory/ubi10-minimal/) |
+| Fedora 43 Minimal | [Inventory](/trusted-base-images/inventory/fedora43-minimal/) |

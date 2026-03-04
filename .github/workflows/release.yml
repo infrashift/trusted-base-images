@@ -60,7 +60,7 @@ jobs:
           MATRIX=$(cat build-matrix.json)
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 
-          MANIFEST_MATRIX=$(jq -c '[.[] | {version, variant}] | unique' build-matrix.json)
+          MANIFEST_MATRIX=$(jq -c '[.[] | {image, distro_key, version, variant}] | unique' build-matrix.json)
           echo "manifest_matrix=$MANIFEST_MATRIX" >> $GITHUB_OUTPUT
 
           echo "Release matrix: $MATRIX"
@@ -130,7 +130,7 @@ jobs:
           echo "review_run_id=$REVIEW_RUN_ID" >> $GITHUB_OUTPUT
 
   release:
-    name: Release UBI Variant
+    name: Release Image Variant
     needs: [gate-check, matrix-setup, resolve-review]
     runs-on: ubuntu-latest
     environment: Release-Actor
@@ -167,7 +167,7 @@ jobs:
       - name: Download review verdict
         uses: actions/download-artifact@v4
         with:
-          name: review-ubi${{ matrix.version }}-${{ matrix.variant }}-${{ matrix.arch }}
+          name: review-${{ matrix.image }}-${{ matrix.arch }}
           path: review/
           run-id: ${{ needs.resolve-review.outputs.review_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -274,7 +274,7 @@ jobs:
             TAG="pr-${PR_NUM}-${{ matrix.arch }}"
           fi
 
-          DEST_IMAGE="${DEST_REGISTRY}/ubi${{ matrix.version }}-${{ matrix.variant }}:${TAG}"
+          DEST_IMAGE="${DEST_REGISTRY}/${{ matrix.image }}:${TAG}"
 
           echo "namespace=$NAMESPACE" >> $GITHUB_OUTPUT
           echo "registry=$DEST_REGISTRY" >> $GITHUB_OUTPUT
@@ -376,7 +376,8 @@ jobs:
       - name: Generate release result
         env:
           VARIANT: ${{ matrix.variant }}
-          VERSION: ${{ matrix.version }}
+          VERSION: ${{ matrix.distro_key }}
+          IMAGE: ${{ matrix.image }}
           ARCH: ${{ matrix.arch }}
           VERDICT: ${{ steps.review.outputs.verdict }}
           NAMESPACE: ${{ steps.dest.outputs.namespace }}
@@ -386,6 +387,7 @@ jobs:
           jq -n \
             --arg variant "$VARIANT" \
             --arg version "$VERSION" \
+            --arg image "$IMAGE" \
             --arg arch "$ARCH" \
             --arg verdict "$VERDICT" \
             --arg namespace "$NAMESPACE" \
@@ -394,6 +396,7 @@ jobs:
             '{
               "variant": $variant,
               "version": $version,
+              "image": $image,
               "arch": $arch,
               "verdict": $verdict,
               "namespace": $namespace,
@@ -407,7 +410,7 @@ jobs:
       - name: Upload release result
         uses: actions/upload-artifact@v4
         with:
-          name: release-result-ubi${{ matrix.version }}-${{ matrix.variant }}-${{ matrix.arch }}
+          name: release-result-${{ matrix.image }}-${{ matrix.arch }}
           path: release-result.json
 
   manifest:
@@ -444,7 +447,7 @@ jobs:
       - name: Download release results
         uses: actions/download-artifact@v4
         with:
-          pattern: release-result-ubi${{ matrix.version }}-${{ matrix.variant }}-*
+          pattern: release-result-${{ matrix.image }}-*
           path: results/
 
       - name: Determine namespace
@@ -469,11 +472,11 @@ jobs:
           SHORT_SHA: ${{ needs.gate-check.outputs.short_sha }}
           DATE_TAG: ${{ needs.gate-check.outputs.date_tag }}
         run: |
-          MANIFEST="ghcr.io/${{ github.repository }}/trusted/ubi${{ matrix.version }}-${{ matrix.variant }}"
+          MANIFEST="ghcr.io/${{ github.repository }}/trusted/${{ matrix.image }}"
 
           # Dynamically collect arches from release results
           ARCHES=()
-          for dir in results/release-result-ubi${{ matrix.version }}-${{ matrix.variant }}-*/; do
+          for dir in results/release-result-${{ matrix.image }}-*/; do
             [ -f "${dir}release-result.json" ] || continue
             ARCHES+=($(jq -r '.arch' "${dir}release-result.json"))
           done
@@ -500,7 +503,7 @@ jobs:
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
         run: |
-          MANIFEST="ghcr.io/${{ github.repository }}/trusted/ubi${{ matrix.version }}-${{ matrix.variant }}"
+          MANIFEST="ghcr.io/${{ github.repository }}/trusted/${{ matrix.image }}"
 
           MANIFEST_DIGEST=$(skopeo inspect --raw "docker://${MANIFEST}:latest" | sha256sum | awk '{print "sha256:"$1}')
           MANIFEST_URI="${MANIFEST}@${MANIFEST_DIGEST}"
@@ -566,14 +569,10 @@ jobs:
             [ -f "${dir}release-result.json" ] || continue
             RESULT_FILE="${dir}release-result.json"
 
-            VARIANT=$(jq -r '.variant' "$RESULT_FILE")
-            VERSION=$(jq -r '.version' "$RESULT_FILE")
+            IMAGE_NAME=$(jq -r '.image' "$RESULT_FILE")
             ARCH=$(jq -r '.arch' "$RESULT_FILE")
             VERDICT=$(jq -r '.verdict' "$RESULT_FILE")
             NAMESPACE=$(jq -r '.namespace' "$RESULT_FILE")
-            DEST=$(jq -r '.dest_image' "$RESULT_FILE")
-
-            IMAGE_NAME="ubi${VERSION}-${VARIANT}"
 
             if [[ "$NAMESPACE" == "trusted" ]]; then
               TAGS="\`${SHORT_SHA}-${ARCH}\`, \`latest\`, \`${DATE_TAG}\`, \`${SHORT_SHA}\`"

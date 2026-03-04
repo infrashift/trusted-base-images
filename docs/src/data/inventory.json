@@ -2830,5 +2830,15 @@
         }
       ]
     }
+  },
+  "fedora43-minimal": {
+    "status": "pending",
+    "tags": [],
+    "cves": {
+      "critical": [],
+      "high": [],
+      "medium": [],
+      "low": []
+    }
   }
 }

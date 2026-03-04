@@ -36,6 +36,12 @@ export default defineConfig({
 								{ label: 'Minimal', slug: 'images/ubi10-minimal', badge: { text: 'amd64 only', variant: 'caution' } },
 							],
 						},
+						{
+							label: 'Fedora 43',
+							items: [
+								{ label: 'Minimal', slug: 'images/fedora43-minimal', badge: { text: 'amd64 only', variant: 'caution' } },
+							],
+						},
 					],
 				},
 				{
@@ -47,6 +53,7 @@ export default defineConfig({
 						{ label: 'UBI9 Micro', slug: 'inventory/ubi9-micro' },
 						{ label: 'UBI9 Init', slug: 'inventory/ubi9-init' },
 						{ label: 'UBI10 Minimal', slug: 'inventory/ubi10-minimal', badge: { text: 'amd64 only', variant: 'caution' } },
+						{ label: 'Fedora 43 Minimal', slug: 'inventory/fedora43-minimal', badge: { text: 'amd64 only', variant: 'caution' } },
 					],
 				},
 				{
