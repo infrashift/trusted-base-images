@@ -182,19 +182,30 @@ jobs:
           MEDIUM=$(jq '[.matches[] | select(.vulnerability.severity == "Medium")] | length' evidence/cve-report.json)
           LOW=$(jq '[.matches[] | select(.vulnerability.severity == "Low")] | length' evidence/cve-report.json)
 
+          # Fixable = upstream has published a fixed version. Grype reports
+          # fix.state as one of: fixed | not-fixed | wont-fix | unknown.
+          # Only "fixed" is actionable — a rebuild can clear it.
+          FIX_CRITICAL=$(jq '[.matches[] | select(.vulnerability.severity == "Critical" and .vulnerability.fix.state == "fixed")] | length' evidence/cve-report.json)
+          FIX_HIGH=$(jq '[.matches[] | select(.vulnerability.severity == "High" and .vulnerability.fix.state == "fixed")] | length' evidence/cve-report.json)
+
           echo "CVE summary: Critical=$CRITICAL High=$HIGH Medium=$MEDIUM Low=$LOW"
+          echo "Fixable:     Critical=$FIX_CRITICAL High=$FIX_HIGH"
 
           jq -n \
             --argjson critical "$CRITICAL" \
             --argjson high "$HIGH" \
             --argjson medium "$MEDIUM" \
             --argjson low "$LOW" \
+            --argjson fixCritical "$FIX_CRITICAL" \
+            --argjson fixHigh "$FIX_HIGH" \
             '{
               "scan_results": {
                 "critical_count": $critical,
                 "high_count": $high,
                 "medium_count": $medium,
-                "low_count": $low
+                "low_count": $low,
+                "fixable_critical_count": $fixCritical,
+                "fixable_high_count": $fixHigh
               }
             }' > /tmp/opa-input.json
 
@@ -216,6 +227,8 @@ jobs:
           echo "high=$HIGH" >> $GITHUB_OUTPUT
           echo "medium=$MEDIUM" >> $GITHUB_OUTPUT
           echo "low=$LOW" >> $GITHUB_OUTPUT
+          echo "fixable_critical=$FIX_CRITICAL" >> $GITHUB_OUTPUT
+          echo "fixable_high=$FIX_HIGH" >> $GITHUB_OUTPUT
 
       - name: Generate Review Verdict
         id: verdict
@@ -226,6 +239,8 @@ jobs:
           CVE_HIGH: ${{ steps.cve-policy.outputs.high }}
           CVE_MEDIUM: ${{ steps.cve-policy.outputs.medium }}
           CVE_LOW: ${{ steps.cve-policy.outputs.low }}
+          CVE_FIXABLE_CRITICAL: ${{ steps.cve-policy.outputs.fixable_critical }}
+          CVE_FIXABLE_HIGH: ${{ steps.cve-policy.outputs.fixable_high }}
         run: |
           IMAGE_DIGEST=$(echo "$IMAGE_URI" | cut -d'@' -f2)
 
@@ -258,6 +273,8 @@ jobs:
             --argjson high "${CVE_HIGH}" \
             --argjson medium "${CVE_MEDIUM}" \
             --argjson low "${CVE_LOW}" \
+            --argjson fixableCritical "${CVE_FIXABLE_CRITICAL}" \
+            --argjson fixableHigh "${CVE_FIXABLE_HIGH}" \
             --arg verdict "$VERDICT" \
             --arg sbomSha "$SBOM_SHA" \
             --arg cveSha "$CVE_SHA" \
@@ -298,7 +315,9 @@ jobs:
                     "critical": $critical,
                     "high": $high,
                     "medium": $medium,
-                    "low": $low
+                    "low": $low,
+                    "fixable_critical": $fixableCritical,
+                    "fixable_high": $fixableHigh
                   }
                 }
               },
@@ -407,8 +426,8 @@ jobs:
           echo "<details>" >> /tmp/pr-comment.md
           echo "<summary>CVE Details</summary>" >> /tmp/pr-comment.md
           echo "" >> /tmp/pr-comment.md
-          echo "| Image | Arch | Critical | High | Medium | Low |" >> /tmp/pr-comment.md
-          echo "|-------|------|:--------:|:----:|:------:|:---:|" >> /tmp/pr-comment.md
+          echo "| Image | Arch | Critical | High | Fixable (C/H) | Medium | Low |" >> /tmp/pr-comment.md
+          echo "|-------|------|:--------:|:----:|:-------------:|:------:|:---:|" >> /tmp/pr-comment.md
 
           for dir in verdicts/review-*/; do
             [ -f "${dir}review-verdict.json" ] || continue
@@ -420,8 +439,10 @@ jobs:
             HIGH=$(jq -r '.checks.cve_policy.summary.high' "$VERDICT_FILE")
             MED=$(jq -r '.checks.cve_policy.summary.medium' "$VERDICT_FILE")
             LOW=$(jq -r '.checks.cve_policy.summary.low' "$VERDICT_FILE")
+            FIX_CRIT=$(jq -r '.checks.cve_policy.summary.fixable_critical // 0' "$VERDICT_FILE")
+            FIX_HIGH=$(jq -r '.checks.cve_policy.summary.fixable_high // 0' "$VERDICT_FILE")
 
-            echo "| ${VARIANT} | ${ARCH} | ${CRIT} | ${HIGH} | ${MED} | ${LOW} |" >> /tmp/pr-comment.md
+            echo "| ${VARIANT} | ${ARCH} | ${CRIT} | ${HIGH} | ${FIX_CRIT}/${FIX_HIGH} | ${MED} | ${LOW} |" >> /tmp/pr-comment.md
           done
 
           echo "" >> /tmp/pr-comment.md
