@@ -17,11 +17,11 @@
     },
     "init": {
       "base": "registry.access.redhat.com/ubi9-init",
-      "amd64": { "digest": "sha256:15abd6245a53d8d118727f213901db9ad165f7a230cf93f957758f794b8b123f" },
-      "arm64": { "digest": "sha256:35e49b137a45b9d24cdd4409421007a35a619967d22d438fed6a40f4f9954ac7" }
+      "amd64": { "digest": "sha256:1af9d150b8fe27aeeb126689a467fb566df93dbc11e37fbe541e313b79bacf34" },
+      "arm64": { "digest": "sha256:4bf8643eec8ec708a1ef0a39e8fa6b556d7d316f3953d4d6f51ff6f7c28a065c" }
     },
-    "updated": "2026-08-17",
-    "reason": "Upstream refresh to RHEL 9.8"
+    "updated": "2026-08-18",
+    "reason": "ubi9-init: pick up patched curl (CVE-2026-8286, CVE-2026-9547)"
   },
   "ubi10": {
     "minimal": {
