@@ -3,6 +3,12 @@ ARG UPSTREAM_DIGEST
 
 FROM ${UPSTREAM_BASE}@${UPSTREAM_DIGEST}
 
+# Re-declared after FROM: ARGs before the first FROM are global build args and
+# are not in scope inside the build stage, so the LABELs below would otherwise
+# expand to empty strings.
+ARG UPSTREAM_BASE
+ARG UPSTREAM_DIGEST
+
 ARG IMAGE_VERSION
 ARG BUILD_DATE
 ARG TARGETARCH
