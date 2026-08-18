@@ -50,7 +50,7 @@ The policy package `tbi.pdp` contains three rule categories:
 
 #### CVE Security Threshold
 
-The active policy — evaluated during every review. It blocks images with any Critical or High severity CVEs:
+The active policy — evaluated during every review. It blocks images with any Critical CVE, or any High CVE for which upstream has published a fix:
 
 ```rego
 package tbi.pdp
@@ -61,10 +61,15 @@ violation_security_threshold[msg] if {
 }
 
 violation_security_threshold[msg] if {
-    input.scan_results.high_count > 0
-    msg := "High vulnerabilities found. Deployment denied."
+    input.scan_results.fixable_high_count > 0
+    msg := sprintf(
+        "%v High vulnerabilities with an available upstream fix. Deployment denied.",
+        [input.scan_results.fixable_high_count],
+    )
 }
 ```
+
+Gating Highs on fix availability keeps the signal actionable: a fixable High means the base image is stale and a rebuild will clear it, whereas an unfixed High cannot be resolved by anything the pipeline does. See [CVE Monitoring](/trusted-base-images/security/cve-monitoring/) for the full rationale.
 
 **Input format**: The Review-Actor constructs a JSON input document from the Grype CVE report:
 
@@ -72,9 +77,11 @@ violation_security_threshold[msg] if {
 {
   "scan_results": {
     "critical_count": 0,
-    "high_count": 1,
-    "medium_count": 42,
-    "low_count": 182
+    "high_count": 11,
+    "medium_count": 175,
+    "low_count": 228,
+    "fixable_critical_count": 0,
+    "fixable_high_count": 0
   }
 }
 ```
@@ -130,7 +137,7 @@ The Review-Actor invokes the PDP at a specific point in its verification chain:
 1. Verify Build-Actor attestation signatures (cosign)
 2. Verify evidence blob checksums and signatures
 3. Cross-check upstream digest between provenance and `versions.json`
-4. **Invoke PDP**: Feed CVE counts to OPA, evaluate `violation_security_threshold`
+4. **Invoke PDP**: Feed CVE counts — total and fixable — to OPA, evaluate `violation_security_threshold`
 5. Record the verdict (PASS or FAIL) in the review attestation
 6. Sign and attach the review attestation to the image
 
@@ -154,7 +161,7 @@ The PDP architecture supports multiple enforcement points without duplicating po
 
 ### Separation of Concerns
 
-Policy authors can modify thresholds (e.g., allowing High CVEs for specific packages) without touching workflow definitions. Conversely, workflow changes don't affect policy logic.
+Policy authors can modify thresholds (e.g., allowing High CVEs for specific packages) without touching workflow definitions, as long as the Review-Actor already supplies the fields the rule reads. Conversely, workflow changes don't affect policy logic.
 
 ### Auditable Decisions
 
