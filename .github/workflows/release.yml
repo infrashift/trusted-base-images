@@ -393,6 +393,27 @@ jobs:
           echo "Release attestation:"
           cat release-attestation.json
 
+      # Only the manifest list was signed, so `cosign verify` failed on an
+      # arch-specific digest - the exact reference this project tells consumers
+      # to pin, and the one versions.json itself uses for upstream bases.
+      # Attestations alone left `cosign verify` reporting "no signatures found",
+      # which reads as unsigned. Sign each arch manifest with the same dual-sign
+      # pattern used for the manifest list below.
+      - name: Dual-sign arch image
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          DEST_URI: ${{ steps.promote.outputs.uri }}
+        run: |
+          echo "Signing arch image $DEST_URI"
+
+          echo "Pass 1: Sovereign ED25519 key signing..."
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY "$DEST_URI"
+
+          echo "Pass 2: Keyless OIDC signing..."
+          cosign sign --yes "$DEST_URI"
+
+          echo "Arch image dual signing complete"
+
       - name: Dual-sign release attestation
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
