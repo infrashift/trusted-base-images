@@ -365,6 +365,7 @@ jobs:
     permissions:
       pull-requests: write
       actions: read
+      statuses: write
 
     steps:
       - name: Download All Review Verdicts
@@ -374,6 +375,7 @@ jobs:
           path: verdicts/
 
       - name: Generate Summary Comment
+        id: summary
         env:
           PR_NUMBER: ${{ needs.gate-check.outputs.pr_number }}
           HEAD_SHA: ${{ needs.gate-check.outputs.head_sha }}
@@ -455,6 +457,8 @@ jobs:
             echo "**Overall Verdict: FAIL** — One or more images failed review." >> /tmp/pr-comment.md
           fi
 
+          echo "verdict=$OVERALL_VERDICT" >> $GITHUB_OUTPUT
+
           cat /tmp/pr-comment.md
 
       - name: Post PR Comment
@@ -463,3 +467,38 @@ jobs:
           PR_NUMBER: ${{ needs.gate-check.outputs.pr_number }}
         run: |
           gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" --body-file /tmp/pr-comment.md
+
+      # The review runs on workflow_run, so its result never attaches to the PR
+      # as a check and cannot be required by a ruleset. Post it back onto the PR
+      # head as a commit status so the gate can actually block a merge instead of
+      # only advising via a comment. Context matches the value seeded by
+      # pr-gate.yml so the two resolve to one status, not two.
+      - name: Publish CVE gate commit status
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ needs.gate-check.outputs.head_sha }}
+          VERDICT: ${{ steps.summary.outputs.verdict }}
+          REVIEW_RUN_ID: ${{ github.run_id }}
+        run: |
+          if [[ "$VERDICT" == "PASS" ]]; then
+            STATE=success
+            DESC="All images passed attestation, evidence, upstream and CVE policy checks"
+          elif [[ "$VERDICT" == "FAIL" ]]; then
+            STATE=failure
+            DESC="One or more images failed review - see the summary comment"
+          else
+            # The summary step did not complete, so no verdict was produced.
+            STATE=error
+            DESC="Review did not produce a verdict"
+          fi
+
+          gh api -X POST "/repos/${REPO}/statuses/${HEAD_SHA}" \
+            -f state="$STATE" \
+            -f context="review/cve-policy" \
+            -f description="$DESC" \
+            -f target_url="https://github.com/${REPO}/actions/runs/${REVIEW_RUN_ID}" \
+            > /dev/null
+
+          echo "Posted commit status review/cve-policy=$STATE on ${HEAD_SHA:0:7}"
