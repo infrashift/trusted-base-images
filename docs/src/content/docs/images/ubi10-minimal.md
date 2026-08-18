@@ -1,13 +1,9 @@
 ---
 title: UBI10 Minimal
-description: Early-access Red Hat UBI10 minimal image for amd64.
+description: Early-access Red Hat UBI10 minimal image for amd64 and arm64.
 ---
 
 The UBI10 Minimal image is an early-access build of the Red Hat Universal Base Image for RHEL 10. It provides a minimal footprint with `microdnf` for package management.
-
-:::caution
-UBI10 Minimal is currently available for **amd64 only**. arm64 support will be added when Red Hat publishes upstream arm64 manifests.
-:::
 
 ## Quick Pull
 
@@ -30,7 +26,7 @@ docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi10-minimal@sha256:
 | Property | Value |
 |----------|-------|
 | **Upstream Base** | `registry.access.redhat.com/ubi10-minimal` |
-| **Architectures** | amd64 |
+| **Architectures** | amd64, arm64 |
 | **Package Manager** | `microdnf` |
 | **Default User** | `1001` (non-root) |
 | **Hardening** | Cache cleaned (`microdnf clean all`) |
@@ -48,7 +44,7 @@ docker pull ghcr.io/infrashift/trusted-base-images/trusted/ubi10-minimal@sha256:
 
 - Early adoption of RHEL 10 base images
 - Testing application compatibility with UBI10
-- amd64 workloads that want the latest RHEL base
+- amd64 and arm64 workloads that want the latest RHEL base
 
 ## Containerfile
 

@@ -65,10 +65,6 @@ docker pull --platform linux/amd64 ghcr.io/infrashift/trusted-base-images/truste
 docker pull --platform linux/arm64 ghcr.io/infrashift/trusted-base-images/trusted/ubi9-standard:latest
 ```
 
-:::note
-UBI10 Minimal is currently amd64 only. Pulling with `--platform linux/arm64` will fail for that image.
-:::
-
 ## Authentication
 
 GHCR packages in this repository are public. No authentication is required to pull images. If you need to authenticate for rate-limiting purposes:

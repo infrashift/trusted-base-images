@@ -12,32 +12,34 @@ description: Field-by-field documentation of the versions.json source of truth f
   "ubi9": {
     "standard": {
       "base": "registry.access.redhat.com/ubi9",
-      "amd64": { "digest": "sha256:09d0f42e..." },
-      "arm64": { "digest": "sha256:2b9be42b..." }
+      "amd64": { "digest": "sha256:7a069592..." },
+      "arm64": { "digest": "sha256:1dbdcfbb..." }
     },
     "minimal": {
       "base": "registry.access.redhat.com/ubi9-minimal",
-      "amd64": { "digest": "sha256:42c0bdc0..." },
-      "arm64": { "digest": "sha256:680087262..." }
+      "amd64": { "digest": "sha256:285fe183..." },
+      "arm64": { "digest": "sha256:3aa4da3d..." }
     },
-    "updated": "2026-02-15",
-    "reason": "Test OPA fix and high CVE policy"
+    "updated": "2026-08-17",
+    "reason": "Upstream refresh to RHEL 9.8"
   },
   "ubi10": {
     "minimal": {
       "base": "registry.access.redhat.com/ubi10-minimal",
-      "amd64": { "digest": "sha256:84d365ce..." }
+      "amd64": { "digest": "sha256:ca6b9148..." },
+      "arm64": { "digest": "sha256:4e47e991..." }
     },
-    "updated": "2026-02-16",
-    "reason": "Test release workflow with ubi10-minimal"
+    "updated": "2026-08-17",
+    "reason": "Upstream refresh to RHEL 10.2; add arm64"
   },
   "fedora43": {
     "minimal": {
       "base": "registry.fedoraproject.org/fedora-minimal",
-      "amd64": { "digest": "sha256:6807db66..." }
+      "amd64": { "digest": "sha256:a2f37bd3..." },
+      "arm64": { "digest": "sha256:5fd0a767..." }
     },
-    "updated": "2026-03-03",
-    "reason": "Add Fedora 43 minimal base image"
+    "updated": "2026-08-17",
+    "reason": "Upstream Fedora 43 rebuild; add arm64"
   }
 }
 ```
@@ -70,7 +72,7 @@ The top-level key identifies the distro. For UBI images this is `ubi<version>`. 
 ## Key Rules
 
 1. **Digests are per-architecture**, not manifest-list digests. Use `skopeo inspect --raw` to resolve them.
-2. **Architecture keys absent = architecture not built**. For example, `ubi10-minimal` has no `arm64` key.
+2. **Architecture keys absent = architecture not built**. Every variant currently pins both `amd64` and `arm64`; omitting an arch key is how you exclude a variant from that architecture's build matrix.
 3. **The `base` field** is the registry URL without a tag or digest. The build combines it with the arch digest: `${base}@${digest}`.
 
 ## Resolving Digests from Upstream
@@ -90,8 +92,8 @@ skopeo inspect --raw docker://registry.fedoraproject.org/fedora-minimal:43 | \
 Example output (UBI9):
 
 ```
-amd64: sha256:09d0f42ed3953ff69e1f3d9577633a33ce0f16a577fb3e18ce3cf6b41379386b
-arm64: sha256:2b9be42b19836c9056168098102f964a543e8b863af697c86fd83352d23e743a
+amd64: sha256:7a069592145703a5e202a6e23a0ac3cf89737f89f2b26343b88ca3358a53f5de
+arm64: sha256:1dbdcfbbf752d0564eb9a084aa4398e5d3c96dff51f2eb8664c0e5a510465780
 ```
 
 ## Adding a New Image

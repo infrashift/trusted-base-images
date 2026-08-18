@@ -20,21 +20,13 @@ Trusted Base Images provides hardened, SLSA Level 3 compliant container base ima
 
 | Image | Variant | Upstream Source | Architectures | Use Case |
 |-------|---------|----------------|:-------------:|----------|
-| [UBI10 Minimal](/trusted-base-images/images/ubi10-minimal/) | `minimal` | [ubi10-minimal](https://catalog.redhat.com/software/containers/ubi10-minimal/) | amd64 | Early-access UBI10 minimal image |
-
-:::caution
-UBI10 images are currently available for amd64 only. arm64 support will be added when upstream provides it.
-:::
+| [UBI10 Minimal](/trusted-base-images/images/ubi10-minimal/) | `minimal` | [ubi10-minimal](https://catalog.redhat.com/software/containers/ubi10-minimal/) | amd64, arm64 | Early-access UBI10 minimal image |
 
 ### Fedora 43
 
 | Image | Variant | Upstream Source | Architectures | Use Case |
 |-------|---------|----------------|:-------------:|----------|
-| [Fedora 43 Minimal](/trusted-base-images/images/fedora43-minimal/) | `minimal` | [fedora-minimal](https://fedoraproject.org/containers/) | amd64 | Fedora-based workloads with minimal footprint |
-
-:::caution
-Fedora 43 images are currently available for amd64 only.
-:::
+| [Fedora 43 Minimal](/trusted-base-images/images/fedora43-minimal/) | `minimal` | [fedora-minimal](https://fedoraproject.org/containers/) | amd64, arm64 | Fedora-based workloads with minimal footprint |
 
 ## Registry
 
