@@ -1,0 +1,60 @@
+name: PR Review Gate
+
+# Seeds the review/cve-policy commit status on every PR.
+#
+# review.yml runs on workflow_run, so it only fires for PRs that touched a
+# build-triggering path, and it cannot report until the build finishes. A
+# required status check that never reports blocks a PR forever, so this
+# workflow guarantees the context always exists:
+#
+#   touches image paths -> pending, and review.yml resolves it later
+#   touches nothing     -> success, there is nothing to review
+#
+# The context string must stay in sync with review.yml.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  seed:
+    name: Seed Review Status
+    runs-on: ubuntu-latest
+    # Fork PRs get a read-only GITHUB_TOKEN regardless of the block below, so
+    # the status API call would fail. Those need a maintainer to review and
+    # set the status by hand.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      statuses: write
+      pull-requests: read
+    steps:
+      - name: Seed review/cve-policy status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # Keep in sync with the paths filter in build.yml.
+          BUILD_PATHS='^(Containerfiles/|versions\.json$|\.github/pdp/|\.github/workflows/(review|release)\.yml$)'
+
+          FILES=$(gh pr diff "$PR_NUMBER" --repo "$REPO" --name-only)
+          echo "Changed files:"; echo "$FILES" | sed 's/^/  /'
+
+          if echo "$FILES" | grep -qE "$BUILD_PATHS"; then
+            STATE=pending
+            DESC="Waiting for the review actor to evaluate CVE policy"
+          else
+            STATE=success
+            DESC="No image-affecting changes; nothing to review"
+          fi
+
+          gh api -X POST "/repos/${REPO}/statuses/${SHA}" \
+            -f state="$STATE" \
+            -f context="review/cve-policy" \
+            -f description="$DESC" \
+            > /dev/null
+
+          echo "Seeded review/cve-policy=$STATE on ${SHA:0:7}"
