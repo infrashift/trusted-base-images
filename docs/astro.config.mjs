@@ -33,13 +33,13 @@ export default defineConfig({
 						{
 							label: 'UBI10',
 							items: [
-								{ label: 'Minimal', slug: 'images/ubi10-minimal', badge: { text: 'amd64 only', variant: 'caution' } },
+								{ label: 'Minimal', slug: 'images/ubi10-minimal' },
 							],
 						},
 						{
 							label: 'Fedora 43',
 							items: [
-								{ label: 'Minimal', slug: 'images/fedora43-minimal', badge: { text: 'amd64 only', variant: 'caution' } },
+								{ label: 'Minimal', slug: 'images/fedora43-minimal' },
 							],
 						},
 					],
@@ -52,8 +52,8 @@ export default defineConfig({
 						{ label: 'UBI9 Minimal', slug: 'inventory/ubi9-minimal' },
 						{ label: 'UBI9 Micro', slug: 'inventory/ubi9-micro' },
 						{ label: 'UBI9 Init', slug: 'inventory/ubi9-init' },
-						{ label: 'UBI10 Minimal', slug: 'inventory/ubi10-minimal', badge: { text: 'amd64 only', variant: 'caution' } },
-						{ label: 'Fedora 43 Minimal', slug: 'inventory/fedora43-minimal', badge: { text: 'amd64 only', variant: 'caution' } },
+						{ label: 'UBI10 Minimal', slug: 'inventory/ubi10-minimal' },
+						{ label: 'Fedora 43 Minimal', slug: 'inventory/fedora43-minimal' },
 					],
 				},
 				{
@@ -84,6 +84,7 @@ export default defineConfig({
 						{ label: 'versions.json Schema', slug: 'reference/versions-json' },
 						{ label: 'Contributing', slug: 'reference/contributing' },
 						{ label: 'Roadmap', slug: 'reference/roadmap' },
+						{ label: 'Known Limitations', slug: 'reference/known-limitations' },
 						{ label: 'Thank You', slug: 'reference/thank-you' },
 					],
 				},
