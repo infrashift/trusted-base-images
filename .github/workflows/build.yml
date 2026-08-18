@@ -7,10 +7,12 @@ on:
       - 'Containerfiles/**'
       - 'versions.json'
       # The CVE gate is only as trustworthy as its last evaluation. Changing the
-      # policy, or the step that builds the policy's input, re-runs build ->
-      # review so the gate is validated against what is actually in the repo.
+      # policy, the step that builds the policy's input, or the step that acts
+      # on its verdict re-runs build -> review so the gate is validated against
+      # what is actually in the repo.
       - '.github/pdp/**'
       - '.github/workflows/review.yml'
+      - '.github/workflows/release.yml'
 
 jobs:
   matrix-setup:
