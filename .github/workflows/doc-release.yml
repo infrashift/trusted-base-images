@@ -20,7 +20,9 @@ jobs:
       github.event.workflow_run.conclusion == 'success'
     permissions:
       contents: write
-      pull-requests: write
+      # read, not write: this job only lists PRs now. It cannot open one, and
+      # GITHUB_TOKEN would be refused if it tried.
+      pull-requests: read
       packages: read
 
     steps:
@@ -185,19 +187,22 @@ jobs:
             echo "Inventory changes detected"
           fi
 
-      - name: Open inventory update PR
+      - name: Publish inventory branch
         if: steps.changes.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_ID: ${{ inputs.release_run_id || github.event.workflow_run.id }}
+          REPO: ${{ github.repository }}
           BRANCH: automation/docs-inventory
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # main is protected, so the inventory lands via a PR rather than a
-          # direct push. One long-lived branch is reused so repeated releases
-          # update a single PR instead of opening a new one each time.
+          # direct push. This job only publishes the branch: GITHUB_TOKEN cannot
+          # open the PR, because "Allow GitHub Actions to create and approve pull
+          # requests" is disabled - and it stays disabled deliberately, since the
+          # same flag would also let any workflow satisfy a required approval.
           git checkout -B "$BRANCH"
           git add docs/src/data/inventory.json
           git commit -m "docs: update image inventory data" \
@@ -205,12 +210,28 @@ jobs:
           git push --force origin "$BRANCH"
 
           EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
-          if [[ -n "$EXISTING" ]]; then
-            echo "Updated existing inventory PR #${EXISTING}"
-          else
-            gh pr create --base main --head "$BRANCH" \
-              --title "docs: update image inventory data" \
-              --body "Auto-generated from Release Images workflow run #${RUN_ID}.
+          COMPARE="https://github.com/${REPO}/compare/main...${BRANCH}?expand=1"
 
-          Merging publishes the refreshed inventory to the docs site — the push to \`main\` triggers \`deploy-docs.yml\` via its \`docs/**\` path filter."
+          {
+            echo "## Docs inventory updated"
+            echo ""
+            if [[ -n "$EXISTING" ]]; then
+              echo "Pushed to \`${BRANCH}\`, which already has an open PR: #${EXISTING}."
+              echo ""
+              echo "Merge it to publish the refreshed inventory."
+            else
+              echo "Pushed to \`${BRANCH}\`. **This needs a pull request to reach the site.**"
+              echo ""
+              echo "[Open the pull request](${COMPARE})"
+            fi
+            echo ""
+            echo "Merging pushes to \`main\` under \`docs/**\`, which triggers \`deploy-docs.yml\`."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [[ -n "$EXISTING" ]]; then
+            echo "::notice title=Docs inventory::Updated branch ${BRANCH}; PR #${EXISTING} is open and needs merging"
+          else
+            # Loud on purpose: the job succeeds but the docs are not published
+            # until a human opens and merges the PR.
+            echo "::warning title=Docs inventory needs a PR::Pushed ${BRANCH} but no PR exists. Open one: ${COMPARE}"
           fi
