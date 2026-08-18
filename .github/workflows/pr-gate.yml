@@ -38,7 +38,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           # Keep in sync with the paths filter in build.yml.
-          BUILD_PATHS='^(Containerfiles/|versions\.json$|\.github/pdp/|\.github/workflows/review\.yml$)'
+          BUILD_PATHS='^(Containerfiles/|versions\.json$|\.github/pdp/|\.github/workflows/(review|release)\.yml$)'
 
           FILES=$(gh pr diff "$PR_NUMBER" --repo "$REPO" --name-only)
           echo "Changed files:"; echo "$FILES" | sed 's/^/  /'
