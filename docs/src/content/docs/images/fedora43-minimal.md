@@ -1,13 +1,9 @@
 ---
 title: Fedora 43 Minimal
-description: Fedora 43 minimal base image for amd64.
+description: Fedora 43 minimal base image for amd64 and arm64.
 ---
 
 The Fedora 43 Minimal image is a hardened build of the Fedora Minimal base image from the Fedora Container Registry. It provides a minimal footprint with `microdnf` for package management.
-
-:::caution
-Fedora 43 Minimal is currently available for **amd64 only**.
-:::
 
 ## Quick Pull
 
@@ -30,7 +26,7 @@ docker pull ghcr.io/infrashift/trusted-base-images/trusted/fedora43-minimal@sha2
 | Property | Value |
 |----------|-------|
 | **Upstream Base** | `registry.fedoraproject.org/fedora-minimal` |
-| **Architectures** | amd64 |
+| **Architectures** | amd64, arm64 |
 | **Package Manager** | `microdnf` |
 | **Default User** | `1001` (non-root) |
 | **Hardening** | Cache cleaned (`microdnf clean all`) |
@@ -49,7 +45,7 @@ docker pull ghcr.io/infrashift/trusted-base-images/trusted/fedora43-minimal@sha2
 
 - Fedora-based workloads that need a minimal, hardened base
 - Applications that depend on Fedora-specific packages
-- amd64 workloads that prefer Fedora over RHEL UBI
+- amd64 and arm64 workloads that prefer Fedora over RHEL UBI
 
 ## Containerfile
 
