@@ -3,14 +3,14 @@
     "status": "trusted",
     "tags": [
       {
-        "tag": "a06b10a-amd64",
+        "tag": "4174d7c-amd64",
         "arch": "amd64",
-        "digest": "sha256:6c72f2f5f23b96d296bad5fd20bab2554a5c9f944917f7dad410a17158a3c1da"
+        "digest": "sha256:787925d6b938c18c444d7a2145808847bf1e85014613cfed508645c894b08cf9"
       },
       {
-        "tag": "a06b10a-arm64",
+        "tag": "4174d7c-arm64",
         "arch": "arm64",
-        "digest": "sha256:9a49f24477aea041eb0b1e340f388eb9874e3a9c05835b8f6736c395cd573fba"
+        "digest": "sha256:5024a5f2bf3c512a66d7c72eb7500724032f8f5d164a422fdaf8c18dc163087a"
       },
       {
         "tag": "sha256-a0bf654f8412b975fbe95defc5d59f35411d12b9b4113ff23bbffbffbc3bfe94",
@@ -35,7 +35,7 @@
       {
         "tag": "latest",
         "type": "manifest-list",
-        "digest": "sha256:63154d5ad8532847fc2be4c66935749450a989c503dfae32a3c2f2ffed70e61e"
+        "digest": "sha256:d158fb1fd4c031fc0f1ed8faaf5c52ccfd4f832144ad2ee51f5d2409163590f1"
       },
       {
         "tag": "20260216",
@@ -86,11 +86,82 @@
         "tag": "sha256-63154d5ad8532847fc2be4c66935749450a989c503dfae32a3c2f2ffed70e61e.sig",
         "type": "manifest-list",
         "digest": "sha256:a7ee9f0f7e832fbc5ef7387c73be75c0353d12bd0e8c571b2eb4e31998e955cd"
+      },
+      {
+        "tag": "sha256-787925d6b938c18c444d7a2145808847bf1e85014613cfed508645c894b08cf9",
+        "type": "manifest-list",
+        "digest": "sha256:787925d6b938c18c444d7a2145808847bf1e85014613cfed508645c894b08cf9"
+      },
+      {
+        "tag": "sha256-787925d6b938c18c444d7a2145808847bf1e85014613cfed508645c894b08cf9.att",
+        "type": "manifest-list",
+        "digest": "sha256:28bfc53d744cab0f70a81d7e7c94c101ed46b0f496e259f0088d0e85bbf8e76b"
+      },
+      {
+        "tag": "sha256-5024a5f2bf3c512a66d7c72eb7500724032f8f5d164a422fdaf8c18dc163087a.att",
+        "type": "manifest-list",
+        "digest": "sha256:f774e27d932a4e4b063791c0b4994a4fdc7dbfc60744c8d86d2e72c1dc6cbae2"
+      },
+      {
+        "tag": "sha256-5024a5f2bf3c512a66d7c72eb7500724032f8f5d164a422fdaf8c18dc163087a",
+        "type": "manifest-list",
+        "digest": "sha256:5024a5f2bf3c512a66d7c72eb7500724032f8f5d164a422fdaf8c18dc163087a"
+      },
+      {
+        "tag": "20260818",
+        "type": "manifest-list",
+        "digest": "sha256:d158fb1fd4c031fc0f1ed8faaf5c52ccfd4f832144ad2ee51f5d2409163590f1"
+      },
+      {
+        "tag": "4174d7c",
+        "type": "manifest-list",
+        "digest": "sha256:d158fb1fd4c031fc0f1ed8faaf5c52ccfd4f832144ad2ee51f5d2409163590f1"
+      },
+      {
+        "tag": "sha256-d158fb1fd4c031fc0f1ed8faaf5c52ccfd4f832144ad2ee51f5d2409163590f1.sig",
+        "type": "manifest-list",
+        "digest": "sha256:af5949c52cbb7673c46775a8a4fd7b15733fc2eaf85c760705acd84a45f3be38"
       }
     ],
     "cves": {
       "critical": [],
-      "high": [],
+      "high": [
+        {
+          "id": "CVE-2026-73076",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-73078",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-73566",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8286",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8458",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8927",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-9547",
+          "package": "curl-minimal",
+          "fixedIn": null
+        }
+      ],
       "medium": [
         {
           "id": "CVE-2005-2541",
@@ -138,6 +209,11 @@
           "fixedIn": null
         },
         {
+          "id": "CVE-2025-13034",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
           "id": "CVE-2025-13837",
           "package": "python3",
           "fixedIn": null
@@ -148,32 +224,7 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-14087",
-          "package": "glib2",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-14512",
-          "package": "glib2",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-14831",
-          "package": "gnutls",
-          "fixedIn": null
-        },
-        {
           "id": "CVE-2025-15282",
-          "package": "python3",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-15366",
-          "package": "python3",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-15367",
           "package": "python3",
           "fixedIn": null
         },
@@ -203,11 +254,6 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-5278",
-          "package": "coreutils-single",
-          "fixedIn": null
-        },
-        {
           "id": "CVE-2025-60753",
           "package": "libarchive",
           "fixedIn": null
@@ -228,23 +274,43 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-0865",
-          "package": "python3",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2026-0915",
-          "package": "glibc",
-          "fixedIn": "0:2.34-231.el9_7.10"
-        },
-        {
           "id": "CVE-2026-0990",
           "package": "libxml2",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-1299",
+          "id": "CVE-2026-11850",
+          "package": "krb5-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-11856",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-11972",
           "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-11979",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-12610",
+          "package": "pam",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-13346",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-13595",
+          "package": "libblkid",
           "fixedIn": null
         },
         {
@@ -258,13 +324,48 @@
           "fixedIn": null
         },
         {
+          "id": "CVE-2026-15003",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1502",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-15588",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-16118",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-16730",
+          "package": "dbus-broker",
+          "fixedIn": null
+        },
+        {
           "id": "CVE-2026-1757",
           "package": "libxml2",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-2100",
-          "package": "p11-kit",
+          "id": "CVE-2026-18477",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-18508",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1965",
+          "package": "curl-minimal",
           "fixedIn": null
         },
         {
@@ -273,18 +374,18 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-25749",
-          "package": "vim-minimal",
+          "id": "CVE-2026-25645",
+          "package": "python3-pip-wheel",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-26960",
-          "package": "tar",
+          "id": "CVE-2026-2673",
+          "package": "openssl",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-28417",
-          "package": "vim-minimal",
+          "id": "CVE-2026-27456",
+          "package": "libblkid",
           "fixedIn": null
         },
         {
@@ -303,18 +404,373 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-28421",
+          "id": "CVE-2026-32284",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3276",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-32776",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-32777",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-32778",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-33056",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-34743",
+          "package": "xz-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3644",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3783",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3784",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-39881",
           "package": "vim-minimal",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-3441",
+          "id": "CVE-2026-40467",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-40468",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-40553",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4105",
+          "package": "systemd",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-41991",
+          "package": "gzip",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4224",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-42250",
+          "package": "bzip2-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-42307",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-42308",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4360",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4426",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-44656",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-45130",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-45409",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4873",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-50219",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-51298",
+          "package": "sqlite-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-52859",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-53655",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-54371",
+          "package": "attr",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-54411",
+          "package": "pam",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5545",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-55892",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56131",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56132",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56391",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56392",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56404",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56405",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56406",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56407",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56412",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5704",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5713",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5745",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-57451",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-57452",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5773",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58010",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58011",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58012",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58013",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58014",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58015",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5958",
+          "package": "sed",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-59857",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-59871",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-59875",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6019",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6253",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6368",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6429",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6653",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6732",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6791",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6844",
           "package": "gdb-gdbserver",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-3442",
+          "id": "CVE-2026-6845",
           "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-7168",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-7210",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8924",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8932",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-9149",
+          "package": "libsolv",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-9150",
+          "package": "libsolv",
           "fixedIn": null
         }
       ],
@@ -367,6 +823,11 @@
         {
           "id": "CVE-2021-4187",
           "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-46195",
+          "package": "libgcc",
           "fixedIn": null
         },
         {
@@ -750,11 +1211,6 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2023-2953",
-          "package": "openldap",
-          "fixedIn": null
-        },
-        {
           "id": "CVE-2023-32636",
           "package": "glib2",
           "fixedIn": null
@@ -890,11 +1346,6 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2024-34459",
-          "package": "libxml2",
-          "fixedIn": null
-        },
-        {
           "id": "CVE-2024-41957",
           "package": "vim-minimal",
           "fixedIn": null
@@ -1005,8 +1456,8 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-13151",
-          "package": "libtasn1",
+          "id": "CVE-2025-13462",
+          "package": "python3",
           "fixedIn": null
         },
         {
@@ -1025,9 +1476,19 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-15281",
-          "package": "glibc",
-          "fixedIn": "0:2.34-231.el9_7.10"
+          "id": "CVE-2025-14524",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15079",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15224",
+          "package": "curl-minimal",
+          "fixedIn": null
         },
         {
           "id": "CVE-2025-1632",
@@ -1095,11 +1556,6 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-6170",
-          "package": "libxml2",
-          "fixedIn": null
-        },
-        {
           "id": "CVE-2025-66382",
           "package": "expat",
           "fixedIn": null
@@ -1135,24 +1591,64 @@
           "fixedIn": null
         },
         {
+          "id": "CVE-2025-69644",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69645",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69646",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69647",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69648",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69649",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69650",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69651",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69652",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
           "id": "CVE-2025-7039",
           "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-70873",
+          "package": "sqlite-libs",
           "fixedIn": null
         },
         {
           "id": "CVE-2025-9232",
           "package": "openssl",
           "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-9820",
-          "package": "gnutls",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2026-0861",
-          "package": "glibc",
-          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2026-0988",
@@ -1172,6 +1668,31 @@
         {
           "id": "CVE-2026-1485",
           "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-15028",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-16517",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-18739",
+          "package": "popt",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-18839",
+          "package": "popt",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-2297",
+          "package": "python3",
           "fixedIn": null
         },
         {
@@ -1195,8 +1716,48 @@
           "fixedIn": null
         },
         {
+          "id": "CVE-2026-28388",
+          "package": "openssl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28389",
+          "package": "openssl",
+          "fixedIn": null
+        },
+        {
           "id": "CVE-2026-28422",
           "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-31789",
+          "package": "openssl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3479",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-41080",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-41990",
+          "package": "libgcrypt",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-57062",
+          "package": "gnupg2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6276",
+          "package": "curl-minimal",
           "fixedIn": null
         }
       ]
@@ -1206,14 +1767,14 @@
     "status": "trusted",
     "tags": [
       {
-        "tag": "a06b10a-amd64",
+        "tag": "4174d7c-amd64",
         "arch": "amd64",
-        "digest": "sha256:1f47e3c3a6f7ba273c53123346b9334cc42c5557a534fb2555645994eae1355e"
+        "digest": "sha256:768be1436e0577dc79feab7687ec96c15a0b87511ada524b9b45b1c68187f06f"
       },
       {
-        "tag": "a06b10a-arm64",
+        "tag": "4174d7c-arm64",
         "arch": "arm64",
-        "digest": "sha256:db9fbb473e9bf1bd3a4063cfe74d189029cdfd41b8cff7cb4e67136b1d056ddd"
+        "digest": "sha256:5e830493c4a50a3178fe4cf26bb16773894ec4270ff5b5d36621312aa2def499"
       },
       {
         "tag": "sha256-554931b52f4fa596166b67cbe6a663d0ea2f16df916952b68b743d5a836454a8",
@@ -1238,7 +1799,7 @@
       {
         "tag": "latest",
         "type": "manifest-list",
-        "digest": "sha256:08a5f6fca13ef8a2fd66cf7fafc50e3b75be747ea2112d908d11165fcccd4626"
+        "digest": "sha256:6c0eefaca4527baf29e7ec9649f248701a920665b39cd0bfb2f6ea9b73736a5b"
       },
       {
         "tag": "20260216",
@@ -1289,11 +1850,67 @@
         "tag": "sha256-08a5f6fca13ef8a2fd66cf7fafc50e3b75be747ea2112d908d11165fcccd4626.sig",
         "type": "manifest-list",
         "digest": "sha256:f80aac62834239454b08bc56514c7e0cfed1dba81e0e97aa7c7626b6566a9729"
+      },
+      {
+        "tag": "sha256-768be1436e0577dc79feab7687ec96c15a0b87511ada524b9b45b1c68187f06f",
+        "type": "manifest-list",
+        "digest": "sha256:768be1436e0577dc79feab7687ec96c15a0b87511ada524b9b45b1c68187f06f"
+      },
+      {
+        "tag": "sha256-768be1436e0577dc79feab7687ec96c15a0b87511ada524b9b45b1c68187f06f.att",
+        "type": "manifest-list",
+        "digest": "sha256:7deeda0cb52c4179d688c138f065efe24c571a7c6ced641b3599c0d15994cb6f"
+      },
+      {
+        "tag": "sha256-5e830493c4a50a3178fe4cf26bb16773894ec4270ff5b5d36621312aa2def499",
+        "type": "manifest-list",
+        "digest": "sha256:5e830493c4a50a3178fe4cf26bb16773894ec4270ff5b5d36621312aa2def499"
+      },
+      {
+        "tag": "sha256-5e830493c4a50a3178fe4cf26bb16773894ec4270ff5b5d36621312aa2def499.att",
+        "type": "manifest-list",
+        "digest": "sha256:7a6f2843e5e93f4e5bf87cfa23f14bc7f79a3da33c53125d175599fe3eb723ee"
+      },
+      {
+        "tag": "20260818",
+        "type": "manifest-list",
+        "digest": "sha256:6c0eefaca4527baf29e7ec9649f248701a920665b39cd0bfb2f6ea9b73736a5b"
+      },
+      {
+        "tag": "4174d7c",
+        "type": "manifest-list",
+        "digest": "sha256:6c0eefaca4527baf29e7ec9649f248701a920665b39cd0bfb2f6ea9b73736a5b"
+      },
+      {
+        "tag": "sha256-6c0eefaca4527baf29e7ec9649f248701a920665b39cd0bfb2f6ea9b73736a5b.sig",
+        "type": "manifest-list",
+        "digest": "sha256:98d100bcfb36746fb3130eba2ded821525c05d37e655313f0877a169b2467706"
       }
     ],
     "cves": {
       "critical": [],
-      "high": [],
+      "high": [
+        {
+          "id": "CVE-2026-8286",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8458",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8927",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-9547",
+          "package": "curl-minimal",
+          "fixedIn": null
+        }
+      ],
       "medium": [
         {
           "id": "CVE-2023-30571",
@@ -1301,28 +1918,13 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-14017",
+          "id": "CVE-2025-13034",
           "package": "curl-minimal",
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-14087",
-          "package": "glib2",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-14512",
-          "package": "glib2",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-14831",
-          "package": "gnutls",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-5278",
-          "package": "coreutils-single",
+          "id": "CVE-2025-14017",
+          "package": "curl-minimal",
           "fixedIn": null
         },
         {
@@ -1336,13 +1938,28 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-0915",
-          "package": "glibc",
-          "fixedIn": "0:2.34-231.el9_7.10"
-        },
-        {
           "id": "CVE-2026-0990",
           "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-11850",
+          "package": "krb5-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-11856",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-11979",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-13595",
+          "package": "libblkid",
           "fixedIn": null
         },
         {
@@ -1356,22 +1973,222 @@
           "fixedIn": null
         },
         {
+          "id": "CVE-2026-15588",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-16118",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
           "id": "CVE-2026-1757",
           "package": "libxml2",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-2100",
-          "package": "p11-kit",
+          "id": "CVE-2026-1965",
+          "package": "curl-minimal",
           "fixedIn": null
         },
         {
           "id": "CVE-2026-22185",
           "package": "openldap",
           "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-2673",
+          "package": "openssl-fips-provider",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-27456",
+          "package": "libblkid",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-34743",
+          "package": "xz-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3783",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3784",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-40467",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-40468",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-40553",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4105",
+          "package": "systemd-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-42250",
+          "package": "bzip2-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4426",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4873",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-51298",
+          "package": "sqlite-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-54371",
+          "package": "libattr",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5545",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56391",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56392",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5745",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5773",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58010",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58011",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58012",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58013",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58014",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58015",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5958",
+          "package": "sed",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6253",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6368",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6429",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6653",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6732",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6791",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-7168",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8924",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8932",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-9149",
+          "package": "libsolv",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-9150",
+          "package": "libsolv",
+          "fixedIn": null
         }
       ],
       "low": [
+        {
+          "id": "CVE-2021-46195",
+          "package": "libgcc",
+          "fixedIn": null
+        },
         {
           "id": "CVE-2022-27943",
           "package": "libgcc",
@@ -1385,11 +2202,6 @@
         {
           "id": "CVE-2022-41409",
           "package": "pcre2",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2023-2953",
-          "package": "openldap",
           "fixedIn": null
         },
         {
@@ -1428,11 +2240,6 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2024-34459",
-          "package": "libxml2",
-          "fixedIn": null
-        },
-        {
           "id": "CVE-2024-41996",
           "package": "openssl-libs",
           "fixedIn": null
@@ -1448,14 +2255,19 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-13151",
-          "package": "libtasn1",
+          "id": "CVE-2025-14524",
+          "package": "curl-minimal",
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-15281",
-          "package": "glibc",
-          "fixedIn": "0:2.34-231.el9_7.10"
+          "id": "CVE-2025-15079",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15224",
+          "package": "curl-minimal",
+          "fixedIn": null
         },
         {
           "id": "CVE-2025-1632",
@@ -1498,29 +2310,19 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-6170",
-          "package": "libxml2",
+          "id": "CVE-2025-7039",
+          "package": "glib2",
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-7039",
-          "package": "glib2",
+          "id": "CVE-2025-70873",
+          "package": "sqlite-libs",
           "fixedIn": null
         },
         {
           "id": "CVE-2025-9232",
           "package": "openssl-libs",
           "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-9820",
-          "package": "gnutls",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2026-0861",
-          "package": "glibc",
-          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2026-0988",
@@ -1543,6 +2345,26 @@
           "fixedIn": null
         },
         {
+          "id": "CVE-2026-15028",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-16517",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-18739",
+          "package": "popt",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-18839",
+          "package": "popt",
+          "fixedIn": null
+        },
+        {
           "id": "CVE-2026-24883",
           "package": "gnupg2",
           "fixedIn": null
@@ -1550,6 +2372,36 @@
         {
           "id": "CVE-2026-27171",
           "package": "zlib",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28388",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28389",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-31789",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-41990",
+          "package": "libgcrypt",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-57062",
+          "package": "gnupg2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6276",
+          "package": "curl-minimal",
           "fixedIn": null
         }
       ]
@@ -1559,14 +2411,14 @@
     "status": "trusted",
     "tags": [
       {
-        "tag": "a06b10a-amd64",
+        "tag": "4174d7c-amd64",
         "arch": "amd64",
-        "digest": "sha256:7ceda67f5c5cbd36d89a5f14b413b83874c9d2e438cadc8600937c33e721ef77"
+        "digest": "sha256:16584b619e68473a21f6c85d551cc86f1e92e6ba3c34635ce1eb59d17f52bebc"
       },
       {
-        "tag": "a06b10a-arm64",
+        "tag": "4174d7c-arm64",
         "arch": "arm64",
-        "digest": "sha256:b752ad113c50492090e9279ff16e913bf68630c11f7531f6c39b13b9e4595214"
+        "digest": "sha256:f6ce9af5446c7ad8819ba6649113b2c14e924bb1fda9797442d7e24b78ceda1f"
       },
       {
         "tag": "sha256-04cd7da1ebad5f6a5545ad4c8675aea05548ad1623b706cc8c243ab866f4cce3",
@@ -1591,7 +2443,7 @@
       {
         "tag": "latest",
         "type": "manifest-list",
-        "digest": "sha256:4a594d078a6f696bf37249da439217971b2b793204dd99ccc85d31a4b1320749"
+        "digest": "sha256:412441c6bd34f64b5297a9182d62f0eb38537e1ca7e57efcebf811aea604a172"
       },
       {
         "tag": "20260216",
@@ -1642,6 +2494,41 @@
         "tag": "sha256-4a594d078a6f696bf37249da439217971b2b793204dd99ccc85d31a4b1320749.sig",
         "type": "manifest-list",
         "digest": "sha256:ba9b9ccb8708472f565ecd1b1cdcb7b44f945a4d427d6ff9cc5da23d0834cfff"
+      },
+      {
+        "tag": "sha256-f6ce9af5446c7ad8819ba6649113b2c14e924bb1fda9797442d7e24b78ceda1f",
+        "type": "manifest-list",
+        "digest": "sha256:f6ce9af5446c7ad8819ba6649113b2c14e924bb1fda9797442d7e24b78ceda1f"
+      },
+      {
+        "tag": "sha256-f6ce9af5446c7ad8819ba6649113b2c14e924bb1fda9797442d7e24b78ceda1f.att",
+        "type": "manifest-list",
+        "digest": "sha256:6f9987f903eac3f1da9921184077a615a3924c9d75bcc1ff3c47529b107be004"
+      },
+      {
+        "tag": "sha256-16584b619e68473a21f6c85d551cc86f1e92e6ba3c34635ce1eb59d17f52bebc",
+        "type": "manifest-list",
+        "digest": "sha256:16584b619e68473a21f6c85d551cc86f1e92e6ba3c34635ce1eb59d17f52bebc"
+      },
+      {
+        "tag": "sha256-16584b619e68473a21f6c85d551cc86f1e92e6ba3c34635ce1eb59d17f52bebc.att",
+        "type": "manifest-list",
+        "digest": "sha256:833480b7c1e1ff0b9cef800e7d00ef69b7530195978ab79311f7195462283310"
+      },
+      {
+        "tag": "20260818",
+        "type": "manifest-list",
+        "digest": "sha256:412441c6bd34f64b5297a9182d62f0eb38537e1ca7e57efcebf811aea604a172"
+      },
+      {
+        "tag": "4174d7c",
+        "type": "manifest-list",
+        "digest": "sha256:412441c6bd34f64b5297a9182d62f0eb38537e1ca7e57efcebf811aea604a172"
+      },
+      {
+        "tag": "sha256-412441c6bd34f64b5297a9182d62f0eb38537e1ca7e57efcebf811aea604a172.sig",
+        "type": "manifest-list",
+        "digest": "sha256:570a0f1027d75bf0a2ff19f27d52fa3c3bf70fc13a440342eccae8da784b8ca9"
       }
     ],
     "cves": {
@@ -1649,17 +2536,37 @@
       "high": [],
       "medium": [
         {
-          "id": "CVE-2025-5278",
+          "id": "CVE-2026-54371",
+          "package": "libattr",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56391",
           "package": "coreutils-single",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-0915",
+          "id": "CVE-2026-56392",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6368",
           "package": "glibc",
-          "fixedIn": "0:2.34-231.el9_7.10"
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6791",
+          "package": "glibc",
+          "fixedIn": null
         }
       ],
       "low": [
+        {
+          "id": "CVE-2021-46195",
+          "package": "libgcc",
+          "fixedIn": null
+        },
         {
           "id": "CVE-2022-27943",
           "package": "libgcc",
@@ -1674,41 +2581,101 @@
           "id": "CVE-2023-50495",
           "package": "ncurses-base",
           "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-15281",
-          "package": "glibc",
-          "fixedIn": "0:2.34-231.el9_7.10"
-        },
-        {
-          "id": "CVE-2026-0861",
-          "package": "glibc",
-          "fixedIn": "0:2.34-231.el9_7.10"
         }
       ]
     }
   },
   "ubi9-init": {
-    "status": "quarantine",
+    "status": "trusted",
     "tags": [
       {
-        "tag": "pr-10-amd64",
+        "tag": "4174d7c-amd64",
         "arch": "amd64",
-        "digest": "sha256:3bd5acb3ad8adc8c7a67d5c895454a04bfd5d59955cc926b4db6c0ba2fd482fe"
+        "digest": "sha256:a6487b877041b3c05639d5d7037578e119798a621dbeeeb518aaf9bb939d8821"
       },
       {
-        "tag": "pr-10-arm64",
+        "tag": "4174d7c-arm64",
         "arch": "arm64",
-        "digest": "sha256:ed15931e4c2cd34980cbb13c791ab44add667b782c470c5a4584e14a1d70a556"
+        "digest": "sha256:f1da7ed88014a70834cdfc02fd07f2fdbe668540471b4e6e1265edcb296bb503"
+      },
+      {
+        "tag": "sha256-f1da7ed88014a70834cdfc02fd07f2fdbe668540471b4e6e1265edcb296bb503",
+        "type": "manifest-list",
+        "digest": "sha256:f1da7ed88014a70834cdfc02fd07f2fdbe668540471b4e6e1265edcb296bb503"
+      },
+      {
+        "tag": "sha256-f1da7ed88014a70834cdfc02fd07f2fdbe668540471b4e6e1265edcb296bb503.att",
+        "type": "manifest-list",
+        "digest": "sha256:04693d2d28e0bde508d5bfcdcfc7eda782035b73416ec4f0506ab369cc483f5c"
+      },
+      {
+        "tag": "sha256-a6487b877041b3c05639d5d7037578e119798a621dbeeeb518aaf9bb939d8821",
+        "type": "manifest-list",
+        "digest": "sha256:a6487b877041b3c05639d5d7037578e119798a621dbeeeb518aaf9bb939d8821"
+      },
+      {
+        "tag": "sha256-a6487b877041b3c05639d5d7037578e119798a621dbeeeb518aaf9bb939d8821.att",
+        "type": "manifest-list",
+        "digest": "sha256:cd091dd06192c8234f3605955434585223892df6dd7196e6367ff1448847b4f4"
+      },
+      {
+        "tag": "latest",
+        "type": "manifest-list",
+        "digest": "sha256:96e855612336999d41a9eb7347f24d60bd07e5e9303565394619e83b35115c2e"
+      },
+      {
+        "tag": "20260818",
+        "type": "manifest-list",
+        "digest": "sha256:96e855612336999d41a9eb7347f24d60bd07e5e9303565394619e83b35115c2e"
+      },
+      {
+        "tag": "4174d7c",
+        "type": "manifest-list",
+        "digest": "sha256:96e855612336999d41a9eb7347f24d60bd07e5e9303565394619e83b35115c2e"
+      },
+      {
+        "tag": "sha256-96e855612336999d41a9eb7347f24d60bd07e5e9303565394619e83b35115c2e.sig",
+        "type": "manifest-list",
+        "digest": "sha256:d650d95bb56ecd1c88fba5c15b94749b7a01f67d0b32bec501d5a88d323f6baa"
       }
     ],
     "cves": {
       "critical": [],
       "high": [
         {
-          "id": "CVE-2025-15467",
-          "package": "openssl",
-          "fixedIn": "1:3.5.1-7.el9_7"
+          "id": "CVE-2026-73076",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-73078",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-73566",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8286",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8458",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8927",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-9547",
+          "package": "curl-minimal",
+          "fixedIn": null
         }
       ],
       "medium": [
@@ -1748,23 +2715,18 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-11187",
-          "package": "openssl",
-          "fixedIn": "1:3.5.1-7.el9_7"
-        },
-        {
           "id": "CVE-2025-11468",
           "package": "python3",
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-12084",
-          "package": "python3",
-          "fixedIn": "0:3.9.25-3.el9_7"
-        },
-        {
           "id": "CVE-2025-12781",
           "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-13034",
+          "package": "curl-minimal",
           "fixedIn": null
         },
         {
@@ -1778,37 +2740,7 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-14087",
-          "package": "glib2",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-14104",
-          "package": "libblkid",
-          "fixedIn": "0:2.37.4-21.el9_7"
-        },
-        {
-          "id": "CVE-2025-14512",
-          "package": "glib2",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-14831",
-          "package": "gnutls",
-          "fixedIn": null
-        },
-        {
           "id": "CVE-2025-15282",
-          "package": "python3",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-15366",
-          "package": "python3",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-15367",
           "package": "python3",
           "fixedIn": null
         },
@@ -1838,11 +2770,6 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-5278",
-          "package": "coreutils-single",
-          "fixedIn": null
-        },
-        {
           "id": "CVE-2025-60753",
           "package": "libarchive",
           "fixedIn": null
@@ -1858,29 +2785,9 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-69419",
-          "package": "openssl",
-          "fixedIn": "1:3.5.1-7.el9_7"
-        },
-        {
-          "id": "CVE-2025-9086",
-          "package": "curl-minimal",
-          "fixedIn": "0:7.76.1-35.el9_7.3"
-        },
-        {
           "id": "CVE-2026-0672",
           "package": "python3",
           "fixedIn": null
-        },
-        {
-          "id": "CVE-2026-0865",
-          "package": "python3",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2026-0915",
-          "package": "glibc",
-          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2026-0990",
@@ -1888,8 +2795,38 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-1299",
+          "id": "CVE-2026-11850",
+          "package": "krb5-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-11856",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-11972",
           "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-11979",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-12610",
+          "package": "pam",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-13346",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-13595",
+          "package": "libblkid",
           "fixedIn": null
         },
         {
@@ -1903,13 +2840,48 @@
           "fixedIn": null
         },
         {
+          "id": "CVE-2026-15003",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1502",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-15588",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-16118",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-16730",
+          "package": "dbus-broker",
+          "fixedIn": null
+        },
+        {
           "id": "CVE-2026-1757",
           "package": "libxml2",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-2100",
-          "package": "p11-kit",
+          "id": "CVE-2026-18477",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-18508",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-1965",
+          "package": "curl-minimal",
           "fixedIn": null
         },
         {
@@ -1918,18 +2890,18 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-25749",
-          "package": "vim-minimal",
+          "id": "CVE-2026-25645",
+          "package": "python3-pip-wheel",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-26960",
-          "package": "tar",
+          "id": "CVE-2026-2673",
+          "package": "openssl",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-28417",
-          "package": "vim-minimal",
+          "id": "CVE-2026-27456",
+          "package": "libblkid",
           "fixedIn": null
         },
         {
@@ -1948,18 +2920,378 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-28421",
+          "id": "CVE-2026-32284",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3276",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-32776",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-32777",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-32778",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-33056",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-34743",
+          "package": "xz-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3644",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3783",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3784",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-39881",
           "package": "vim-minimal",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-3441",
+          "id": "CVE-2026-40467",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-40468",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-40553",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4105",
+          "package": "systemd",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-41991",
+          "package": "gzip",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4224",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-42250",
+          "package": "bzip2-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-42307",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-42308",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4360",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4426",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-44656",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-45130",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-45409",
+          "package": "python3-pip-wheel",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4873",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-50219",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-51298",
+          "package": "sqlite-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-52859",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-53655",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-54371",
+          "package": "attr",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-54411",
+          "package": "pam",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5545",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-55892",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56131",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56132",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56391",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56392",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56404",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56405",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56406",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56407",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56412",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5704",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5713",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5745",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-57451",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-57452",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5773",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58010",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58011",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58012",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58013",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58014",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58015",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58055",
+          "package": "libnghttp2",
+          "fixedIn": "0:1.43.0-6.el9_8.2"
+        },
+        {
+          "id": "CVE-2026-5958",
+          "package": "sed",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-59857",
+          "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-59871",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-59875",
+          "package": "tar",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6019",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6253",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6368",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6429",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6653",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6732",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6791",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6844",
           "package": "gdb-gdbserver",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-3442",
+          "id": "CVE-2026-6845",
           "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-7168",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-7210",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8924",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8932",
+          "package": "curl-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-9149",
+          "package": "libsolv",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-9150",
+          "package": "libsolv",
           "fixedIn": null
         }
       ],
@@ -2012,6 +3344,11 @@
         {
           "id": "CVE-2021-4187",
           "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2021-46195",
+          "package": "libgcc",
           "fixedIn": null
         },
         {
@@ -2395,11 +3732,6 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2023-2953",
-          "package": "openldap",
-          "fixedIn": null
-        },
-        {
           "id": "CVE-2023-32636",
           "package": "glib2",
           "fixedIn": null
@@ -2535,11 +3867,6 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2024-34459",
-          "package": "libxml2",
-          "fixedIn": null
-        },
-        {
           "id": "CVE-2024-41957",
           "package": "vim-minimal",
           "fixedIn": null
@@ -2650,8 +3977,8 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-13151",
-          "package": "libtasn1",
+          "id": "CVE-2025-13462",
+          "package": "python3",
           "fixedIn": null
         },
         {
@@ -2670,19 +3997,19 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-15281",
-          "package": "glibc",
-          "fixedIn": "0:2.34-231.el9_7.10"
+          "id": "CVE-2025-14524",
+          "package": "curl-minimal",
+          "fixedIn": null
         },
         {
-          "id": "CVE-2025-15468",
-          "package": "openssl",
-          "fixedIn": "1:3.5.1-7.el9_7"
+          "id": "CVE-2025-15079",
+          "package": "curl-minimal",
+          "fixedIn": null
         },
         {
-          "id": "CVE-2025-15469",
-          "package": "openssl",
-          "fixedIn": "1:3.5.1-7.el9_7"
+          "id": "CVE-2025-15224",
+          "package": "curl-minimal",
+          "fixedIn": null
         },
         {
           "id": "CVE-2025-1632",
@@ -2750,16 +4077,6 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-6170",
-          "package": "libxml2",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-66199",
-          "package": "openssl",
-          "fixedIn": "1:3.5.1-7.el9_7"
-        },
-        {
           "id": "CVE-2025-66382",
           "package": "expat",
           "fixedIn": null
@@ -2795,24 +4112,49 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-68160",
-          "package": "openssl",
-          "fixedIn": "1:3.5.1-7.el9_7"
+          "id": "CVE-2025-69644",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
         },
         {
-          "id": "CVE-2025-69418",
-          "package": "openssl",
-          "fixedIn": "1:3.5.1-7.el9_7"
+          "id": "CVE-2025-69645",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
         },
         {
-          "id": "CVE-2025-69420",
-          "package": "openssl",
-          "fixedIn": "1:3.5.1-7.el9_7"
+          "id": "CVE-2025-69646",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
         },
         {
-          "id": "CVE-2025-69421",
-          "package": "openssl",
-          "fixedIn": "1:3.5.1-7.el9_7"
+          "id": "CVE-2025-69647",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69648",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69649",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69650",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69651",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-69652",
+          "package": "gdb-gdbserver",
+          "fixedIn": null
         },
         {
           "id": "CVE-2025-7039",
@@ -2820,19 +4162,14 @@
           "fixedIn": null
         },
         {
+          "id": "CVE-2025-70873",
+          "package": "sqlite-libs",
+          "fixedIn": null
+        },
+        {
           "id": "CVE-2025-9232",
           "package": "openssl",
           "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-9820",
-          "package": "gnutls",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2026-0861",
-          "package": "glibc",
-          "fixedIn": "0:2.34-231.el9_7.10"
         },
         {
           "id": "CVE-2026-0988",
@@ -2855,14 +4192,29 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-22795",
-          "package": "openssl",
-          "fixedIn": "1:3.5.1-7.el9_7"
+          "id": "CVE-2026-15028",
+          "package": "libarchive",
+          "fixedIn": null
         },
         {
-          "id": "CVE-2026-22796",
-          "package": "openssl",
-          "fixedIn": "1:3.5.1-7.el9_7"
+          "id": "CVE-2026-16517",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-18739",
+          "package": "popt",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-18839",
+          "package": "popt",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-2297",
+          "package": "python3",
+          "fixedIn": null
         },
         {
           "id": "CVE-2026-24515",
@@ -2885,28 +4237,133 @@
           "fixedIn": null
         },
         {
+          "id": "CVE-2026-28388",
+          "package": "openssl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28389",
+          "package": "openssl",
+          "fixedIn": null
+        },
+        {
           "id": "CVE-2026-28422",
           "package": "vim-minimal",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-31789",
+          "package": "openssl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3479",
+          "package": "python3",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-41080",
+          "package": "expat",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-41990",
+          "package": "libgcrypt",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-57062",
+          "package": "gnupg2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6276",
+          "package": "curl-minimal",
           "fixedIn": null
         }
       ]
     }
   },
   "ubi10-minimal": {
-    "status": "quarantine",
+    "status": "trusted",
     "tags": [
       {
-        "tag": "pr-10-amd64",
+        "tag": "4174d7c-amd64",
         "arch": "amd64",
-        "digest": "sha256:918e9a514892e4affef250e16d9a27ed52a7b79b4c2180b30c943c6ca6e0d9c9"
+        "digest": "sha256:c2f3770f24a4a9a1df08a75c95706bbec2ddcb4941322c512e1c1f290633eb43"
+      },
+      {
+        "tag": "4174d7c-arm64",
+        "arch": "arm64",
+        "digest": "sha256:db43de215bfc43fba2e63051cac2a27812b12f8131e8e285a8d8300d324d3c50"
+      },
+      {
+        "tag": "sha256-db43de215bfc43fba2e63051cac2a27812b12f8131e8e285a8d8300d324d3c50",
+        "type": "manifest-list",
+        "digest": "sha256:db43de215bfc43fba2e63051cac2a27812b12f8131e8e285a8d8300d324d3c50"
+      },
+      {
+        "tag": "sha256-db43de215bfc43fba2e63051cac2a27812b12f8131e8e285a8d8300d324d3c50.att",
+        "type": "manifest-list",
+        "digest": "sha256:56b532797c50c3283d32a56c731e241459a566b0379bf0f4803d7daa0156993d"
+      },
+      {
+        "tag": "sha256-c2f3770f24a4a9a1df08a75c95706bbec2ddcb4941322c512e1c1f290633eb43",
+        "type": "manifest-list",
+        "digest": "sha256:c2f3770f24a4a9a1df08a75c95706bbec2ddcb4941322c512e1c1f290633eb43"
+      },
+      {
+        "tag": "sha256-c2f3770f24a4a9a1df08a75c95706bbec2ddcb4941322c512e1c1f290633eb43.att",
+        "type": "manifest-list",
+        "digest": "sha256:0db592ed33fa778b1e46d208fbec47094d5702143a7096469823cbcadd26b6ac"
+      },
+      {
+        "tag": "latest",
+        "type": "manifest-list",
+        "digest": "sha256:bf57b48f9a2874b755daf5e23c8ff59e4b72b4b1585cd46a9c88c68a4b01c340"
+      },
+      {
+        "tag": "20260818",
+        "type": "manifest-list",
+        "digest": "sha256:bf57b48f9a2874b755daf5e23c8ff59e4b72b4b1585cd46a9c88c68a4b01c340"
+      },
+      {
+        "tag": "4174d7c",
+        "type": "manifest-list",
+        "digest": "sha256:bf57b48f9a2874b755daf5e23c8ff59e4b72b4b1585cd46a9c88c68a4b01c340"
+      },
+      {
+        "tag": "sha256-bf57b48f9a2874b755daf5e23c8ff59e4b72b4b1585cd46a9c88c68a4b01c340.sig",
+        "type": "manifest-list",
+        "digest": "sha256:c7518797059e5dcbe89f588faa7863321b10fd2a567f76c86b2253f495b47fdc"
       }
     ],
     "cves": {
       "critical": [],
       "high": [
         {
-          "id": "CVE-2024-56171",
-          "package": "libxml2",
+          "id": "CVE-2026-12064",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8286",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8458",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8927",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-9547",
+          "package": "curl",
           "fixedIn": null
         }
       ],
@@ -2914,11 +4371,6 @@
         {
           "id": "CVE-2024-12133",
           "package": "libtasn1",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2024-12224",
-          "package": "rpm-sequoia",
           "fixedIn": null
         },
         {
@@ -2937,38 +4389,18 @@
           "fixedIn": null
         },
         {
+          "id": "CVE-2025-13034",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
           "id": "CVE-2025-14017",
           "package": "curl",
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-14087",
-          "package": "glib2",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-14512",
-          "package": "glib2",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-14831",
-          "package": "gnutls",
-          "fixedIn": "0:3.8.10-3.el10_1"
-        },
-        {
           "id": "CVE-2025-29087",
           "package": "sqlite-libs",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-4598",
-          "package": "systemd-libs",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-5278",
-          "package": "coreutils-single",
           "fixedIn": null
         },
         {
@@ -2992,6 +4424,36 @@
           "fixedIn": null
         },
         {
+          "id": "CVE-2026-10536",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-11850",
+          "package": "krb5-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-11856",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-11979",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-12610",
+          "package": "pam-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-13595",
+          "package": "libblkid",
+          "fixedIn": null
+        },
+        {
           "id": "CVE-2026-1484",
           "package": "glib2",
           "fixedIn": null
@@ -3002,22 +4464,232 @@
           "fixedIn": null
         },
         {
+          "id": "CVE-2026-15588",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-16118",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
           "id": "CVE-2026-1757",
           "package": "libxml2",
           "fixedIn": null
         },
         {
-          "id": "CVE-2026-2100",
-          "package": "p11-kit",
+          "id": "CVE-2026-1965",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-23679",
+          "package": "libusb1",
           "fixedIn": null
         },
         {
           "id": "CVE-2026-2625",
           "package": "rpm-sequoia",
           "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-2673",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-27456",
+          "package": "libblkid",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-34743",
+          "package": "xz-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3783",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-3784",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-40467",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-40468",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-40553",
+          "package": "gawk",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4105",
+          "package": "systemd-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-42250",
+          "package": "bzip2-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4426",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-47104",
+          "package": "libusb1",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-4873",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-51298",
+          "package": "sqlite-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-54371",
+          "package": "libattr",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-54411",
+          "package": "pam-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5545",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56391",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56392",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5745",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5773",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58010",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58011",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58012",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58013",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58014",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-58015",
+          "package": "glib2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-5958",
+          "package": "sed",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6253",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6368",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6429",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6732",
+          "package": "libxml2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6791",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-7168",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8924",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8926",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8932",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-9079",
+          "package": "curl",
+          "fixedIn": null
         }
       ],
       "low": [
+        {
+          "id": "CVE-2021-46195",
+          "package": "libgcc",
+          "fixedIn": null
+        },
         {
           "id": "CVE-2023-53160",
           "package": "rpm-sequoia",
@@ -3039,22 +4711,12 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2024-34459",
-          "package": "libxml2",
-          "fixedIn": null
-        },
-        {
           "id": "CVE-2024-41996",
           "package": "openssl-libs",
           "fixedIn": null
         },
         {
           "id": "CVE-2024-4603",
-          "package": "openssl-libs",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2024-4741",
           "package": "openssl-libs",
           "fixedIn": null
         },
@@ -3079,13 +4741,23 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-13151",
-          "package": "libtasn1",
+          "id": "CVE-2025-14524",
+          "package": "curl",
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-15281",
-          "package": "glibc",
+          "id": "CVE-2025-14819",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15079",
+          "package": "curl",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2025-15224",
+          "package": "curl",
           "fixedIn": null
         },
         {
@@ -3129,24 +4801,19 @@
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-6170",
-          "package": "libxml2",
+          "id": "CVE-2025-7039",
+          "package": "glib2",
           "fixedIn": null
         },
         {
-          "id": "CVE-2025-7039",
-          "package": "glib2",
+          "id": "CVE-2025-70873",
+          "package": "sqlite-libs",
           "fixedIn": null
         },
         {
           "id": "CVE-2025-9232",
           "package": "openssl-libs",
           "fixedIn": null
-        },
-        {
-          "id": "CVE-2025-9820",
-          "package": "gnutls",
-          "fixedIn": "0:3.8.10-3.el10_1"
         },
         {
           "id": "CVE-2026-0988",
@@ -3167,6 +4834,51 @@
           "id": "CVE-2026-1485",
           "package": "glib2",
           "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-15028",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-16517",
+          "package": "libarchive",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-18739",
+          "package": "popt",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-18839",
+          "package": "popt",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28388",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-28389",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-31789",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-42771",
+          "package": "openssl-libs",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-6276",
+          "package": "curl",
+          "fixedIn": null
         }
       ]
     }
@@ -3175,9 +4887,14 @@
     "status": "trusted",
     "tags": [
       {
-        "tag": "a06b10a-amd64",
+        "tag": "4174d7c-amd64",
         "arch": "amd64",
-        "digest": "sha256:cc9bdc4e9cd7330df6d15ee1bfa3c73390a78dd439c926678a16a6ed7b9553da"
+        "digest": "sha256:5ab76498b32b4057c861c9e60d0f333ee7eccb316918f6dbe0784e9c45eb378f"
+      },
+      {
+        "tag": "4174d7c-arm64",
+        "arch": "arm64",
+        "digest": "sha256:c92da4308f0719d8d4062340e19d9c932590afc53fa41e531a0b30f41360fc7a"
       },
       {
         "tag": "sha256-cc9bdc4e9cd7330df6d15ee1bfa3c73390a78dd439c926678a16a6ed7b9553da",
@@ -3192,7 +4909,7 @@
       {
         "tag": "latest",
         "type": "manifest-list",
-        "digest": "sha256:8263753328e45e77899fb0bd940877086a67fa14e4cb2315bf2374f4ddc2b76e"
+        "digest": "sha256:327836555361a487fa54b2f1a0468b79a9619541372d3fded0851eaf39df6227"
       },
       {
         "tag": "20260304",
@@ -3208,6 +4925,41 @@
         "tag": "sha256-8263753328e45e77899fb0bd940877086a67fa14e4cb2315bf2374f4ddc2b76e.sig",
         "type": "manifest-list",
         "digest": "sha256:c6d96ac166cacced09bd74e47f6aed988c01989a35bf0b9dd34d9951b6edb20b"
+      },
+      {
+        "tag": "sha256-c92da4308f0719d8d4062340e19d9c932590afc53fa41e531a0b30f41360fc7a",
+        "type": "manifest-list",
+        "digest": "sha256:c92da4308f0719d8d4062340e19d9c932590afc53fa41e531a0b30f41360fc7a"
+      },
+      {
+        "tag": "sha256-c92da4308f0719d8d4062340e19d9c932590afc53fa41e531a0b30f41360fc7a.att",
+        "type": "manifest-list",
+        "digest": "sha256:46ed1714006584f1b599170809e8f187a834171c47f26e260654ee4382e04327"
+      },
+      {
+        "tag": "sha256-5ab76498b32b4057c861c9e60d0f333ee7eccb316918f6dbe0784e9c45eb378f",
+        "type": "manifest-list",
+        "digest": "sha256:5ab76498b32b4057c861c9e60d0f333ee7eccb316918f6dbe0784e9c45eb378f"
+      },
+      {
+        "tag": "sha256-5ab76498b32b4057c861c9e60d0f333ee7eccb316918f6dbe0784e9c45eb378f.att",
+        "type": "manifest-list",
+        "digest": "sha256:a74e0edc22ecf1ecec15e04cc5014f7476a6cc988542a1cb2fa62480043ef02d"
+      },
+      {
+        "tag": "20260818",
+        "type": "manifest-list",
+        "digest": "sha256:327836555361a487fa54b2f1a0468b79a9619541372d3fded0851eaf39df6227"
+      },
+      {
+        "tag": "4174d7c",
+        "type": "manifest-list",
+        "digest": "sha256:327836555361a487fa54b2f1a0468b79a9619541372d3fded0851eaf39df6227"
+      },
+      {
+        "tag": "sha256-327836555361a487fa54b2f1a0468b79a9619541372d3fded0851eaf39df6227.sig",
+        "type": "manifest-list",
+        "digest": "sha256:eea20c8164781b2203728b9745fd9abcfcfc925600e49e8e86b64263ec0c0d2d"
       }
     ],
     "cves": {
