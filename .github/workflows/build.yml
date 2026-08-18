@@ -7,10 +7,12 @@ on:
       - 'Containerfiles/**'
       - 'versions.json'
       # The CVE gate is only as trustworthy as its last evaluation. Changing the
-      # policy, or the step that builds the policy's input, re-runs build ->
-      # review so the gate is validated against what is actually in the repo.
+      # policy, the step that builds the policy's input, or the step that acts
+      # on its verdict re-runs build -> review so the gate is validated against
+      # what is actually in the repo.
       - '.github/pdp/**'
       - '.github/workflows/review.yml'
+      - '.github/workflows/release.yml'
 
 jobs:
   matrix-setup:
@@ -20,7 +22,7 @@ jobs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
@@ -88,12 +90,29 @@ jobs:
             FILTERED="$ALL_TRIPLES"
           fi
 
+          # versions.json is checked out from the PR head, so on a fork PR its keys
+          # are attacker controlled and they become matrix values that reach
+          # `run:` blocks. Validate before emitting: strict key set, strict
+          # character allowlist, bounded size. Same guard as review.yml/release.yml.
+          echo "$FILTERED" > build-matrix.json
+          if ! jq -e '
+            type == "array" and length > 0 and length <= 64 and
+            all(.[];
+              type == "object" and
+              (keys_unsorted | sort) == ["arch","distro_key","image","variant","version"] and
+              all(.[]; type == "string" and (length | . > 0 and . <= 64) and test("^[A-Za-z0-9._-]+$")) and
+              .image == (.distro_key + "-" + .variant)
+            )' build-matrix.json > /dev/null; then
+            echo "::error::Computed build matrix failed schema validation - check versions.json keys"
+            cat build-matrix.json
+            exit 1
+          fi
+
           echo "Final matrix: $FILTERED"
           echo "matrix=$FILTERED" >> $GITHUB_OUTPUT
-          echo "$FILTERED" > build-matrix.json
 
       - name: Upload build matrix
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: build-matrix
           path: build-matrix.json
@@ -115,10 +134,10 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.4.0
+        uses: sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4 # v3.4.0
 
       - name: Install Syft & Grype
         run: |
@@ -131,7 +150,7 @@ jobs:
           sudo apt-get install -y buildah
 
       - name: Log in to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -321,7 +340,7 @@ jobs:
             --output-signature checksums.sha256.sig checksums.sha256
 
       - name: Upload Evidence Bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: evidence-${{ matrix.image }}-${{ matrix.arch }}
           path: |

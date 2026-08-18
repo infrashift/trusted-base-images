@@ -39,7 +39,7 @@ jobs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - name: Download build matrix
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: build-matrix
           run-id: ${{ github.event.workflow_run.id }}
@@ -48,7 +48,25 @@ jobs:
       - name: Load matrix
         id: matrix
         run: |
-          MATRIX=$(cat build-matrix.json)
+          # The build-matrix artifact is produced by a run whose workflow definition
+          # comes from the PR head, so on a fork PR its contents are attacker
+          # controlled. These values fan out into matrix expansions that reach
+          # `run:` blocks in privileged jobs, so validate them at the trust
+          # boundary: strict key set, strict character allowlist, bounded size.
+          if ! jq -e '
+            type == "array" and length > 0 and length <= 64 and
+            all(.[];
+              type == "object" and
+              (keys_unsorted | sort) == ["arch","distro_key","image","variant","version"] and
+              all(.[]; type == "string" and (length | . > 0 and . <= 64) and test("^[A-Za-z0-9._-]+$")) and
+              .image == (.distro_key + "-" + .variant)
+            )' build-matrix.json > /dev/null; then
+            echo "::error::build-matrix.json failed schema validation - refusing to build a matrix from it"
+            jq -c . build-matrix.json || cat build-matrix.json
+            exit 1
+          fi
+
+          MATRIX=$(jq -c . build-matrix.json)
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
           echo "Review matrix: $MATRIX"
 
@@ -69,12 +87,12 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ needs.gate-check.outputs.head_sha }}
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.4.0
+        uses: sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4 # v3.4.0
 
       - name: Install OPA
         run: |
@@ -82,14 +100,14 @@ jobs:
           chmod +x /usr/local/bin/opa
 
       - name: Log in to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Evidence Bundle
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: evidence-${{ matrix.image }}-${{ matrix.arch }}
           path: evidence/
@@ -160,9 +178,15 @@ jobs:
 
       - name: Upstream Digest Cross-Check
         id: upstream
+        env:
+          DISTRO_KEY: ${{ matrix.distro_key }}
+          VARIANT: ${{ matrix.variant }}
+          ARCH: ${{ matrix.arch }}
         run: |
           PROV_DIGEST=$(jq -r '.buildDefinition.resolvedDependencies[0].digest.sha256' evidence/provenance.json)
-          EXPECTED_DIGEST=$(jq -r '.${{ matrix.distro_key }}.${{ matrix.variant }}.${{ matrix.arch }}.digest' versions.json | sed 's/^sha256://')
+          # Passed via --arg, never interpolated into the filter string.
+          EXPECTED_DIGEST=$(jq -r --arg dk "$DISTRO_KEY" --arg var "$VARIANT" --arg arch "$ARCH" \
+            '.[$dk][$var][$arch].digest' versions.json | sed 's/^sha256://')
 
           echo "Provenance upstream digest: $PROV_DIGEST"
           echo "versions.json digest:       $EXPECTED_DIGEST"
@@ -241,6 +265,9 @@ jobs:
           CVE_LOW: ${{ steps.cve-policy.outputs.low }}
           CVE_FIXABLE_CRITICAL: ${{ steps.cve-policy.outputs.fixable_critical }}
           CVE_FIXABLE_HIGH: ${{ steps.cve-policy.outputs.fixable_high }}
+          MATRIX_VARIANT: ${{ matrix.variant }}
+          MATRIX_DISTRO_KEY: ${{ matrix.distro_key }}
+          MATRIX_ARCH: ${{ matrix.arch }}
         run: |
           IMAGE_DIGEST=$(echo "$IMAGE_URI" | cut -d'@' -f2)
 
@@ -265,9 +292,9 @@ jobs:
             --arg commitSha "${{ needs.gate-check.outputs.head_sha }}" \
             --arg uri "$IMAGE_URI" \
             --arg digest "$IMAGE_DIGEST" \
-            --arg variant "${{ matrix.variant }}" \
-            --arg version "${{ matrix.distro_key }}" \
-            --arg arch "${{ matrix.arch }}" \
+            --arg variant "$MATRIX_VARIANT" \
+            --arg version "$MATRIX_DISTRO_KEY" \
+            --arg arch "$MATRIX_ARCH" \
             --arg cveResult "$CVE_RESULT" \
             --argjson critical "${CVE_CRITICAL}" \
             --argjson high "${CVE_HIGH}" \
@@ -350,7 +377,7 @@ jobs:
           echo "Review attestation attached"
 
       - name: Upload Review Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: review-${{ matrix.image }}-${{ matrix.arch }}
           path: |
@@ -369,7 +396,7 @@ jobs:
 
     steps:
       - name: Download All Review Verdicts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: review-*
           path: verdicts/

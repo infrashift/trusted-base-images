@@ -49,7 +49,7 @@ jobs:
       manifest_matrix: ${{ steps.matrix.outputs.manifest_matrix }}
     steps:
       - name: Download build matrix
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: build-matrix
           run-id: ${{ needs.resolve-review.outputs.build_run_id }}
@@ -58,7 +58,25 @@ jobs:
       - name: Load matrix
         id: matrix
         run: |
-          MATRIX=$(cat build-matrix.json)
+          # The build-matrix artifact is produced by a run whose workflow definition
+          # comes from the PR head, so on a fork PR its contents are attacker
+          # controlled. These values fan out into matrix expansions that reach
+          # `run:` blocks in privileged jobs, so validate them at the trust
+          # boundary: strict key set, strict character allowlist, bounded size.
+          if ! jq -e '
+            type == "array" and length > 0 and length <= 64 and
+            all(.[];
+              type == "object" and
+              (keys_unsorted | sort) == ["arch","distro_key","image","variant","version"] and
+              all(.[]; type == "string" and (length | . > 0 and . <= 64) and test("^[A-Za-z0-9._-]+$")) and
+              .image == (.distro_key + "-" + .variant)
+            )' build-matrix.json > /dev/null; then
+            echo "::error::build-matrix.json failed schema validation - refusing to build a matrix from it"
+            jq -c . build-matrix.json || cat build-matrix.json
+            exit 1
+          fi
+
+          MATRIX=$(jq -c . build-matrix.json)
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 
           MANIFEST_MATRIX=$(jq -c '[.[] | {image, distro_key, version, variant}] | unique' build-matrix.json)
@@ -167,10 +185,10 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.4.0
+        uses: sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4 # v3.4.0
 
       - name: Install Skopeo
         run: |
@@ -178,14 +196,14 @@ jobs:
           sudo apt-get install -y skopeo
 
       - name: Log in to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download review verdict
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: review-${{ matrix.image }}-${{ matrix.arch }}
           path: review/
@@ -428,7 +446,7 @@ jobs:
           cat release-result.json
 
       - name: Upload release result
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: release-result-${{ matrix.image }}-${{ matrix.arch }}
           path: release-result.json
@@ -450,7 +468,7 @@ jobs:
 
     steps:
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.4.0
+        uses: sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4 # v3.4.0
 
       - name: Install Buildah & Skopeo
         run: |
@@ -458,14 +476,14 @@ jobs:
           sudo apt-get install -y buildah skopeo
 
       - name: Log in to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download release results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: release-result-${{ matrix.image }}-*
           path: results/
@@ -557,7 +575,7 @@ jobs:
 
     steps:
       - name: Download all release results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: release-result-*
           path: results/
