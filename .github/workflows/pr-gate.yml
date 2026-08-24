@@ -1,6 +1,15 @@
 name: PR Review Gate
 
-# Seeds the review/cve-policy commit status on every PR.
+# Reports on EVERY pull request, including ones that touch no image.
+#
+# Deliberately NOT path-filtered. A path-filtered workflow simply does not run,
+# and its required contexts never appear, so a docs-only PR would wait forever
+# on a check that will never report. scripts/lint-workflows.sh enforces this.
+#
+#   repo-gate  the repository-scoped half of the PDP: secret scanning, tool and
+#              action pinning, policy self-test, workflow lint.
+#
+#   seed       seeds the review/cve-policy commit status on every PR.
 #
 # review.yml runs on workflow_run, so it only fires for PRs that touched a
 # build-triggering path, and it cannot report until the build finishes. A
@@ -19,6 +28,88 @@ on:
 permissions: {}
 
 jobs:
+  repo-gate:
+    name: repo-gate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          # gitleaks scans history. A key that was committed and then removed is
+          # still a leaked key, and only a full clone can see it. This repo has
+          # never had gitleaks run against it at all, so the first execution is
+          # reading history for the first time.
+          fetch-depth: 0
+
+      - name: Install pinned tools
+        run: sudo BIN=/usr/local/bin ./scripts/install-tools.sh opa gitleaks
+
+      - name: Guard the secret scanner config
+        # Guard #2 of three. An empty .gitleaks.toml means ZERO rules: gitleaks
+        # scans, finds nothing, exits 0 -- indistinguishable from a clean scan.
+        # This file was committed at 0 bytes and stayed that way, so this guard
+        # is the one that would have caught it.
+        run: |
+          set -euo pipefail
+          bytes=$(stat -c%s .gitleaks.toml)
+          [ "$bytes" -ge 64 ] || { echo "::error::.gitleaks.toml is ${bytes} bytes -- an empty config disables every rule"; exit 1; }
+          grep -qE 'useDefault[[:space:]]*=[[:space:]]*true' .gitleaks.toml \
+            || { echo "::error::.gitleaks.toml must set [extend] useDefault = true"; exit 1; }
+
+      - name: Assert a single authoritative policy
+        run: ./scripts/check-no-orphan-rego.sh
+
+      - name: Lint workflows for drift
+        run: ./scripts/lint-workflows.sh
+
+      - name: Lint shell
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          shellcheck -S warning scripts/*.sh
+
+      - name: Policy self-test
+        run: |
+          set -euo pipefail
+          opa check --strict .github/pdp/
+          out=$(opa fmt --list .github/pdp/)
+          if [ -n "$out" ]; then echo "::error::rego needs formatting: $out"; exit 1; fi
+          opa test .github/pdp/ | tail -1
+          cov=$(opa test .github/pdp/ --coverage --format json | jq -r '.coverage')
+          printf 'coverage: %.1f%%\n' "$cov"
+          awk -v c="$cov" 'BEGIN{ if (c+0 < 85) { print "coverage below 85% threshold" > "/dev/stderr"; exit 1 } }'
+
+      - name: Evaluate data.tbi.pdp.repo_decision
+        # Builds the OPA input from MEASURED facts -- real config size, real scan
+        # output, real tools.lock, real workflow refs -- never from asserted
+        # literals. scripts/bot-propose-approval.sh in this repo writes
+        # "gitleaks_passed": true as a hardcoded string; this step is what makes
+        # that claim checkable.
+        run: ./scripts/repo-gate.sh repo-decision.json
+
+      - name: Summarise
+        if: always()
+        run: |
+          set -euo pipefail
+          [ -f repo-decision.json ] || exit 0
+          {
+            echo "## Repo gate"
+            echo
+            echo "- allow: \`$(jq -r '.allow' repo-decision.json)\`"
+            echo "- violations: $(jq -r '.counts.violations' repo-decision.json)"
+            echo "- warnings: $(jq -r '.counts.warnings' repo-decision.json)"
+            jq -r '.violations[]? | "  - **\(.code)** \(.message)"' repo-decision.json
+            jq -r '.warnings[]?   | "  - _\(.code)_ \(.message)"' repo-decision.json
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: repo-decision
+          path: repo-decision.json
+          if-no-files-found: ignore
+
   seed:
     name: Seed Review Status
     runs-on: ubuntu-latest

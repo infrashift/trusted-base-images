@@ -11,6 +11,11 @@ on:
         required: true
         type: string
 
+# Deny by default at the workflow level; every job below states the scopes it
+# needs. A workflow-level grant applies to EVERY job, including ones that only
+# read, so least privilege has to be expressed per job.
+permissions: {}
+
 jobs:
   cleanup:
     name: Delete Development Images

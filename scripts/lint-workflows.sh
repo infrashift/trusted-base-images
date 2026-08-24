@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+# Mechanical checks over .github/workflows/.
+#
+# Every rule here exists because the failure it catches is invisible in review:
+# a `uses:` on a movable tag looks identical to a pinned one, a required status
+# context spelled two ways looks like two correct strings, and a paths: filter
+# that has drifted from the gate's own regex looks like nothing at all.
+set -euo pipefail
+
+WF=".github/workflows"
+fail=0
+
+err() { echo "error: $*" >&2; fail=1; }
+
+# --- 1. Every action pinned to a full commit SHA ---------------------------
+# A tag is mutable. `actions/checkout@v4` is a promise from whoever can move
+# that tag, and several of these actions run in the job holding the signing key.
+while IFS= read -r ref; do
+  [ -n "$ref" ] || continue
+  # Local composite actions (./.github/actions/x) are in-tree, so the commit
+  # under review IS the pin.
+  case "$ref" in ./*) continue ;; esac
+  if ! [[ "$ref" =~ @[0-9a-f]{40}$ ]]; then
+    err "action not pinned to a commit SHA: ${ref}"
+  fi
+done < <(grep -rhoE '^\s*(-\s*)?uses:\s*\S+' "$WF"/ | sed -E 's/^\s*(-\s*)?uses:\s*//' | sort -u)
+
+# --- 2. Every pinned action carries a version comment ----------------------
+# A bare 40-hex SHA is unreviewable. The trailing `# v4` is what makes a bump
+# legible in a diff.
+while IFS= read -r line; do
+  [ -n "$line" ] || continue
+  if ! [[ "$line" =~ \#[[:space:]]*v?[0-9] ]]; then
+    err "pinned action has no version comment: ${line}"
+  fi
+done < <(grep -rhE '^\s*(-\s*)?uses:\s*\S+@[0-9a-f]{40}' "$WF"/ | sed -E 's/^\s*(-\s*)?//' | sort -u)
+
+# --- 3. No workflow-level write permissions --------------------------------
+# Workflow-level grants apply to EVERY job, including ones that only read.
+# Least privilege has to be per job.
+for f in "$WF"/*.y*ml; do
+  # The workflow-level permissions block is the one at column 0.
+  if awk '/^permissions:/{flag=1;next} /^[a-z]/{flag=0} flag && /write/{print;exit}' "$f" | grep -q write; then
+    err "$(basename "$f"): workflow-level permissions grant write. Move the grant to the job that needs it."
+  fi
+done
+
+# --- 4. Required status contexts spelled identically everywhere ------------
+# pr-gate.yml seeds these contexts; something else has to report them. If a
+# seeded string and its reporter ever differ, the seeded check stays pending
+# forever and every PR hangs -- blocked, not failed, which is the slow kind of
+# broken.
+#
+# Checking against a known set rather than counting: a misspelling is not in the
+# set, so it fails, and adding a second legitimate context later does not make
+# the rule fire on correct code.
+#
+# `build/gate` is listed although this repo does not seed it yet. pr-gate.yml
+# here seeds only `review/cve-policy`; build.yml publishes no aggregate gate at
+# all, and its per-image matrix legs must never be required directly for the
+# reason in rule 1's sibling comment -- job names move with the matrix. Adding
+# an aggregate is tracked separately; the name is reserved here so that when it
+# lands it is already the spelling everything else expects.
+#
+# `|| true` is load-bearing here for the same reason as everywhere else in this
+# file: a repo with no status-seeding workflow has no `-f context=` lines at
+# all, grep exits 1, and under `set -e` the linter would die at exactly the
+# moment it had nothing to complain about.
+KNOWN_CONTEXTS='build/gate review/cve-policy'
+CONTEXTS=$( { grep -rhoE '\-f context="[^"]+"' "$WF"/ || true; } | sed -E 's/.*context="([^"]+)".*/\1/' | sort -u)
+for c in $CONTEXTS; do
+  case " $KNOWN_CONTEXTS " in
+    *" $c "*) : ;;
+    *) err "unknown status context ${c}; expected one of: ${KNOWN_CONTEXTS}" ;;
+  esac
+done
+
+# A seeded context needs something that actually reports it, or seeding it is
+# the only thing that ever will. Each must therefore either be resolved by
+# another workflow -- a second `-f context=` occurrence -- or match a job name
+# that publishes it as a check run.
+for c in $CONTEXTS; do
+  occurrences=$( { grep -rhoE "\-f context=\"${c}\"" "$WF"/ || true; } | grep -c . || true)
+  if [ "$occurrences" -lt 2 ] && ! grep -rqE "^\s*name:\s*${c}\s*$" "$WF"/; then
+    err "status context ${c} is seeded but nothing reports it: no second -f context= and no job named ${c}"
+  fi
+done
+
+# --- 5. The PR gate must not be path-filtered ------------------------------
+# A path-filtered workflow does not run at all, so its required contexts never
+# appear and a docs-only PR waits forever on a check that will never report.
+if [ -f "$WF/pr-gate.yml" ]; then
+  if awk '/^on:/{flag=1;next} /^[a-z]/{flag=0} flag' "$WF/pr-gate.yml" | grep -q 'paths:'; then
+    err "pr-gate.yml is path-filtered. It must report on every PR."
+  fi
+fi
+
+# --- 6. Untrusted values reach run: blocks through env, not interpolation ---
+# `${{ }}` inside a run: block is textual substitution before the shell sees it.
+# github.event.* fields are attacker-controlled on a fork PR.
+while IFS= read -r hit; do
+  err "untrusted interpolation inside a run: block -- pass it through env: instead: ${hit}"
+done < <(grep -rnE '\$\{\{\s*github\.event\.(pull_request\.(title|body|head\.(ref|label))|issue\.(title|body)|comment\.body)' "$WF"/ || true)
+
+if [ "$fail" -eq 0 ]; then
+  echo "OK: workflow lint clean"
+fi
+exit "$fail"

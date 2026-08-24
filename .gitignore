@@ -1,1 +1,4 @@
 temp-delete/
+# Written by scripts/repo-gate.sh on every run; the decision is an artifact,
+# not source. Uploaded by pr-gate.yml rather than committed.
+repo-decision.json

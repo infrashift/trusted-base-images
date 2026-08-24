@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+# Install pipeline tools at the versions pinned in tools.lock.
+#
+# Usage: scripts/install-tools.sh opa syft grype gitleaks
+#
+# Never install from an unpinned `latest` URL or a floating action ref. Several
+# of these binaries run in the same job as the cosign signing key, so a mutable
+# download is a code-execution path into the most privileged step in the
+# pipeline. That was not hypothetical here: build.yml piped
+# anchore/{syft,grype}/main/install.sh straight into sh, from the default branch
+# rather than a tag, in exactly that job. Where upstream publishes a checksum we verify it; where it does not,
+# the version is still pinned and that is stated rather than left implied.
+set -euo pipefail
+
+# shellcheck disable=SC1091
+source "$(dirname "${BASH_SOURCE[0]}")/../tools.lock"
+
+BIN="${BIN:-/usr/local/bin}"
+ARCH="$(uname -m)"
+case "$ARCH" in
+  x86_64)        GOARCH=amd64 ;;
+  aarch64|arm64) GOARCH=arm64 ;;
+  *) echo "unsupported arch: $ARCH" >&2; exit 1 ;;
+esac
+
+# Checksums are keyed by version AND arch. An unpinned pair fails by name rather
+# than silently skipping verification -- the same rule the feature roles follow
+# for their downloads.
+# Every post-install check below runs "$BIN/<tool>", never the bare name. A bare
+# name resolves through PATH, so on a machine that already has the tool the
+# script happily reports a DIFFERENT binary than the one it just wrote -- which
+# is how a wrong version, or a failed install, reads as success. Observed:
+# BIN=/tmp/... installed grype 0.117.0 while `grype version` printed the
+# 0.115.0 already on PATH.
+
+# Every download below goes through fetch(). Retrying only where a retry can
+# help is the whole point of the flag choice:
+#
+#   --retry 3 --retry-delay 2   timeouts, 5xx and 429 -- the registry or the
+#                               release CDN having a bad second
+#   --retry-connrefused         the connection refused before a response, which
+#                               curl does not count as transient on its own
+#
+# NOT --retry-all-errors. That would also retry a 404, and a 404 here means a
+# wrong pin in tools.lock, not a flaky network -- three retries would turn a
+# clear "this version does not exist" into a slow one.
+fetch() {
+  curl -sSfL --retry 3 --retry-delay 2 --retry-connrefused --max-time 120 "$@"
+}
+
+sha_for() {
+  local key="$1"
+  case "$key" in
+    opa:v1.19.1:amd64)      echo c9f985ce0d345f5484006ade2c695ed9e3f308e4441139e46695c5c182ac0839 ;;
+    opa:v1.19.1:arm64)      echo 19dcb5186fd394c32023918c53eaacda55f835abb05e13e0f9a766dd1429494f ;;
+    gitleaks:v8.30.1:amd64) echo 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb ;;
+    gitleaks:v8.30.1:arm64) echo e4a487ee7ccd7d3a7f7ec08657610aa3606637dab924210b3aee62570fb4b080 ;;
+    *) echo "no pinned checksum for ${key}" >&2; return 1 ;;
+  esac
+}
+
+verify() {
+  local file="$1" key="$2" want got
+  want="$(sha_for "$key")" || {
+    echo "::error::refusing to install ${key} without a pinned checksum" >&2
+    exit 1
+  }
+  got="$(sha256sum "$file" | cut -d' ' -f1)"
+  if [ "$want" != "$got" ]; then
+    echo "::error::checksum mismatch for ${key}: want ${want}, got ${got}" >&2
+    exit 1
+  fi
+}
+
+install_opa() {
+  local tmp; tmp=$(mktemp -d)
+  fetch -o "$tmp/opa" \
+    "https://github.com/open-policy-agent/opa/releases/download/${OPA_VERSION}/opa_linux_${GOARCH}_static"
+  verify "$tmp/opa" "opa:${OPA_VERSION}:${GOARCH}"
+  install -m 0755 "$tmp/opa" "$BIN/opa"
+  rm -rf "$tmp"
+  "$BIN/opa" version
+}
+
+install_gitleaks() {
+  local tmp arch; tmp=$(mktemp -d)
+  # gitleaks names its 64-bit x86 asset x64, not amd64. arm64 matches.
+  case "$GOARCH" in amd64) arch=x64 ;; *) arch="$GOARCH" ;; esac
+  fetch -o "$tmp/g.tar.gz" \
+    "https://github.com/gitleaks/gitleaks/releases/download/${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION#v}_linux_${arch}.tar.gz"
+  verify "$tmp/g.tar.gz" "gitleaks:${GITLEAKS_VERSION}:${GOARCH}"
+  tar -xzf "$tmp/g.tar.gz" -C "$tmp" gitleaks
+  install -m 0755 "$tmp/gitleaks" "$BIN/gitleaks"
+  rm -rf "$tmp"
+  "$BIN/gitleaks" version
+}
+
+# syft and grype ship an installer that verifies the release checksum itself,
+# fetched at the pinned tag rather than from main. This replaces
+# anchore/sbom-action@v0 and anchore/scan-action@v6, both floating major refs.
+#
+# The version is passed WITH its leading v. Both installers resolve the argument
+# as a git tag, and the tags are v1.51.0 / v0.117.0 -- stripping the v yields
+# `received HTTP status=404 for .../releases/1.51.0`, then `unable to find
+# tag=''`, which reads like a bad pin rather than a malformed one.
+#
+# The installer is fetched to a FILE and then run, rather than piped straight
+# into sh. Piping cannot be retried safely: if the transfer dies half way, sh
+# has already executed everything that arrived, so a retry re-runs an installer
+# on top of a partial one. Landing it on disk first makes the download atomic
+# with respect to execution -- either fetch() returns a whole script or it fails
+# and nothing ran.
+install_anchore() {
+  local tool="$1" version="$2" tmp
+  tmp=$(mktemp -d)
+  fetch -o "$tmp/install.sh" \
+    "https://raw.githubusercontent.com/anchore/${tool}/${version}/install.sh"
+  sh "$tmp/install.sh" -b "$BIN" "$version"
+  rm -rf "$tmp"
+  "$BIN/${tool}" version
+}
+
+install_syft()  { install_anchore syft  "${SYFT_VERSION}"; }
+install_grype() { install_anchore grype "${GRYPE_VERSION}"; }
+
+for tool in "$@"; do
+  echo "::group::install $tool"
+  "install_${tool}"
+  echo "::endgroup::"
+done

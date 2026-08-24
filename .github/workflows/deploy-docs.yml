@@ -6,10 +6,11 @@ on:
     paths: ['docs/**']
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+# Deny by default; the deploy job below states the scopes it needs. A
+# workflow-level grant applies to EVERY job, so `pages: write` and
+# `id-token: write` here also handed them to the build job, which only needs to
+# read the tree and run Astro.
+permissions: {}
 
 concurrency:
   group: pages
@@ -19,6 +20,8 @@ jobs:
   build:
     name: Build Documentation
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -33,6 +36,11 @@ jobs:
     name: Deploy to GitHub Pages
     needs: build
     runs-on: ubuntu-latest
+    # actions/deploy-pages needs both: pages: write to publish, id-token: write
+    # for the OIDC token it exchanges for the deployment.
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
