@@ -4,7 +4,9 @@ set -e
 # Usage: ./scripts/verify-and-sign.sh <artifact_to_sign> <previous_artifact_to_verify>
 ARTIFACT=$1
 PREV_ARTIFACT=$2
-ACTOR_KEY=$COSIGN_PRIVATE_KEY # Provided via Environment Secret
+# COSIGN_PRIVATE_KEY is read straight out of the environment by cosign below
+# (env://COSIGN_PRIVATE_KEY); it was previously also copied into an ACTOR_KEY
+# variable that nothing used.
 
 echo "🔐 Sovereign Validator: Initializing..."
 

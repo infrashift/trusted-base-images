@@ -14,10 +14,18 @@ on:
       - '.github/workflows/review.yml'
       - '.github/workflows/release.yml'
 
+# Deny by default at the workflow level; every job below states the scopes it
+# needs. A workflow-level grant applies to EVERY job, including ones that only
+# read, so least privilege has to be expressed per job.
+permissions: {}
+
 jobs:
   matrix-setup:
     name: Resolve Build Matrix
     runs-on: ubuntu-latest
+    # Checks out the tree to diff Containerfiles against the PR base.
+    permissions:
+      contents: read
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
@@ -138,11 +146,17 @@ jobs:
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4 # v3.4.0
+        with:
+          cosign-release: v2.6.1   # keep in lockstep with tools.lock
 
       - name: Install Syft & Grype
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+        # Was: curl .../anchore/{syft,grype}/main/install.sh | sh
+        # That fetched the installer from the DEFAULT BRANCH, not a tag, and
+        # piped it straight into a shell -- in this job, which holds the cosign
+        # key and packages: write. Anyone able to push to either upstream default
+        # branch had code execution next to the signing material. Versions now
+        # come from tools.lock and the installer is fetched to a file first.
+        run: sudo BIN=/usr/local/bin ./scripts/install-tools.sh syft grype
 
       - name: Install Buildah
         run: |
