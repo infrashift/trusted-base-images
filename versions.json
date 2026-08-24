@@ -35,10 +35,10 @@
   "fedora43": {
     "minimal": {
       "base": "registry.fedoraproject.org/fedora-minimal",
-      "amd64": { "digest": "sha256:a2f37bd3e14d9fe9ee1792a6cfe3891a8a72ec96c2e07ca755d7f6aad3e05ad6" },
-      "arm64": { "digest": "sha256:5fd0a7675320feba61d9b45f59ee699f72e285eecda5535475c178527296d6b2" }
+      "amd64": { "digest": "sha256:0250e6a1fbf369c3d365cae5698675ba3491f620ac1e0af06bf28359825261d3" },
+      "arm64": { "digest": "sha256:5d461e9b7555dc018317f2b2529017233d80c1058d97181436ed99b49df927fe" }
     },
-    "updated": "2026-08-17",
-    "reason": "Upstream Fedora 43 rebuild; add arm64"
+    "updated": "2026-08-24",
+    "reason": "fedora43-minimal: pick up patched sqlite-libs (CVE-2026-11822, CVE-2026-11824)"
   }
 }
