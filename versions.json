@@ -12,16 +12,16 @@
     },
     "micro": {
       "base": "registry.access.redhat.com/ubi9-micro",
-      "amd64": { "digest": "sha256:3e7b3f8a3fd6b61b277b6856a75ded7269d5b99dc37607b10f7d5e1068bb832a" },
-      "arm64": { "digest": "sha256:e3527dad49097d14ffbc29787902942524906622f9ff69181544e071f0fcf2d1" }
+      "amd64": { "digest": "sha256:7325ffb45d8401b227033dc26c567e138c919731ed2f8119e921ddba71835f87" },
+      "arm64": { "digest": "sha256:0925d6b17e753c1595e272224bce5d017b285510bec597b19a5821061080f786" }
     },
     "init": {
       "base": "registry.access.redhat.com/ubi9-init",
       "amd64": { "digest": "sha256:1af9d150b8fe27aeeb126689a467fb566df93dbc11e37fbe541e313b79bacf34" },
       "arm64": { "digest": "sha256:4bf8643eec8ec708a1ef0a39e8fa6b556d7d316f3953d4d6f51ff6f7c28a065c" }
     },
-    "updated": "2026-08-18",
-    "reason": "ubi9-init: pick up patched curl (CVE-2026-8286, CVE-2026-9547)"
+    "updated": "2026-10-13",
+    "reason": "ubi9-micro: pick up patched pcre2 (CVE-2026-103111, CVE-2026-86145, CVE-2026-89161)"
   },
   "ubi10": {
     "minimal": {
