@@ -129,10 +129,12 @@ jobs:
         with:
           cosign-release: v2.6.1   # keep in lockstep with tools.lock
 
+      # Pinned and checksum-verified, the same binary pr-gate.yml tests the
+      # policy with. This step used to fetch `latest` unverified: when a newer
+      # OPA's type checker rejected policies.rego (repo_warnings, 2026-10-13),
+      # every review died here while the policy self-test stayed green.
       - name: Install OPA
-        run: |
-          curl -sSfL -o /usr/local/bin/opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
-          chmod +x /usr/local/bin/opa
+        run: sudo BIN=/usr/local/bin ./scripts/install-tools.sh opa
 
       - name: Log in to GHCR
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
@@ -421,7 +423,7 @@ jobs:
 
   summary:
     name: Post Review Summary
-    needs: [gate-check, review]
+    needs: [gate-check, matrix-setup, review]
     if: always() && needs.gate-check.result == 'success'
     runs-on: ubuntu-latest
     permissions:
@@ -444,6 +446,8 @@ jobs:
           BUILD_RUN_ID: ${{ github.event.workflow_run.id }}
           REVIEW_RUN_ID: ${{ github.run_id }}
           REPO: ${{ github.repository }}
+          REVIEW_RESULT: ${{ needs.review.result }}
+          REVIEW_MATRIX: ${{ needs.matrix-setup.outputs.matrix }}
         run: |
           cat > /tmp/pr-comment.md << 'HEADER'
           ## Review Attestation Summary
@@ -484,6 +488,24 @@ jobs:
             fi
           done
 
+          # FAIL CLOSED. A review leg that dies before uploading its verdict
+          # leaves no file, and the loop above can only see files: two failed
+          # legs once read as an empty table and PASS (PR #26, 2026-10-13).
+          # Every image in the matrix must have a verdict, and every leg must
+          # have succeeded.
+          EXPECTED=$(jq 'length' <<< "${REVIEW_MATRIX:-[]}")
+          for want in $(jq -r '.[] | "\(.image)-\(.arch)"' <<< "${REVIEW_MATRIX:-[]}"); do
+            if [[ ! -f "verdicts/review-${want}/review-verdict.json" ]]; then
+              echo "| ${want} | - | - | - | - | - | **NO VERDICT** |" >> /tmp/pr-comment.md
+              OVERALL_VERDICT="FAIL"
+            fi
+          done
+          if [[ "$EXPECTED" -eq 0 || "$REVIEW_RESULT" != "success" ]]; then
+            OVERALL_VERDICT="FAIL"
+          fi
+
+          echo "" >> /tmp/pr-comment.md
+          echo "Review legs: \`${REVIEW_RESULT}\`; verdicts expected: ${EXPECTED}." >> /tmp/pr-comment.md
           echo "" >> /tmp/pr-comment.md
 
           # CVE details table
