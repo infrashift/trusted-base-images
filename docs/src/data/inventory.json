@@ -3,14 +3,14 @@
     "status": "trusted",
     "tags": [
       {
-        "tag": "4150399-amd64",
+        "tag": "ea1e21e-amd64",
         "arch": "amd64",
-        "digest": "sha256:41001ec6790f8614532366b84d84ce4ef54d62cea34b52f806537fb57ed5bb81"
+        "digest": "sha256:2402379f1bb5a09bb477e4679f0bed281c23d5c004dbfec8aafb30045552c169"
       },
       {
-        "tag": "4150399-arm64",
+        "tag": "ea1e21e-arm64",
         "arch": "arm64",
-        "digest": "sha256:83207ec00e319eb0d358786ee3929f16002250d1bf19623bcbbf332eb918171b"
+        "digest": "sha256:bff8b7cad7f09ab9a3cca97f85803c87e333fa220581991ce8c6017f4fe33a13"
       },
       {
         "tag": "sha256-a0bf654f8412b975fbe95defc5d59f35411d12b9b4113ff23bbffbffbc3bfe94",
@@ -35,7 +35,7 @@
       {
         "tag": "latest",
         "type": "manifest-list",
-        "digest": "sha256:2b466d59593a17aea895b92e2f3678711f7b30c013ea5b9d9bbbe0642598147f"
+        "digest": "sha256:492304c8ff2237112a353e59eee9454ddbb7b0ea84e2ae45f7824e49e1bbc913"
       },
       {
         "tag": "20260216",
@@ -195,7 +195,7 @@
       {
         "tag": "20261028",
         "type": "manifest-list",
-        "digest": "sha256:2b466d59593a17aea895b92e2f3678711f7b30c013ea5b9d9bbbe0642598147f"
+        "digest": "sha256:492304c8ff2237112a353e59eee9454ddbb7b0ea84e2ae45f7824e49e1bbc913"
       },
       {
         "tag": "4150399",
@@ -206,6 +206,36 @@
         "tag": "sha256-2b466d59593a17aea895b92e2f3678711f7b30c013ea5b9d9bbbe0642598147f.sig",
         "type": "manifest-list",
         "digest": "sha256:3bb11b4bc88c06a5e10d1ba821f85520fec4d0aa7b8ecee0102bb9b943d14feb"
+      },
+      {
+        "tag": "sha256-bff8b7cad7f09ab9a3cca97f85803c87e333fa220581991ce8c6017f4fe33a13",
+        "type": "manifest-list",
+        "digest": "sha256:bff8b7cad7f09ab9a3cca97f85803c87e333fa220581991ce8c6017f4fe33a13"
+      },
+      {
+        "tag": "sha256-bff8b7cad7f09ab9a3cca97f85803c87e333fa220581991ce8c6017f4fe33a13.att",
+        "type": "manifest-list",
+        "digest": "sha256:7f983a29970e3702e915c7d00f3393f3eedf6b97709b052148e736830b2a85cb"
+      },
+      {
+        "tag": "sha256-2402379f1bb5a09bb477e4679f0bed281c23d5c004dbfec8aafb30045552c169",
+        "type": "manifest-list",
+        "digest": "sha256:2402379f1bb5a09bb477e4679f0bed281c23d5c004dbfec8aafb30045552c169"
+      },
+      {
+        "tag": "sha256-2402379f1bb5a09bb477e4679f0bed281c23d5c004dbfec8aafb30045552c169.att",
+        "type": "manifest-list",
+        "digest": "sha256:4d73b62d0f4bc5227f473d29ce2b3c87aa659989d96b20e2f264a8cc11387bc5"
+      },
+      {
+        "tag": "ea1e21e",
+        "type": "manifest-list",
+        "digest": "sha256:492304c8ff2237112a353e59eee9454ddbb7b0ea84e2ae45f7824e49e1bbc913"
+      },
+      {
+        "tag": "sha256-492304c8ff2237112a353e59eee9454ddbb7b0ea84e2ae45f7824e49e1bbc913.sig",
+        "type": "manifest-list",
+        "digest": "sha256:f52a726fc07796b1d1864791967232b9687dd9b498f5356c1b124075e707a18f"
       }
     ],
     "cves": {
@@ -239,16 +269,6 @@
         {
           "id": "CVE-2026-76641",
           "package": "expat",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2026-97687",
-          "package": "python3-urllib3",
-          "fixedIn": null
-        },
-        {
-          "id": "CVE-2026-97689",
-          "package": "python3-urllib3",
           "fixedIn": null
         }
       ],
@@ -5932,14 +5952,14 @@
     "status": "trusted",
     "tags": [
       {
-        "tag": "4150399-amd64",
+        "tag": "ea1e21e-amd64",
         "arch": "amd64",
-        "digest": "sha256:133e62232b0774ad75589563b9892e0f28a5bfe9cfaff34ea9c56fd18c68eee5"
+        "digest": "sha256:4eadcdd2ab158f4365f9c3fcf7355e2558b99cac5a291db5367aba8a671caedc"
       },
       {
-        "tag": "4150399-arm64",
+        "tag": "ea1e21e-arm64",
         "arch": "arm64",
-        "digest": "sha256:d0ecaf84d370762e2ba1a7fd8724e93caa33bf5a2b60be4228f63d1b42de95ef"
+        "digest": "sha256:561761ed2187b62b269c8337384af88804cf34f4c11a68dbc767041ccc285384"
       },
       {
         "tag": "sha256-cc9bdc4e9cd7330df6d15ee1bfa3c73390a78dd439c926678a16a6ed7b9553da",
@@ -5954,7 +5974,7 @@
       {
         "tag": "latest",
         "type": "manifest-list",
-        "digest": "sha256:8f11e44f58fc85cf100be22434abfb745ee4bf48a7f3931961f32a3255db0890"
+        "digest": "sha256:27dbbbb9470a39d04fb4154ec7bf9bff3e58d69365247f318eec5e8cd9783b2e"
       },
       {
         "tag": "20260304",
@@ -6114,7 +6134,7 @@
       {
         "tag": "20261028",
         "type": "manifest-list",
-        "digest": "sha256:8f11e44f58fc85cf100be22434abfb745ee4bf48a7f3931961f32a3255db0890"
+        "digest": "sha256:27dbbbb9470a39d04fb4154ec7bf9bff3e58d69365247f318eec5e8cd9783b2e"
       },
       {
         "tag": "4150399",
@@ -6125,6 +6145,36 @@
         "tag": "sha256-8f11e44f58fc85cf100be22434abfb745ee4bf48a7f3931961f32a3255db0890.sig",
         "type": "manifest-list",
         "digest": "sha256:cfb796fb6e64f9e4e8a4fb790e8f3829e55e0010f2f53b529334465bc9813890"
+      },
+      {
+        "tag": "sha256-4eadcdd2ab158f4365f9c3fcf7355e2558b99cac5a291db5367aba8a671caedc",
+        "type": "manifest-list",
+        "digest": "sha256:4eadcdd2ab158f4365f9c3fcf7355e2558b99cac5a291db5367aba8a671caedc"
+      },
+      {
+        "tag": "sha256-4eadcdd2ab158f4365f9c3fcf7355e2558b99cac5a291db5367aba8a671caedc.att",
+        "type": "manifest-list",
+        "digest": "sha256:8dc29ef5985f80673a9bf1055c18b548142d3fe540d877515661b378683ec5d9"
+      },
+      {
+        "tag": "sha256-561761ed2187b62b269c8337384af88804cf34f4c11a68dbc767041ccc285384",
+        "type": "manifest-list",
+        "digest": "sha256:561761ed2187b62b269c8337384af88804cf34f4c11a68dbc767041ccc285384"
+      },
+      {
+        "tag": "sha256-561761ed2187b62b269c8337384af88804cf34f4c11a68dbc767041ccc285384.att",
+        "type": "manifest-list",
+        "digest": "sha256:843c3efcda5d0ce21df13651a995b5a507ccbf9dfd4617dff0b1fd6cb8e5fe7d"
+      },
+      {
+        "tag": "ea1e21e",
+        "type": "manifest-list",
+        "digest": "sha256:27dbbbb9470a39d04fb4154ec7bf9bff3e58d69365247f318eec5e8cd9783b2e"
+      },
+      {
+        "tag": "sha256-27dbbbb9470a39d04fb4154ec7bf9bff3e58d69365247f318eec5e8cd9783b2e.sig",
+        "type": "manifest-list",
+        "digest": "sha256:16314a88e7c2d1f42dad51654aef8fb2dfaf09f322aa82e155c6fc18f0877f9c"
       }
     ],
     "cves": {
