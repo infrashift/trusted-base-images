@@ -2,8 +2,8 @@
   "ubi9": {
     "standard": {
       "base": "registry.access.redhat.com/ubi9",
-      "amd64": { "digest": "sha256:a7488b086f05bf976bf116ecbaa292d0d19a7f76f0e5185119586d5583916f1a" },
-      "arm64": { "digest": "sha256:ba43815a0882d17bd4de0385615c3fb0996d27eca1f5ed5907efb35c3e544836" }
+      "amd64": { "digest": "sha256:c1f105254b12a7cc676508c7e676d37125fc5c330fe2c1ce5a0cd693fa66ce8e" },
+      "arm64": { "digest": "sha256:e26edbdb978880abfa1d0ffd0af518540aa9259202a2e42e45b4d6ebac8bc256" }
     },
     "minimal": {
       "base": "registry.access.redhat.com/ubi9-minimal",
@@ -20,8 +20,8 @@
       "amd64": { "digest": "sha256:2da73d427391a763ebbdff5cfabab43cfe720324193e88a10730a8896ac6ff17" },
       "arm64": { "digest": "sha256:cf1926bb3316b7d99d8e3775da2edd2063ac0272263e532a75bf3da8bb9a04ff" }
     },
-    "updated": "2026-10-27",
-    "reason": "ubi9-standard/minimal/init: upstream refresh to pick up patched openssl, python3, sqlite, pcre2, ca-certificates and others"
+    "updated": "2026-10-28",
+    "reason": "ubi9-standard: upstream refresh found by the drift check"
   },
   "ubi10": {
     "minimal": {
@@ -35,10 +35,10 @@
   "fedora43": {
     "minimal": {
       "base": "registry.fedoraproject.org/fedora-minimal",
-      "amd64": { "digest": "sha256:b2c4457423c8f344e2044d356db4741fc156a62aff555713140c5b9239cc764b" },
-      "arm64": { "digest": "sha256:2f9b9aeef358f34704bb649fb1b2db0dcba11b7727133a333b092519e6bd6dd3" }
+      "amd64": { "digest": "sha256:33c92f0e8b91f85d9f6ef8c309362abca1a607a0b8dfbe0544b3e963881b088a" },
+      "arm64": { "digest": "sha256:2d91e26e9de92184aaea18be98389a885e688f0f8e784bcde5e76f2b72954127" }
     },
-    "updated": "2026-10-27",
-    "reason": "fedora43-minimal: upstream refresh to pick up patched packages"
+    "updated": "2026-10-28",
+    "reason": "fedora43-minimal: upstream refresh found by the drift check"
   }
 }
