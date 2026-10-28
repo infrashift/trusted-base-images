@@ -117,6 +117,20 @@ jobs:
             "\($dk)-\(.key)"' versions.json))
 
           for IMAGE in "${IMAGES[@]}"; do
+            # The release run only carries results for the images it released,
+            # so an image it did not touch keeps its existing entry. Rebuilding
+            # that entry from nothing dropped its per-arch tags and CVE data, and
+            # a docs-only merge (whose release run releases nothing) blanked the
+            # whole inventory and asked for another inventory PR.
+            if ! compgen -G "results/release-result-${IMAGE}-*/release-result.json" > /dev/null; then
+              EXISTING=$(jq -c --arg img "$IMAGE" '.[$img] // empty' docs/src/data/inventory.json 2>/dev/null || true)
+              if [[ -n "$EXISTING" ]]; then
+                echo "${IMAGE}: not in this release; keeping its existing entry"
+                INVENTORY=$(echo "$INVENTORY" | jq -c --arg img "$IMAGE" --argjson entry "$EXISTING" '.[$img] = $entry')
+                continue
+              fi
+            fi
+
             STATUS="trusted"
             TAGS='[]'
             CVES='{"critical":[],"high":[],"medium":[],"low":[]}'
