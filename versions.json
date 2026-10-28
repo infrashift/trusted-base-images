@@ -2,13 +2,13 @@
   "ubi9": {
     "standard": {
       "base": "registry.access.redhat.com/ubi9",
-      "amd64": { "digest": "sha256:7a069592145703a5e202a6e23a0ac3cf89737f89f2b26343b88ca3358a53f5de" },
-      "arm64": { "digest": "sha256:1dbdcfbbf752d0564eb9a084aa4398e5d3c96dff51f2eb8664c0e5a510465780" }
+      "amd64": { "digest": "sha256:a7488b086f05bf976bf116ecbaa292d0d19a7f76f0e5185119586d5583916f1a" },
+      "arm64": { "digest": "sha256:ba43815a0882d17bd4de0385615c3fb0996d27eca1f5ed5907efb35c3e544836" }
     },
     "minimal": {
       "base": "registry.access.redhat.com/ubi9-minimal",
-      "amd64": { "digest": "sha256:285fe1836090b985747a93cda2c3c07c0560a1d90a8522ab27877ed2fd5166ee" },
-      "arm64": { "digest": "sha256:3aa4da3d39c5213748fa3bd0c17fcf9e170a7d8aa5145e2487b3b496db6083d3" }
+      "amd64": { "digest": "sha256:5c9e61f364f90de936dae884069044e372a1441288203d83f40783d633244b2f" },
+      "arm64": { "digest": "sha256:fc0015cab5a79af84baa23f96c34f2673ce79c15dfd9f4aac852617167375dd5" }
     },
     "micro": {
       "base": "registry.access.redhat.com/ubi9-micro",
@@ -17,28 +17,28 @@
     },
     "init": {
       "base": "registry.access.redhat.com/ubi9-init",
-      "amd64": { "digest": "sha256:1af9d150b8fe27aeeb126689a467fb566df93dbc11e37fbe541e313b79bacf34" },
-      "arm64": { "digest": "sha256:4bf8643eec8ec708a1ef0a39e8fa6b556d7d316f3953d4d6f51ff6f7c28a065c" }
+      "amd64": { "digest": "sha256:2da73d427391a763ebbdff5cfabab43cfe720324193e88a10730a8896ac6ff17" },
+      "arm64": { "digest": "sha256:cf1926bb3316b7d99d8e3775da2edd2063ac0272263e532a75bf3da8bb9a04ff" }
     },
-    "updated": "2026-10-13",
-    "reason": "ubi9-micro: pick up patched pcre2 (CVE-2026-103111, CVE-2026-86145, CVE-2026-89161)"
+    "updated": "2026-10-27",
+    "reason": "ubi9-standard/minimal/init: upstream refresh to pick up patched openssl, python3, sqlite, pcre2, ca-certificates and others"
   },
   "ubi10": {
     "minimal": {
       "base": "registry.access.redhat.com/ubi10-minimal",
-      "amd64": { "digest": "sha256:ca6b9148f45f061b4c9e92689ea0b09dd112428b8ef2224577e3376a20b7d1a8" },
-      "arm64": { "digest": "sha256:4e47e991358f12e4d0441fa3f26e68e46066c7cc5406dee1d0a523476b121da8" }
+      "amd64": { "digest": "sha256:eed1fd1de97f2638206c08969b875434b02488ce566e4a9fbfdb7922b1798140" },
+      "arm64": { "digest": "sha256:d4e1b8befc9bb906d4b63cccb25a516ba7fdb053ee7b527e8d9c3e836fdb27a6" }
     },
-    "updated": "2026-08-17",
-    "reason": "Upstream refresh to RHEL 10.2; add arm64"
+    "updated": "2026-10-27",
+    "reason": "ubi10-minimal: upstream refresh to pick up patched packages"
   },
   "fedora43": {
     "minimal": {
       "base": "registry.fedoraproject.org/fedora-minimal",
-      "amd64": { "digest": "sha256:0250e6a1fbf369c3d365cae5698675ba3491f620ac1e0af06bf28359825261d3" },
-      "arm64": { "digest": "sha256:5d461e9b7555dc018317f2b2529017233d80c1058d97181436ed99b49df927fe" }
+      "amd64": { "digest": "sha256:b2c4457423c8f344e2044d356db4741fc156a62aff555713140c5b9239cc764b" },
+      "arm64": { "digest": "sha256:2f9b9aeef358f34704bb649fb1b2db0dcba11b7727133a333b092519e6bd6dd3" }
     },
-    "updated": "2026-08-24",
-    "reason": "fedora43-minimal: pick up patched sqlite-libs (CVE-2026-11822, CVE-2026-11824)"
+    "updated": "2026-10-27",
+    "reason": "fedora43-minimal: upstream refresh to pick up patched packages"
   }
 }
