@@ -23,7 +23,7 @@ This wiki holds what the code does not say. It records why the system works this
 ## How to read this wiki
 
 1. Read this page.
-2. Open the `index.md` of the bundle you need. Each line gives one concept and one sentence.
+2. Open the `index.md` of the bundle you need. Each line gives one concept and one sentence. Over MCP, use `okfw_read {"ref":"<bundle>/"}`.
 3. Open one concept. Follow its links only when you need more.
 4. Go to the source files or the public site last.
 

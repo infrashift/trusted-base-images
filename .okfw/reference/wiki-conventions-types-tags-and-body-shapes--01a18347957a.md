@@ -33,7 +33,7 @@ Put each concept in one bundle. If a concept fits two bundles, put it in the bun
 
 ## Types
 
-`okfw create` writes `type: "note"`. Change the `type:` line by hand after you create the concept. Then run `okfw validate --all`.
+Set the type when you create the concept: `okfw create --type <type>`, or `type` in `okfw_create`. Without it, the type is the kind (`note` or `issue`).
 
 | type | Bundle | Body shape |
 |---|---|---|
@@ -49,11 +49,11 @@ Put each concept in one bundle. If a concept fits two bundles, put it in the bun
 | `issue` | `issues/` | Description, Context, Details, Acceptance Criteria, Related |
 | `runbook` | `runbooks/` | Goal, Prerequisites, Steps (numbered, one action each), Verify, Related |
 
-An issue also has `kind: "issue"`, so `okfw search --kind issue` finds it.
+An issue also has `kind: "issue"` (`okfw create --kind issue`), so `okfw search --kind issue` finds it.
 
 ## Tags
 
-- State of an issue: `open` or `fixed`. Change the tag when the state changes.
+- State of an issue: `open` or `fixed`. When the state changes, swap the tag: `okfw remove-tags <ref> open`, then `okfw add-tags <ref> fixed`.
 - Class of an issue: `bug`, `enhancement` or `chore`.
 - A plan has `planned` until work starts, then `active`.
 - Topic: `security`, `signing`, `cve`, `pipeline`, `registry`, `governance`, `docs`, `wiki`, `agents`.
@@ -71,7 +71,7 @@ Use only these tags. Add a new tag here before you use it.
 
 - Set `resource` to the file or page that the concept describes: `okfw set-resource <ref> <url>`.
 - Add each source you used: `okfw add-source <ref> --resource <url> --title "<label>"`.
-- Record the writer: `okfw set-generated <ref> --by <actor>`. An AI agent writes `claude-code/<model>`. A person writes `human:<github-login>`.
+- Record the writer: `generated_by` in `okfw_create`, or `okfw set-generated <ref> --by <actor>` after a CLI create. An AI agent writes `claude-code/<model>`. A person writes `human:<github-login>`.
 - After a person checks a concept, run `okfw verify <ref>`.
 
 ## Links

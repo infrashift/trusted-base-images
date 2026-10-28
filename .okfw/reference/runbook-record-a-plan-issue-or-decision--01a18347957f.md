@@ -32,16 +32,16 @@ Add one new concept to the correct bundle, with the correct type, tags and links
    okfw search "<words>"
    ```
 
-2. Create the concept in its bundle. Write a one-sentence description.
+2. Create the concept in its bundle, with its type. Write a one-sentence description. For an issue, add `--kind issue`.
 
    ```sh
-   okfw create "<Title>" --path issues -d "<one sentence>" --tags open,bug --json
+   okfw create "<Title>" --path issues --kind issue --type issue -d "<one sentence>" --tags open,bug --json
    ```
 
-3. Open the file. Change `type: "note"` to the correct type. For an issue, add `kind: "issue"` under `type`.
+3. Over MCP, use one `okfw_create` call. Set `dir`, `kind`, `type`, `description`, `tags`, `status`, `resource` and `generated_by` in it.
 4. Write the body in the shape that [Wiki conventions: types, tags and body shapes](/reference/wiki-conventions-types-tags-and-body-shapes--01a18347957a.md) gives for the type.
 5. Add links to related concepts. Use paths from the wiki root.
-6. Record the writer.
+6. If you used the CLI, record the writer. Over MCP, `generated_by` in step 3 does this.
 
    ```sh
    okfw set-generated <ref> --by human:<github-login>
