@@ -2886,6 +2886,16 @@
     "status": "trusted",
     "tags": [
       {
+        "tag": "6c0d95c-amd64",
+        "arch": "amd64",
+        "digest": "sha256:f024088541e1220e3809020f238809cc048cb5e5123527e26e39a11d75440efe"
+      },
+      {
+        "tag": "6c0d95c-arm64",
+        "arch": "arm64",
+        "digest": "sha256:4f93842687d19ffa7abf51233bc538bf4e0783f6e11a6a6990114949214aefb7"
+      },
+      {
         "tag": "sha256-04cd7da1ebad5f6a5545ad4c8675aea05548ad1623b706cc8c243ab866f4cce3",
         "type": "manifest-list",
         "digest": "sha256:04cd7da1ebad5f6a5545ad4c8675aea05548ad1623b706cc8c243ab866f4cce3"
@@ -3084,8 +3094,70 @@
     "cves": {
       "critical": [],
       "high": [],
-      "medium": [],
-      "low": []
+      "medium": [
+        {
+          "id": "CVE-2026-102010",
+          "package": "libgcc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-56391",
+          "package": "coreutils-single",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-8674",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-86805",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-89092",
+          "package": "glibc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-95619",
+          "package": "libgcc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-95818",
+          "package": "glibc",
+          "fixedIn": null
+        }
+      ],
+      "low": [
+        {
+          "id": "CVE-2021-46195",
+          "package": "libgcc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-27943",
+          "package": "libgcc",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2022-41409",
+          "package": "pcre2",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2023-50495",
+          "package": "ncurses-base",
+          "fixedIn": null
+        },
+        {
+          "id": "CVE-2026-97399",
+          "package": "glibc",
+          "fixedIn": null
+        }
+      ]
     }
   },
   "ubi9-init": {
