@@ -7,15 +7,6 @@ This roadmap outlines planned features and enhancements. Items are not in strict
 
 ## Planned Features
 
-### Automatic Upstream Version Bump Triggers
-
-Monitor Red Hat registries for new UBI digest publications. When upstream digests change, automatically open PRs to update `versions.json`:
-
-- Scheduled workflow to check upstream manifests via `skopeo inspect --raw`
-- Compare current digests in `versions.json` with upstream
-- Open a PR with updated digests when changes are detected
-- The existing Build/Review pipeline handles the rest
-
 ### Automatic CVE Announcement Triggers
 
 When new CVEs are published that affect managed images, trigger re-scans and notify stakeholders:

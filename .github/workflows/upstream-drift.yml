@@ -1,0 +1,247 @@
+name: Upstream Drift Check
+
+# Compares every pin in versions.json with what its upstream tag serves now, and
+# grype-scans the pinned and upstream amd64 images so the report says whether a
+# refresh actually clears anything.
+#
+# On drift it pushes automation/upstream-refresh with the re-pinned
+# versions.json and keeps one tracking issue current. It cannot open the PR:
+# "Allow GitHub Actions to create and approve pull requests" is disabled on
+# purpose (see doc-release.yml), so a human opens it from the issue's link and
+# the normal Build/Review/Release pipeline takes it from there.
+
+on:
+  schedule:
+    - cron: '23 7 * * *'
+  workflow_dispatch:
+
+# Deny by default at the workflow level; every job below states the scopes it
+# needs. A workflow-level grant applies to EVERY job, including ones that only
+# read, so least privilege has to be expressed per job.
+permissions: {}
+
+concurrency:
+  group: upstream-drift
+  cancel-in-progress: false
+
+env:
+  BRANCH: automation/upstream-refresh
+  ISSUE_TITLE: Upstream base image drift
+
+jobs:
+  detect:
+    name: Detect Drift
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+
+      - name: Install Skopeo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo jq
+
+      - name: Compare pins with upstream
+        run: |
+          ./scripts/check-upstream-drift.sh --apply versions.json > drift.json
+          jq -r '.[] | "\(.image) \(.arch): \(if .drifted then "DRIFTED" else "current" end)"' drift.json
+
+      - name: Build scan matrix
+        id: matrix
+        # One leg per image, amd64 only: both arches of a UBI or Fedora build
+        # come from the same package set, and the review pipeline scans both
+        # arches before anything is released.
+        run: |
+          MATRIX=$(jq -c '[.[] | select(.arch == "amd64")
+            | {image, base, pinned, upstream, drifted}]' drift.json)
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+
+      - name: Upload drift result
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: drift
+          path: |
+            drift.json
+            versions.json
+
+  scan:
+    name: Scan (${{ matrix.image }})
+    needs: detect
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.detect.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+
+      - name: Install Grype
+        run: sudo BIN=/usr/local/bin ./scripts/install-tools.sh grype
+
+      - name: Scan pinned and upstream
+        env:
+          IMAGE: ${{ matrix.image }}
+          BASE: ${{ matrix.base }}
+          PINNED: ${{ matrix.pinned }}
+          UPSTREAM: ${{ matrix.upstream }}
+          DRIFTED: ${{ matrix.drifted }}
+        run: |
+          # Blocking is what the review gate blocks on: any Critical, or a High
+          # with a published fix. Same selectors as review.yml.
+          counts() {
+            grype -q "registry:${BASE}@$1" -o json | jq -c '{
+              critical:     [.matches[] | select(.vulnerability.severity == "Critical")] | length,
+              high:         [.matches[] | select(.vulnerability.severity == "High")] | length,
+              fixable_high: [.matches[] | select(.vulnerability.severity == "High" and .vulnerability.fix.state == "fixed")] | length
+            } | . + {blocking: (.critical + .fixable_high)}'
+          }
+
+          PINNED_COUNTS=$(counts "$PINNED")
+          if [[ "$DRIFTED" == "true" ]]; then
+            UPSTREAM_COUNTS=$(counts "$UPSTREAM")
+          else
+            UPSTREAM_COUNTS=null
+          fi
+
+          jq -n --arg image "$IMAGE" --argjson pinned "$PINNED_COUNTS" --argjson upstream "$UPSTREAM_COUNTS" \
+            '{image: $image, pinned: $pinned, upstream: $upstream}' > "scan-${IMAGE}.json"
+          cat "scan-${IMAGE}.json"
+
+      - name: Upload scan result
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: scan-${{ matrix.image }}
+          path: scan-${{ matrix.image }}.json
+
+  publish:
+    name: Publish Refresh Branch and Issue
+    needs: [detect, scan]
+    # A failed scan leg still reports: its row says so instead of the whole
+    # check going quiet.
+    if: always() && needs.detect.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+
+      - name: Download results
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          path: results/
+
+      - name: Build report
+        id: report
+        env:
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          DRIFT=results/drift/drift.json
+          SCANS=$(jq -s '.' results/scan-*/scan-*.json 2>/dev/null || echo '[]')
+
+          DRIFTED=$(jq '[.[] | select(.drifted)] | length' "$DRIFT")
+          # Blocking findings on a pin with no newer upstream are the case no
+          # refresh can fix: those need an exception or a vendor fix.
+          STUCK_IMAGES=$(jq -r --argjson s "$SCANS" '[.[] | select(.arch == "amd64" and (.drifted | not)) | .image as $i
+            | $s[] | select(.image == $i and .pinned.blocking > 0) | .image] | join(", ")' "$DRIFT")
+          STUCK=$(jq -rn --arg l "$STUCK_IMAGES" '$l | if . == "" then 0 else split(", ") | length end')
+
+          echo "drifted=$DRIFTED" >> "$GITHUB_OUTPUT"
+          echo "stuck=$STUCK" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "The [drift check](${RUN_URL}) compared every pin in \`versions.json\` with its upstream tag on $(date -u +%F)."
+            echo ""
+            echo "| Image | Tag | Pinned (amd64 / arm64) | Upstream | Blocking now | Blocking after refresh |"
+            echo "|---|---|---|---|---:|---:|"
+            jq -r --argjson s "$SCANS" '
+              group_by(.image)[] | . as $rows | ($rows[0].image) as $i
+              | ([$s[] | select(.image == $i)][0]) as $scan
+              | ($rows | map(select(.arch == "amd64"))[0]) as $a
+              | ($rows | map(select(.arch == "arm64"))[0]) as $b
+              | (if $scan == null then "scan failed" else ($scan.pinned.blocking | tostring) end) as $now
+              | (if ($rows | any(.drifted)) | not then "–"
+                 elif $scan == null or $scan.upstream == null then "scan failed"
+                 else ($scan.upstream.blocking | tostring) end) as $after
+              | "| \($i) | `\($a.tag)` | `\($a.pinned[7:19])` / `\($b.pinned[7:19] // "–")` | "
+                + (if ($rows | any(.drifted)) then "**drifted** → `\($a.upstream[7:19])` / `\($b.upstream[7:19] // "–")`" else "current" end)
+                + " | \($now) | \($after) |"' "$DRIFT"
+            echo ""
+            echo "_Blocking_ means what the review gate blocks: any Critical, or a High with a published fix (amd64 scan)."
+            echo ""
+            if [[ "$DRIFTED" -gt 0 ]]; then
+              echo "### Refresh"
+              echo ""
+              echo "\`${BRANCH}\` has the re-pinned \`versions.json\`, with both arches checked against their declared architecture."
+              echo ""
+              echo "**[Open the pull request](https://github.com/${REPO}/compare/main...${BRANCH}?expand=1)**. The Build/Review/Release pipeline does the rest."
+            fi
+            if [[ "$STUCK" -gt 0 ]]; then
+              echo ""
+              echo "### Blocking findings with no upstream refresh"
+              echo ""
+              echo "${STUCK_IMAGES}: the current pin has blocking findings and upstream has nothing newer. No refresh can clear them. Each needs an exception or a vendor fix."
+            fi
+          } > report.md
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Push refresh branch
+        if: steps.report.outputs.drifted != '0'
+        run: |
+          cp results/drift/versions.json versions.json
+          # Push only when the proposal changed, so a PR already open from this
+          # branch is not rebuilt every morning for the same digests.
+          if git fetch --quiet origin "$BRANCH" 2>/dev/null && git diff --quiet FETCH_HEAD -- versions.json; then
+            echo "${BRANCH} already proposes these digests"
+            exit 0
+          fi
+
+          IMAGES=$(jq -r '[.[] | select(.drifted) | .image] | unique | join(", ")' results/drift/drift.json)
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add versions.json
+          git commit -m "fix: refresh drifted upstream bases" \
+                     -m "Re-pins ${IMAGES} to the digests upstream serves now. Found by Upstream Drift Check run ${GITHUB_RUN_ID}."
+          git push --force origin "$BRANCH"
+
+      - name: Update tracking issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRIFTED: ${{ steps.report.outputs.drifted }}
+          STUCK: ${{ steps.report.outputs.stuck }}
+        run: |
+          # Search is fuzzy, so match the exact title afterwards. gh's --jq takes
+          # no --arg, hence the separate jq.
+          ISSUE=$(gh issue list --state open --search "in:title \"${ISSUE_TITLE}\"" --json number,title \
+            | jq -r --arg t "$ISSUE_TITLE" '[.[] | select(.title == $t)][0].number // empty')
+
+          if [[ "$DRIFTED" == "0" && "$STUCK" == "0" ]]; then
+            if [[ -n "$ISSUE" ]]; then
+              gh issue close "$ISSUE" --comment "Every pin matches upstream again and no current pin has blocking findings."
+            fi
+            echo "No drift"
+            exit 0
+          fi
+
+          if [[ -n "$ISSUE" ]]; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/${ISSUE}" -F body=@report.md > /dev/null
+            echo "Updated #${ISSUE}"
+          else
+            gh issue create --title "$ISSUE_TITLE" --body-file report.md
+          fi
