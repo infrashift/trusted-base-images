@@ -7,8 +7,8 @@
     },
     "minimal": {
       "base": "registry.access.redhat.com/ubi9-minimal",
-      "amd64": { "digest": "sha256:5c9e61f364f90de936dae884069044e372a1441288203d83f40783d633244b2f" },
-      "arm64": { "digest": "sha256:fc0015cab5a79af84baa23f96c34f2673ce79c15dfd9f4aac852617167375dd5" }
+      "amd64": { "digest": "sha256:660adca8516eaf4d033616118fe87c5df60af51e6346c528f3aaa225b1a5cc6d" },
+      "arm64": { "digest": "sha256:d98d72b4eb807924bee5f319061683b13122beb7473729f03912cf3b66d57c5f" }
     },
     "micro": {
       "base": "registry.access.redhat.com/ubi9-micro",
@@ -17,11 +17,11 @@
     },
     "init": {
       "base": "registry.access.redhat.com/ubi9-init",
-      "amd64": { "digest": "sha256:2da73d427391a763ebbdff5cfabab43cfe720324193e88a10730a8896ac6ff17" },
-      "arm64": { "digest": "sha256:cf1926bb3316b7d99d8e3775da2edd2063ac0272263e532a75bf3da8bb9a04ff" }
+      "amd64": { "digest": "sha256:cda0cb66c470798aad7358c20adb071b7e2871726af6be33f40ef122efb1dbca" },
+      "arm64": { "digest": "sha256:f7fed13f75e5f1e30d1b49d5d997692128a1f2bd6d112b7da7bc4e8367ba24b2" }
     },
-    "updated": "2026-10-28",
-    "reason": "ubi9-standard: upstream refresh found by the drift check"
+    "updated": "2026-10-31",
+    "reason": "ubi9-init, ubi9-minimal: upstream refresh found by the drift check"
   },
   "ubi10": {
     "minimal": {
@@ -35,10 +35,10 @@
   "fedora43": {
     "minimal": {
       "base": "registry.fedoraproject.org/fedora-minimal",
-      "amd64": { "digest": "sha256:33c92f0e8b91f85d9f6ef8c309362abca1a607a0b8dfbe0544b3e963881b088a" },
-      "arm64": { "digest": "sha256:2d91e26e9de92184aaea18be98389a885e688f0f8e784bcde5e76f2b72954127" }
+      "amd64": { "digest": "sha256:54eba47204a973f19c6124f2c0fc2ab9facf1117d7e141a982db7b10125eb46e" },
+      "arm64": { "digest": "sha256:7cb8bcc524781b2df1aff141091de2d28169e962e022f0ada449f6c422c0112e" }
     },
-    "updated": "2026-10-28",
+    "updated": "2026-10-31",
     "reason": "fedora43-minimal: upstream refresh found by the drift check"
   }
 }
