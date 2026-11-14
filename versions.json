@@ -2,43 +2,43 @@
   "ubi9": {
     "standard": {
       "base": "registry.access.redhat.com/ubi9",
-      "amd64": { "digest": "sha256:c1f105254b12a7cc676508c7e676d37125fc5c330fe2c1ce5a0cd693fa66ce8e" },
-      "arm64": { "digest": "sha256:e26edbdb978880abfa1d0ffd0af518540aa9259202a2e42e45b4d6ebac8bc256" }
+      "amd64": { "digest": "sha256:3c3fa194551e503333f03a017bf418fc1f658545db1e2df1e58ccc67e203c324" },
+      "arm64": { "digest": "sha256:f9994e6724db471941ac342d07727a7004f5b27de04985e7ee71cee1bb4822b0" }
     },
     "minimal": {
       "base": "registry.access.redhat.com/ubi9-minimal",
-      "amd64": { "digest": "sha256:5c9e61f364f90de936dae884069044e372a1441288203d83f40783d633244b2f" },
-      "arm64": { "digest": "sha256:fc0015cab5a79af84baa23f96c34f2673ce79c15dfd9f4aac852617167375dd5" }
+      "amd64": { "digest": "sha256:27932e0a0da4346c6dffa965960a71ee766117244531635eec25322ecb3e91a6" },
+      "arm64": { "digest": "sha256:8ba266750b8a2b4f47c8161491ca797d239781cceaebaf403294aeca02a364a8" }
     },
     "micro": {
       "base": "registry.access.redhat.com/ubi9-micro",
-      "amd64": { "digest": "sha256:7325ffb45d8401b227033dc26c567e138c919731ed2f8119e921ddba71835f87" },
-      "arm64": { "digest": "sha256:0925d6b17e753c1595e272224bce5d017b285510bec597b19a5821061080f786" }
+      "amd64": { "digest": "sha256:6e5529ed4ca394a3cfbed2ea2cff0615b69b401a4e5d66d71364ec380634db10" },
+      "arm64": { "digest": "sha256:4d31030f31dbe2c812eef22b8ac14c3ab1ff1bf43303e26e6d36b495aa2c4349" }
     },
     "init": {
       "base": "registry.access.redhat.com/ubi9-init",
-      "amd64": { "digest": "sha256:2da73d427391a763ebbdff5cfabab43cfe720324193e88a10730a8896ac6ff17" },
-      "arm64": { "digest": "sha256:cf1926bb3316b7d99d8e3775da2edd2063ac0272263e532a75bf3da8bb9a04ff" }
+      "amd64": { "digest": "sha256:3bdd8db3cc34b88f22d5a5572b71e784ae01c5dc0e7c32e3f7129625424af644" },
+      "arm64": { "digest": "sha256:c3ba5a42e941989c164ddab0c61b7b774932343603792ee25624da2e30faa5be" }
     },
-    "updated": "2026-10-28",
-    "reason": "ubi9-standard: upstream refresh found by the drift check"
+    "updated": "2026-11-14",
+    "reason": "ubi9-init, ubi9-micro, ubi9-minimal, ubi9-standard: upstream refresh found by the drift check"
   },
   "ubi10": {
     "minimal": {
       "base": "registry.access.redhat.com/ubi10-minimal",
-      "amd64": { "digest": "sha256:eed1fd1de97f2638206c08969b875434b02488ce566e4a9fbfdb7922b1798140" },
-      "arm64": { "digest": "sha256:d4e1b8befc9bb906d4b63cccb25a516ba7fdb053ee7b527e8d9c3e836fdb27a6" }
+      "amd64": { "digest": "sha256:5c8d483a135ea13cd9859dd0d1391c6ccb30fca0794a05fa2974ff7df454a6b7" },
+      "arm64": { "digest": "sha256:735a36e6d8d70ea58cc88e2c3d5ceb13cf60dd21bc0ff846776abb58bdaa5961" }
     },
-    "updated": "2026-10-27",
-    "reason": "ubi10-minimal: upstream refresh to pick up patched packages"
+    "updated": "2026-11-14",
+    "reason": "ubi10-minimal: upstream refresh found by the drift check"
   },
   "fedora43": {
     "minimal": {
       "base": "registry.fedoraproject.org/fedora-minimal",
-      "amd64": { "digest": "sha256:33c92f0e8b91f85d9f6ef8c309362abca1a607a0b8dfbe0544b3e963881b088a" },
-      "arm64": { "digest": "sha256:2d91e26e9de92184aaea18be98389a885e688f0f8e784bcde5e76f2b72954127" }
+      "amd64": { "digest": "sha256:bef4dd2f2bd5ca9079728357ac9fb45bb7d83ee075c3fbd6dd5f0b8f715458c2" },
+      "arm64": { "digest": "sha256:b19bbb8e781fc7b66c526a4966c043cfcb1a7f8332ce5b6fcfbf8191359abf50" }
     },
-    "updated": "2026-10-28",
+    "updated": "2026-11-14",
     "reason": "fedora43-minimal: upstream refresh found by the drift check"
   }
 }
